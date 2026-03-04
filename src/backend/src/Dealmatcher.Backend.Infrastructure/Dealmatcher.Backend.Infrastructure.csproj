@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Dealmatcher.Backend.Domain\Dealmatcher.Backend.Domain.csproj" />
+    <ProjectReference Include="..\Dealmatcher.Backend.UseCases\Dealmatcher.Backend.UseCases.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ExternalServices\" />
+    <Folder Include="PersistentImplementations\" />
+  </ItemGroup>
+
+</Project>
