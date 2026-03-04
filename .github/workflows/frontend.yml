@@ -2,7 +2,7 @@ name: frontend flutter develop CI
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ develop, flutter_ci ]
 
 jobs:
   frontend-dev:
