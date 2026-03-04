@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget{
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
