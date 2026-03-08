@@ -9,11 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5003FB43-6907-4B16-B08C-94460A35BDFB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{96250B66-62F2-49A0-A497-FFAC11DA13DB}"
-	ProjectSection(SolutionItems) = preProject
-		SolutionItems\.editorconfig = SolutionItems\.editorconfig
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dealmatcher.Backend.Domain", "src\Dealmatcher.Backend.Domain\Dealmatcher.Backend.Domain.csproj", "{0E4E5EC6-14E5-6FE9-1018-C80F6BD40F76}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dealmatcher.Backend.Infrastructure", "src\Dealmatcher.Backend.Infrastructure\Dealmatcher.Backend.Infrastructure.csproj", "{DB2388B4-64D1-7DF9-5598-207A22EDA8DC}"
@@ -25,6 +20,17 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dealmatcher.Backend.IntegrationTests", "tests\Dealmatcher.Backend.IntegrationTests\Dealmatcher.Backend.IntegrationTests.csproj", "{F46817EE-1DDB-5532-C004-A171E5302380}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dealmatcher.Backend.UnitTests", "tests\Dealmatcher.Backend.UnitTests\Dealmatcher.Backend.UnitTests.csproj", "{A965543E-D592-5111-31CD-396AE54F3220}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.runsettings = .runsettings
+		Directory.build.props = Directory.build.props
+		Directory.Packages.props = Directory.Packages.props
+		docker.ignore = docker.ignore
+		global.json = global.json
+		nuget.config = nuget.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

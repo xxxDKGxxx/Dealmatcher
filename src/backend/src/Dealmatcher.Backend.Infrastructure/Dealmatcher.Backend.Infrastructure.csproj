@@ -11,9 +11,4 @@
     <ProjectReference Include="..\Dealmatcher.Backend.UseCases\Dealmatcher.Backend.UseCases.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ExternalServices\" />
-    <Folder Include="PersistentImplementations\" />
-  </ItemGroup>
-
 </Project>

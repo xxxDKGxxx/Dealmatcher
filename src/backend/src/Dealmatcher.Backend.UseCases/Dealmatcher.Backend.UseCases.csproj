@@ -10,8 +10,4 @@
     <ProjectReference Include="..\Dealmatcher.Backend.Domain\Dealmatcher.Backend.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Mapping\Profiles\" />
-  </ItemGroup>
-
 </Project>

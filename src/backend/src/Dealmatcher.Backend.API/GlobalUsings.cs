@@ -1,1 +1,12 @@
-﻿
+﻿global using System.Diagnostics;
+global using System.Security.Claims;
+global using System.Text;
+global using System.Text.Json;
+global using Ardalis.Result;
+global using Ardalis.SharedKernel;
+global using FastEndpoints;
+global using FastEndpoints.Swagger;
+global using FluentValidation;
+global using MediatR;
+global using Serilog;
+global using Serilog.Extensions.Logging;
