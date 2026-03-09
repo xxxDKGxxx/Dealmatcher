@@ -2,12 +2,12 @@ name: Dealmatcher Backend CI
 
 on:
   push:
-    branches: ["develop", "backend"]
+    branches: ["develop", "main"]
     paths:
       - "src/backend/**"
       - ".github/workflows/dealmatcher-backend-ci.yml"
   pull_request:
-    branches: ["develop", "backend"]
+    branches: ["develop", "main"]
     paths:
       - "src/backend/**"
       - ".github/workflows/dealmatcher-backend-ci.yml"

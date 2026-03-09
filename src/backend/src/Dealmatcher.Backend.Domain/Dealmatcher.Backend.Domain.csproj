@@ -7,9 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Core\" />
-    <Folder Include="DataInterfaces\" />
-    <Folder Include="Interfaces\" />
+    <PackageReference Include="Ardalis.GuardClauses" />
+    <PackageReference Include="Ardalis.SharedKernel" />
+    <PackageReference Include="Ardalis.SmartEnum" />
+    <PackageReference Include="Ardalis.Specification" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
-
 </Project>

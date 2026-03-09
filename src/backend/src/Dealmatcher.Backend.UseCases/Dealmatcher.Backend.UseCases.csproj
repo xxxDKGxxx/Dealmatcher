@@ -11,7 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Mapping\Profiles\" />
+    <PackageReference Include="Ardalis.Result" />
+    <PackageReference Include="AutoMapper" />
+    <PackageReference Include="FastEndpoints" />
+    <PackageReference Include="MediatR" />
   </ItemGroup>
-
+  
 </Project>

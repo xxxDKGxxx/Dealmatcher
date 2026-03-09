@@ -1,23 +1,69 @@
-var builder = WebApplication.CreateBuilder(args);
+﻿
+namespace Dealmatcher.Backend.API;
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+public sealed class Program
 {
-    app.MapOpenApi();
+  private static async Task Main(string[] args)
+  {
+    var builder = WebApplication.CreateBuilder(args);
+
+    var logger = Log.Logger = new LoggerConfiguration()
+      .Enrich.FromLogContext()
+      .WriteTo.Console()
+      .CreateLogger();
+
+    logger.Information("Starting web host");
+
+    builder.AddLoggerConfigs();
+
+    var appLogger = new SerilogLoggerFactory(logger)
+      .CreateLogger<Program>();
+
+    try
+    {
+
+      builder.Services.AddFastEndpoints()
+        .SwaggerDocument(o =>
+        {
+          o.DocumentSettings = s =>
+          {
+            s.Title = "Dealmatcher API";
+            s.Version = "1";
+          };
+          o.ShortSchemaNames = true;
+          o.MaxEndpointVersion = 1;
+        });
+
+
+      var frontendOrigin = builder.Configuration.GetValue<string>("FrontendOrigin")
+                 ?? "http://localhost:4200";
+
+      builder.Services.AddCors(options =>
+      {
+        options.AddPolicy("AllowFrontend", policy =>
+        {
+          policy.WithOrigins(frontendOrigin)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .WithExposedHeaders("Content-Disposition");
+        });
+      });
+
+
+      var app = builder.Build();
+
+      app.UseCors("AllowFrontend");
+
+      app.UseAuthentication();
+      app.UseAuthorization();
+
+      await app.RunAsync();
+    }
+    catch (Exception ex)
+    {
+      logger.Error(ex.Message);
+      return;
+    }
+  }
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
