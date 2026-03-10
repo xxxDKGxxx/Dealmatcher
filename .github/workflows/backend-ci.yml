@@ -5,12 +5,12 @@ on:
     branches: ["develop", "main"]
     paths:
       - "src/backend/**"
-      - ".github/workflows/dealmatcher-backend-ci.yml"
+      - ".github/workflows/backend-ci.yml"
   pull_request:
     branches: ["develop", "main"]
     paths:
       - "src/backend/**"
-      - ".github/workflows/dealmatcher-backend-ci.yml"
+      - ".github/workflows/backend-ci.yml"
 
 jobs:
   build:
