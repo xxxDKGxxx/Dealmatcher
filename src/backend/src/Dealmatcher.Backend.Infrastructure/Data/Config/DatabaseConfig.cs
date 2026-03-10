@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Dealmatcher.Backend.Infrastructure.Data.Config;
+
 public static class DatabaseConfig
 {
     public static void AddApplicationDbContext(this IServiceCollection services, string connectionString)

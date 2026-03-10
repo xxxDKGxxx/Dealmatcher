@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Dealmatcher.Backend.Infrastructure.Configs;
+
 public static class AutoMapperConfig
 {
     public static IServiceCollection AddAutoMapperConfigs(this IServiceCollection services)

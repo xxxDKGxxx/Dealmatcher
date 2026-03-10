@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Dealmatcher.Backend.Domain;
+
 public class DealmatcherEntityBase : EntityBase
 {
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;

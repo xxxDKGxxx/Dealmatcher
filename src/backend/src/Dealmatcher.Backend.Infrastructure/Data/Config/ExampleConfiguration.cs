@@ -1,4 +1,5 @@
 ﻿namespace Dealmatcher.Backend.Infrastructure.Data.Config;
+
 public class ExampleConfiguration : DealmatcherBaseEntityConfiguration<Example>
 {
     public override void Configure(EntityTypeBuilder<Example> builder)

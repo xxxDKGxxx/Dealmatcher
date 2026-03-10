@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 
 namespace Dealmatcher.Backend.Infrastructure.Data;
+
 public sealed class AppDbContext(
     DbContextOptions<AppDbContext> options,
     IDomainEventDispatcher? dispatcher) : DbContext(options)

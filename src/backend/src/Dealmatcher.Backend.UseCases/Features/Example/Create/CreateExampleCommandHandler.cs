@@ -1,4 +1,5 @@
 ﻿namespace Dealmatcher.Backend.UseCases.Features.Example.Create;
+
 public sealed class CreateExampleCommandHandler(
     IRepository<ExampleEntity> exampleRepository,
     IMapper mapper) : ICommandHandler<CreateExampleCommand, Result<ExampleDto>>
