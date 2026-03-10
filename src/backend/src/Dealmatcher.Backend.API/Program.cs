@@ -3,67 +3,52 @@ namespace Dealmatcher.Backend.API;
 
 public sealed class Program
 {
-  private static async Task Main(string[] args)
-  {
-    var builder = WebApplication.CreateBuilder(args);
-
-    var logger = Log.Logger = new LoggerConfiguration()
-      .Enrich.FromLogContext()
-      .WriteTo.Console()
-      .CreateLogger();
-
-    logger.Information("Starting web host");
-
-    builder.AddLoggerConfigs();
-
-    var appLogger = new SerilogLoggerFactory(logger)
-      .CreateLogger<Program>();
-
-    try
+    private static async Task Main(string[] args)
     {
+        var builder = WebApplication.CreateBuilder(args);
 
-      builder.Services.AddFastEndpoints()
-        .SwaggerDocument(o =>
+        var logger = Log.Logger = new LoggerConfiguration()
+          .Enrich.FromLogContext()
+          .WriteTo.Console()
+          .CreateLogger();
+
+        logger.Information("Starting web host");
+
+        builder.AddLoggerConfigs();
+
+        var appLogger = new SerilogLoggerFactory(logger)
+          .CreateLogger<Program>();
+
+        try
         {
-          o.DocumentSettings = s =>
-          {
-            s.Title = "Dealmatcher API";
-            s.Version = "1";
-          };
-          o.ShortSchemaNames = true;
-          o.MaxEndpointVersion = 1;
-        });
+            builder.Services.AddServiceConfigs(appLogger, builder);
+            builder.Services.AddFastEndpoints()
+              .SwaggerDocument(o =>
+              {
+                  o.DocumentSettings = s =>
+            {
+                    s.Title = "Dealmatcher API";
+                    s.Version = "1";
+                };
+                  o.ShortSchemaNames = true;
+                  o.MaxEndpointVersion = 1;
+              });
 
 
-      var frontendOrigin = builder.Configuration.GetValue<string>("FrontendOrigin")
-                 ?? "http://localhost:4200";
 
-      builder.Services.AddCors(options =>
-      {
-        options.AddPolicy("AllowFrontend", policy =>
+            var app = builder.Build();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            await app.UseAppMiddlewareAndSeedDatabase();
+
+            await app.RunAsync();
+        }
+        catch (Exception ex)
         {
-          policy.WithOrigins(frontendOrigin)
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials()
-            .WithExposedHeaders("Content-Disposition");
-        });
-      });
-
-
-      var app = builder.Build();
-
-      app.UseCors("AllowFrontend");
-
-      app.UseAuthentication();
-      app.UseAuthorization();
-
-      await app.RunAsync();
+            logger.Error(ex.Message);
+            return;
+        }
     }
-    catch (Exception ex)
-    {
-      logger.Error(ex.Message);
-      return;
-    }
-  }
 }
