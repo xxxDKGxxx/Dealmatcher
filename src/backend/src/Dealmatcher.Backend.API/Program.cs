@@ -27,9 +27,9 @@ public sealed class Program
               {
                   o.DocumentSettings = s =>
             {
-                    s.Title = "Dealmatcher API";
-                    s.Version = "1";
-                };
+                s.Title = "Dealmatcher API";
+                s.Version = "1";
+            };
                   o.ShortSchemaNames = true;
                   o.MaxEndpointVersion = 1;
               });

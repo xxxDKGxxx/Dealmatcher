@@ -6,7 +6,7 @@ public sealed class CreateExampleCommandHandler(
     public async Task<Result<ExampleDto>> Handle(CreateExampleCommand request, CancellationToken cancellationToken)
     {
         ExampleEntity example = new ExampleEntity(request.E);
-        await exampleRepository.AddAsync(example);
+        await exampleRepository.AddAsync(example, cancellationToken);
         return mapper.Map<ExampleDto>(example);
     }
 }
