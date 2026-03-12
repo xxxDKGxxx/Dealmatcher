@@ -104,8 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
       border: const OutlineInputBorder(),
     ),
     validator: (value) {
-      if (value == null ||
-          value.trim().isEmpty) {
+      if (value == null || value.trim().isEmpty) {
         return "$text is empty";
       }
       return null;
