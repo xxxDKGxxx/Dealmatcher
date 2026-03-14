@@ -187,7 +187,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             fit: FlexFit.tight,
                             child: ElevatedButton(
                               onPressed: () async => pickDate(context),
-                              child: Text('Set Your Birthday'),
+                              child: Text('Date'),
                             ),
                           ),
                         ],
