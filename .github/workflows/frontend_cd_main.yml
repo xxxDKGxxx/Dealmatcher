@@ -1,4 +1,4 @@
-name: Dealmatcher frontend CI
+name: Dealmatcher frontend CD - main
 
 on:
   push:
@@ -8,15 +8,10 @@ on:
     paths:
       - "src/frontend/**"
       - ".github/workflows/frontend_main.yml"
-  pull_request:                     
-    branches: [ main ]
-    paths:
-      - "src/frontend/**"
-      - ".github/workflows/frontend_main.yml"
 
 jobs:
-  frontend-ci-cd:
-    name: Dealmatcher main frontend CI/CD
+  frontend-cd-main:
+    name: Dealmatcher main frontend CD - main
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -64,16 +59,7 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Check Dart formatting
-        run: dart format --set-exit-if-changed .
-
-      - name: Analyze project
-        run: flutter analyze
-
-      - name: Run tests
-        run: flutter test
-
-      - name: Build APK
+      - name: Build app
         run: flutter build appbundle --release
 
       - name: Create GitHub Release
