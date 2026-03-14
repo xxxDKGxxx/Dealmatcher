@@ -5,15 +5,15 @@ on:
     branches: [ main, develop ]
     paths:
       - "src/frontend/**"
-      - ".github/workflows/dealmatcher-frontend-ci.yml"
+      - ".github/workflows/frontend_ci.yml"
   pull_request:
     branches: [ main, develop ]
     paths:
       - "src/frontend/**"
-      - ".github/workflows/dealmatcher-frontend-ci.yml"
+      - ".github/workflows/frontend_ci.yml"
 
 jobs:
-  frontend-build:
+  frontend-ci:
     name: Dealmatcher frontend CI
     runs-on: ubuntu-latest
 
@@ -34,9 +34,28 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          cache: true
 
       - name: Flutter version
         run: flutter --version
+
+      - name: Cache pub packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: pub-${{ runner.os }}-${{ hashFiles('src/frontend/pubspec.lock') }}
+          restore-keys: |
+            pub-${{ runner.os }}
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('src/frontend/android/**/*.gradle*', 'src/frontend/android/**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}
 
       - name: Install dependencies
         run: flutter pub get
@@ -51,5 +70,5 @@ jobs:
         run: flutter test
 
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build appbundle --release
 
