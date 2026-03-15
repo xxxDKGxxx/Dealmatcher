@@ -1,5 +1,4 @@
-﻿
-namespace Dealmatcher.Backend.Infrastructure.Data.Config;
+﻿namespace Dealmatcher.Backend.Infrastructure.Data.Config;
 
 public class DealmatcherBaseEntityConfiguration<T> : IEntityTypeConfiguration<T> where T : DealmatcherEntityBase
 {

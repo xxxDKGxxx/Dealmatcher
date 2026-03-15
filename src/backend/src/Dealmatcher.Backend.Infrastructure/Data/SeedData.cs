@@ -9,11 +9,12 @@ public static class SeedData
 
     public static async Task InitializeTestAsync(AppDbContext dbContext)
     {
-        await dbContext.SaveChangesAsync();
-    }
+        var ex = new Example(10);
+        if (!dbContext.Set<Example>().Any()) 
+        {
+            await dbContext.AddAsync(ex);    
+        }
 
-    private static async Task SeedOffers(AppDbContext dbContext)
-    {
         await dbContext.SaveChangesAsync();
     }
 }

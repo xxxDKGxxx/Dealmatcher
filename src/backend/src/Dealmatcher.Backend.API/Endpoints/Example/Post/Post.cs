@@ -1,7 +1,4 @@
-﻿using Dealmatcher.Backend.Domain.EntityAggregates.ExampleAggregate.Dto;
-using Dealmatcher.Backend.UseCases.Features.Example.Create;
-
-namespace Dealmatcher.Backend.API.Endpoints.Example.Post;
+﻿namespace Dealmatcher.Backend.API.Endpoints.Example.Post;
 
 public sealed class Post(IMediator mediator) : Endpoint<PostExampleRequest, ExampleDto>
 {

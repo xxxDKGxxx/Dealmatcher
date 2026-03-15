@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dealmatcher.Backend.Infrastructure.Data.Config;
+﻿namespace Dealmatcher.Backend.Infrastructure.Data.Config;
 
 public static class DatabaseConfig
 {

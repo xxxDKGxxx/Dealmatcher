@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Design;
-
-namespace Dealmatcher.Backend.Infrastructure.Data.DbContextFactories;
+﻿namespace Dealmatcher.Backend.Infrastructure.Data.DbContextFactories;
 
 public sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
     public AppDbContext CreateDbContext(string[] args)
     {
         var config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.Development.json")
             .AddEnvironmentVariables()
             .Build();
 

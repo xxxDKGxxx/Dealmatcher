@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace Dealmatcher.Backend.API.Configurations;
+﻿namespace Dealmatcher.Backend.API.Configurations;
 
 public static class MediatrConfigs
 {
@@ -8,15 +6,15 @@ public static class MediatrConfigs
     {
         var mediatRAssemblies = new[]
         {
-      Assembly.GetAssembly(typeof(Program))
-    };
+            Assembly.GetAssembly(typeof(Program))
+        };
 
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssemblies(mediatRAssemblies!);
         })
-          .AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>))
-          .AddScoped<IDomainEventDispatcher, MediatRDomainEventDispatcher>();
+            .AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>))
+            .AddScoped<IDomainEventDispatcher, MediatRDomainEventDispatcher>();
 
         return services;
     }

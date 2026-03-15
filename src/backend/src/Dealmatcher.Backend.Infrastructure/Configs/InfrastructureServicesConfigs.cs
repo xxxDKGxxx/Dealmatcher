@@ -1,10 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Ardalis.GuardClauses;
-using Dealmatcher.Backend.Infrastructure.Configs;
-using Dealmatcher.Backend.Infrastructure.Data;
-using Dealmatcher.Backend.Infrastructure.Data.Config;
-
-namespace Dealmatcher.Backend.API.Configurations;
+﻿namespace Dealmatcher.Backend.Infrastructure.Configs;
 
 public static class InfrastructureServicesConfigs
 {
@@ -14,6 +8,7 @@ public static class InfrastructureServicesConfigs
         Microsoft.Extensions.Logging.ILogger logger)
     {
         string? connectionString;
+
         try
         {
             connectionString = config.GetConnectionString("DefaultConnection");

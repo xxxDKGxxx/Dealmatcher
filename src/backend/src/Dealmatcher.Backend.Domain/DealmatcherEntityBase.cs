@@ -1,5 +1,4 @@
-﻿
-namespace Dealmatcher.Backend.Domain;
+﻿namespace Dealmatcher.Backend.Domain;
 
 public class DealmatcherEntityBase : EntityBase
 {

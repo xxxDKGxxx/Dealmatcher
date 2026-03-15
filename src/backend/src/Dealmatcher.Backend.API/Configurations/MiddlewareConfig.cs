@@ -1,8 +1,4 @@
-﻿using Ardalis.ListStartupServices;
-using Dealmatcher.Backend.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-
-namespace Dealmatcher.Backend.API.Configurations;
+﻿namespace Dealmatcher.Backend.API.Configurations;
 
 public static class MiddlewareConfig
 {

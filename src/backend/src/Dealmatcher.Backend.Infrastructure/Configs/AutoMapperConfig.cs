@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dealmatcher.Backend.Infrastructure.Configs;
+﻿namespace Dealmatcher.Backend.Infrastructure.Configs;
 
 public static class AutoMapperConfig
 {
@@ -14,7 +8,8 @@ public static class AutoMapperConfig
             _ =>
             {
 
-            });
+            },
+            typeof(ExampleProfile).Assembly);
 
         return services;
     }

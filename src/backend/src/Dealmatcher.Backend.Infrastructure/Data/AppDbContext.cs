@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-
-namespace Dealmatcher.Backend.Infrastructure.Data;
+﻿namespace Dealmatcher.Backend.Infrastructure.Data;
 
 public sealed class AppDbContext(
     DbContextOptions<AppDbContext> options,

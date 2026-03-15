@@ -8,9 +8,9 @@ public sealed class Program
         var builder = WebApplication.CreateBuilder(args);
 
         var logger = Log.Logger = new LoggerConfiguration()
-          .Enrich.FromLogContext()
-          .WriteTo.Console()
-          .CreateLogger();
+            .Enrich.FromLogContext()
+            .WriteTo.Console()
+            .CreateLogger();
 
         logger.Information("Starting web host");
 
@@ -23,26 +23,25 @@ public sealed class Program
         {
             builder.Services.AddServiceConfigs(appLogger, builder);
             builder.Services.AddFastEndpoints()
-              .SwaggerDocument(o =>
-              {
-                  o.DocumentSettings = s =>
-            {
-                s.Title = "Dealmatcher API";
-                s.Version = "1";
-            };
-                  o.ShortSchemaNames = true;
-                  o.MaxEndpointVersion = 1;
-              });
-
-
+                .SwaggerDocument(o =>
+                    {
+                        o.DocumentSettings = s =>
+                            {
+                                s.Title = "Dealmatcher API";
+                                s.Version = "1";
+                            };
+                        o.ShortSchemaNames = true;
+                        o.MaxEndpointVersion = 1;
+                    });
 
             var app = builder.Build();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseAuthentication();
+            //app.UseAuthorization();
 
             await app.UseAppMiddlewareAndSeedDatabase();
 
+            logger.Information("Running app");
             await app.RunAsync();
         }
         catch (Exception ex)

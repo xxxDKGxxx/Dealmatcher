@@ -1,14 +1,23 @@
 ﻿global using System.Diagnostics;
+global using System.Reflection;
 global using System.Security.Claims;
 global using System.Text;
 global using System.Text.Json;
+global using Ardalis.ListStartupServices;
 global using Ardalis.Result;
 global using Ardalis.SharedKernel;
 global using Dealmatcher.Backend.API.Configurations;
 global using Dealmatcher.Backend.API.Extensions;
+// do usunięcia
+global using Dealmatcher.Backend.Domain.EntityAggregates.ExampleAggregate.Dto;
+global using Dealmatcher.Backend.Infrastructure.Configs;
+global using Dealmatcher.Backend.Infrastructure.Data;
+global using Dealmatcher.Backend.UseCases.Features.Example.Create;
 global using FastEndpoints;
 global using FastEndpoints.Swagger;
 global using FluentValidation;
 global using MediatR;
+global using Microsoft.EntityFrameworkCore;
 global using Serilog;
 global using Serilog.Extensions.Logging;
+//
