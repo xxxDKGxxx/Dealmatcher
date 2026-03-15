@@ -51,6 +51,6 @@ jobs:
         working-directory: src/backend
         run: dotnet tool install -g dotnet-format
 
-      # - name: Run dotnet format
-      #   working-directory: src/backend
-      #   run: dotnet format --severity info --verify-no-changes
+      - name: Run dotnet format
+        working-directory: src/backend
+        run: dotnet format --severity info --verify-no-changes
