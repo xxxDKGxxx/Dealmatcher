@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/skd:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /repo
 
 COPY Directory.Build.props ./
@@ -10,11 +10,7 @@ COPY src/Dealmatcher.Backend.UseCases/Dealmatcher.Backend.UseCases.csproj ./src/
 COPY src/Dealmatcher.Backend.Infrastructure/Dealmatcher.Backend.Infrastructure.csproj ./src/Dealmatcher.Backend.Infrastructure/
 COPY src/Dealmatcher.Backend.API/Dealmatcher.Backend.API.csproj ./src/Dealmatcher.Backend.API/
 
-COPY tests/Dealmatcher.Backend.FunctionalTests/Dealmatcher.Backend.FunctionalTests.csproj ./tests/Dealmatcher.Backend.FunctionalTests/
-COPY tests/Dealmatcher.Backend.IntegrationTests/Dealmatcher.Backend.IntegrationTests.csproj ./tests/Dealmatcher.Backend.IntegrationTests/
-COPY tests/Dealmatcher.Backend.UnitTests/Dealmatcher.Backend.UnitTests.csproj ./tests/Dealmatcher.Backend.UnitTests/
-
-RUN dotnet restore
+RUN dotnet restore src/Dealmatcher.Backend.API/Dealmatcher.Backend.API.csproj
 
 COPY src/ ./src/
 RUN dotnet publish src/Dealmatcher.Backend.API/Dealmatcher.Backend.API.csproj \
