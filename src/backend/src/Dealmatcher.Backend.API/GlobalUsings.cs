@@ -11,9 +11,6 @@ global using Dealmatcher.Backend.API.Extensions;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ExampleAggregate.Dto;
 global using Dealmatcher.Backend.Infrastructure.Configs;
 global using Dealmatcher.Backend.Infrastructure.Data;
-// do usunięcia
-global using Dealmatcher.Backend.UseCases.Features.Example.Create;
-//
 global using FastEndpoints;
 global using FastEndpoints.Swagger;
 global using FluentValidation;
