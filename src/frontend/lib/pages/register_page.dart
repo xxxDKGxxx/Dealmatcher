@@ -12,6 +12,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _loginController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _companyController = TextEditingController();
@@ -76,6 +78,7 @@ class _RegisterPageState extends State<RegisterPage> {
     required String text,
     bool Function(String)? additionalValidator,
     bool obscureText = false,
+    String? errorText,
   }) => TextFormField(
     controller: controller,
     obscureText: obscureText,
@@ -87,7 +90,7 @@ class _RegisterPageState extends State<RegisterPage> {
       if (value == null ||
           value.trim().isEmpty ||
           (additionalValidator != null && additionalValidator(value))) {
-        return "$text is invalid";
+        return errorText ?? "$text is invalid";
       }
       return null;
     },
@@ -221,6 +224,17 @@ class _RegisterPageState extends State<RegisterPage> {
                         text: 'Password',
                         obscureText: true,
                         additionalValidator: (s) => s.length < 6,
+                        errorText:
+                            'Password must be at least 6 characters long',
+                      ),
+                      const SizedBox(height: 16),
+                      nonEmptyTextFormField(
+                        controller: _confirmPasswordController,
+                        text: 'Confirm Password',
+                        obscureText: true,
+                        additionalValidator: (s) =>
+                            s != _passwordController.text,
+                        errorText: 'Repeated password is different',
                       ),
                       const SizedBox(height: 24),
 
