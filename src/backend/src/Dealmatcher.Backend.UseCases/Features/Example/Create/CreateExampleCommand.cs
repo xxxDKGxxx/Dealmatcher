@@ -1,5 +1,5 @@
-﻿namespace Dealmatcher.Backend.UseCases.Features.Example.Create;
+﻿//namespace Dealmatcher.Backend.UseCases.Features.Example.Create;
 
-public sealed record CreateExampleCommand(
-    int E
-) : ICommand<Result<ExampleDto>>;
+//public sealed record CreateExampleCommand(
+//    int E
+//) : ICommand<Result<ExampleDto>>;

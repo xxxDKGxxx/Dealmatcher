@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\**" />
-    <Content Remove="Controllers\**" />
-    <EmbeddedResource Remove="Controllers\**" />
-    <None Remove="Controllers\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Dealmatcher.Backend.Domain\Dealmatcher.Backend.Domain.csproj" />
     <ProjectReference Include="..\Dealmatcher.Backend.Infrastructure\Dealmatcher.Backend.Infrastructure.csproj" />
     <ProjectReference Include="..\Dealmatcher.Backend.UseCases\Dealmatcher.Backend.UseCases.csproj" />

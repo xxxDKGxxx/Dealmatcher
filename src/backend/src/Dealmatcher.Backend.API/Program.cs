@@ -1,5 +1,4 @@
-﻿
-namespace Dealmatcher.Backend.API;
+﻿namespace Dealmatcher.Backend.API;
 
 public sealed class Program
 {
@@ -36,12 +35,11 @@ public sealed class Program
 
             var app = builder.Build();
 
-            //app.UseAuthentication();
-            //app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             await app.UseAppMiddlewareAndSeedDatabase();
 
-            logger.Information("Running app");
             await app.RunAsync();
         }
         catch (Exception ex)
