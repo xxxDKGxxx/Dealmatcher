@@ -1,10 +1,10 @@
 name: Dealmatcher frontend CD - dev
 
 on:
-  push:
+  pull_request:
     branches: [ develop ]
-    tags:
-      - "v-dev-*"
+    types:
+      - closed
     paths:
       - "src/frontend/**"
       - ".github/workflows/frontend_main.yml"
@@ -12,6 +12,7 @@ on:
 jobs:
   frontend-cd-dev:
     name: Dealmatcher main frontend CD - dev
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     defaults:
@@ -58,10 +59,10 @@ jobs:
         run: flutter pub get
 
       - name: Build app
-        run: flutter build appbundle --release
+        run: flutter build apk --release
 
       - name: Upload app
         uses: actions/upload-artifact@v4
         with:
           name: app-release
-          path: src/frontend/build/app/outputs/bundle/release/app-release.aab
+          path: src/frontend/build/app/outputs/flutter-apk/app-release.apk
