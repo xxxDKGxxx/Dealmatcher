@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/home_page.dart';
+import 'package:frontend/router/go_router.dart';
 
 void main() {
   runApp(const DealMatcherApp());
@@ -10,12 +10,12 @@ class DealMatcherApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'DealMatcher',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
       ),
-      home: const HomePage(),
+      routerConfig: globalRouter,
     );
   }
 }
