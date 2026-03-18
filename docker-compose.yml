@@ -1,0 +1,49 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: dealmatcher-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Password1!
+    ports:
+      - "1433:1433"
+    volumes:
+      - dealmatcher-sql-data:/var/opt/mssql
+    networks:
+      - dealmatcher-local
+
+  backend:
+    build:
+      context: ./src/backend/
+      dockerfile: Dockerfile
+    container_name: dealmatcher-backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
+      - FrontendOrigin=http://localhost:8080
+    ports:
+      - "5000:80"
+    networks:
+      - dealmatcher-local
+    depends_on:
+      - sqlserver
+
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    container_name: dealmatcher-frontend
+    ports:
+      - "8080:80"
+    networks:
+      - dealmatcher-local
+    depends_on:
+      - backend
+      
+networks:
+  dealmatcher-local:
+    driver: bridge
+
+volumes:
+  dealmatcher-sql-data:
