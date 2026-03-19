@@ -19,7 +19,7 @@ public sealed class SoftDeleteInterceptor : SaveChangesInterceptor
         return base.SavingChanges(eventData, result);
     }
 
-    private void ProcessSoftDelete(DbContext? dbContext)
+    private static void ProcessSoftDelete(DbContext? dbContext)
     {
         if (dbContext is null)
         {

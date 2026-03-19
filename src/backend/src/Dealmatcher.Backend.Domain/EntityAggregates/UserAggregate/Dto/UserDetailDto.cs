@@ -15,4 +15,3 @@ public sealed record UserDetailDto(
     int TotalPurchases,
     DateTime? LastActive
 );
-    

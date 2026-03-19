@@ -19,7 +19,7 @@ public sealed class UpdateTimestampInterceptor : SaveChangesInterceptor
         return base.SavingChanges(eventData, result);
     }
 
-    private void UpdateModificationDate(DbContext? dbContext)
+    private static void UpdateModificationDate(DbContext? dbContext)
     {
         if (dbContext is null)
         {
