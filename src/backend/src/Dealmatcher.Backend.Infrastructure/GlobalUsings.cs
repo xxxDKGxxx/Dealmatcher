@@ -7,6 +7,7 @@ global using Ardalis.SharedKernel;
 global using Ardalis.Specification.EntityFrameworkCore;
 global using Dealmatcher.Backend.Domain;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ExampleAggregate;
+global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Dealmatcher.Backend.Infrastructure.Data;
 global using Dealmatcher.Backend.Infrastructure.Data.Config;
 global using Dealmatcher.Backend.UseCases.Mapping.Profiles;
