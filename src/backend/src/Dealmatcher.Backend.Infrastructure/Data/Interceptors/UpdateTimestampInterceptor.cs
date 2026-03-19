@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Dealmatcher.Backend.Domain;
-
-namespace Dealmatcher.Backend.Infrastructure.Data.Interceptors;
+﻿namespace Dealmatcher.Backend.Infrastructure.Data.Interceptors;
 
 public sealed class UpdateTimestampInterceptor : SaveChangesInterceptor
 {

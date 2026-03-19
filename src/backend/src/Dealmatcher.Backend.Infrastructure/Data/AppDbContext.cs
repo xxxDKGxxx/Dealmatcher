@@ -1,6 +1,4 @@
-﻿using Dealmatcher.Backend.Infrastructure.Data.Interceptors;
-
-namespace Dealmatcher.Backend.Infrastructure.Data;
+﻿namespace Dealmatcher.Backend.Infrastructure.Data;
 
 public sealed class AppDbContext(
     DbContextOptions<AppDbContext> options,
@@ -13,6 +11,7 @@ public sealed class AppDbContext(
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
