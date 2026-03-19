@@ -11,6 +11,9 @@ public class DealmatcherBaseEntityConfiguration<T> : IEntityTypeConfiguration<T>
         builder.Property(e => e.CreatedAt)
             .IsRequired();
 
+        builder.Property(e => e.UpdatedAt)
+            .IsRequired(false);
+
         builder.Property(e => e.DeletedAt).
             IsRequired(false);
 
