@@ -96,4 +96,10 @@ public sealed class User(
     {
         Status = UserStatus.Inactive;
     }
+
+    public override void Delete()
+    {
+        base.Delete();
+        Status = UserStatus.Inactive;
+    }
 }

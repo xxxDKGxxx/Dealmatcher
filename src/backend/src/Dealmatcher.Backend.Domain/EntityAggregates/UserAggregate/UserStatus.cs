@@ -1,16 +1,12 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 
-public abstract class UserStatus : SmartEnum<UserStatus>
+public abstract class UserStatus(string name, int value) : SmartEnum<UserStatus>(name, value)
 {
     public static readonly UserStatus Active = new ActiveStatus();
     public static readonly UserStatus Inactive = new InactiveStatus();
     public static readonly UserStatus Banned = new BannedStatus();
 
     public abstract bool CanLogin { get; }
-
-    protected UserStatus(string name, int value) : base(name, value)
-    {
-    }
 
     private sealed class ActiveStatus() : UserStatus("ACTIVE", 1)
     {

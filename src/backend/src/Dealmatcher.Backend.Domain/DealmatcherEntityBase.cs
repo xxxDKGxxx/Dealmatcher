@@ -7,7 +7,7 @@ public class DealmatcherEntityBase : EntityBase
     public DateTime? DeletedAt { get; private set; } = null;
     public bool IsDeleted { get; private set; } = false;
 
-    public void Delete()
+    public virtual void Delete()
     {
         IsDeleted = true;
         DeletedAt = DateTime.UtcNow;
