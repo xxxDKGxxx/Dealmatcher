@@ -19,7 +19,7 @@ public sealed class User(
     public string? Address { get; private set; }
 
     public bool IsPrivileged { get; private set; } = false;
-    public UserStatus Status { get; private set; } = UserStatus.ACTIVE;
+    public UserStatus Status { get; private set; } = UserStatus.Active;
 
     public void UpdateEmail(string email)
     {
@@ -84,16 +84,16 @@ public sealed class User(
 
     public void BanUser()
     {
-        Status = UserStatus.BANNED;
+        Status = UserStatus.Banned;
     }
 
     public void ActivateUserAccount()
     {
-        Status = UserStatus.ACTIVE;
+        Status = UserStatus.Active;
     }
 
     public void DeactivateUserAccount()
     {
-        Status = UserStatus.INACTIVE;
+        Status = UserStatus.Inactive;
     }
 }

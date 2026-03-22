@@ -44,9 +44,9 @@ public class UserConfiguration : DealmatcherBaseEntityConfiguration<User>
             .IsRequired();
 
         builder.Property(u => u.Status)
-            .HasConversion<string>()
-            .IsRequired()
-            .HasMaxLength(DataSchemaConstants.StatusMaxLength);
-
+            .HasConversion(
+                s => s.Value,
+                v => UserStatus.FromValue(v))
+            .IsRequired();
     }
 }
