@@ -12,16 +12,6 @@ public sealed class AppDbContext(
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-
-        optionsBuilder.AddInterceptors(
-            new SoftDeleteInterceptor(),
-            new UpdateTimestampInterceptor()
-        );
-    }
-
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
         var result = await base.SaveChangesAsync(cancellationToken)

@@ -14,6 +14,12 @@ public static class DatabaseConfig
                     errorNumbersToAdd: null
                 );
             });
+
+            options.AddInterceptors(
+                new SoftDeleteInterceptor(),
+                new UpdateTimestampInterceptor()
+            );
+
         });
     }
 }
