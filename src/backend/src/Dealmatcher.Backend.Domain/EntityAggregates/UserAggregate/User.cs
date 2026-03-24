@@ -1,6 +1,6 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 
-public abstract class User(string email, string passwordHash, string name, string surname) : DealmatcherEntityBase, IAggregateRoot
+public class User(string email, string passwordHash, string name, string surname) : DealmatcherEntityBase, IAggregateRoot
 {
     public string Email { get; private set; } = email;
     public string PasswordHash { get; private set; } = passwordHash;
@@ -24,6 +24,7 @@ public abstract class User(string email, string passwordHash, string name, strin
             PasswordHash = passwordHash;
         }
     }
+
     public void UpdateName(string? name)
     {
         if (!string.IsNullOrWhiteSpace(name))
@@ -32,6 +33,7 @@ public abstract class User(string email, string passwordHash, string name, strin
         }
     }
 
+
     public void UpdateSurname(string? surname)
     {
         if (!string.IsNullOrWhiteSpace(surname))
@@ -39,26 +41,32 @@ public abstract class User(string email, string passwordHash, string name, strin
             Surname = surname;
         }
     }
+
     public void GrantAdminPrivileges()
     {
         IsPrivileged = true;
     }
+
     public void RevokeAdminPrivileges()
     {
         IsPrivileged = false;
     }
+
     public void BanUser()
     {
         Status = UserStatus.Banned;
     }
+
     public void ActivateUserAccount()
     {
         Status = UserStatus.Active;
     }
+
     public void DeactivateUserAccount()
     {
         Status = UserStatus.Inactive;
     }
+
     public override void Delete()
     {
         DeactivateUserAccount();

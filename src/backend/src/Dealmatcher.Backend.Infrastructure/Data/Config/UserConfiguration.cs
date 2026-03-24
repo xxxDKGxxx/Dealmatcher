@@ -9,6 +9,7 @@ public class UserConfiguration : DealmatcherBaseEntityConfiguration<User>
         builder.ToTable($"{nameof(User)}s");
 
         builder.HasDiscriminator<string>("UserType")
+            .HasValue<User>("User")
             .HasValue<BasicUser>("BasicUser");
 
         builder.HasIndex(u => u.Email).IsUnique();

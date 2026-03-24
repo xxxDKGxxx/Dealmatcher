@@ -8,6 +8,7 @@ public sealed class BasicUser(string email, string passwordHash, string name, st
     public string? CompanyName { get; private set; }
     public string? Phone { get; private set; }
     public string? Address { get; private set; }
+
     public void UpdateBirthDate(DateTime? birthDate)
     {
         BirthDate = birthDate;

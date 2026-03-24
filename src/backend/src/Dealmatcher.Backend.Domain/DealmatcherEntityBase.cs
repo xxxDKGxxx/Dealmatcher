@@ -6,6 +6,7 @@ public abstract class DealmatcherEntityBase : EntityBase
     public DateTime? UpdatedAt { get; private set; }
 
     public abstract void Delete();
+
     public void MarkUpdated()
     {
         UpdatedAt = DateTime.UtcNow;
