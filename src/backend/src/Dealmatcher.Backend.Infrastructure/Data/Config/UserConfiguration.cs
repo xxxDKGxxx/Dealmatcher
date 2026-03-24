@@ -8,6 +8,9 @@ public class UserConfiguration : DealmatcherBaseEntityConfiguration<User>
 
         builder.ToTable($"{nameof(User)}s");
 
+        builder.HasDiscriminator<string>("UserType")
+            .HasValue<BasicUser>("BasicUser");
+
         builder.HasIndex(u => u.Email).IsUnique();
 
         builder.Property(u => u.Email)
@@ -24,21 +27,6 @@ public class UserConfiguration : DealmatcherBaseEntityConfiguration<User>
         builder.Property(u => u.Surname)
             .IsRequired()
             .HasMaxLength(DataSchemaConstants.SurnameMaxLength);
-
-        builder.Property(u => u.BirthDate)
-            .IsRequired(false);
-
-        builder.Property(u => u.CompanyName)
-            .IsRequired(false)
-            .HasMaxLength(DataSchemaConstants.CompanyNameMaxLength);
-
-        builder.Property(u => u.Phone)
-            .IsRequired(false)
-            .HasMaxLength(DataSchemaConstants.PhoneMaxLength);
-
-        builder.Property(u => u.Address)
-            .IsRequired(false)
-            .HasMaxLength(DataSchemaConstants.AddressMaxLength);
 
         builder.Property(u => u.IsPrivileged)
             .IsRequired();
