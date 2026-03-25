@@ -11,9 +11,12 @@ public static class DatabaseConfig
                 sqlOptions.EnableRetryOnFailure(
                     maxRetryCount: 5,
                     maxRetryDelay: TimeSpan.FromSeconds(30),
-                    errorNumbersToAdd: null
-                );
+                    errorNumbersToAdd: null);
             });
+
+            options.AddInterceptors(
+                new SoftDeleteInterceptor(),
+                new UpdateTimestampInterceptor());
         });
     }
 }
