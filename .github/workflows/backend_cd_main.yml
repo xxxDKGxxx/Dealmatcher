@@ -7,8 +7,8 @@ on:
     branches: 
       [ main ]
     paths:
-    - '**'
-    - '.github/workflows/dealmatcher-backend-prod-AutoDeployTrigger-dcff6973-3f09-46bf-8cfc-a28502db3c1d.yml'
+    - 'src/backend/**'
+    - '.github/workflows/backend_cd_main.yml'
 
   # Allow manual trigger 
   workflow_dispatch:      
