@@ -40,7 +40,7 @@ class _RegisterPageState extends State<RegisterPage> {
       String email = _emailController.text;
       String password = _passwordController.text;
 
-      if(context.mounted) {
+      if (context.mounted) {
         context.push('/');
       }
 

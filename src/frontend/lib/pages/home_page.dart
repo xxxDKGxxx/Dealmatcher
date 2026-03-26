@@ -11,9 +11,7 @@ class HomePage extends StatelessWidget {
         title: Text('DealMatcher'),
         backgroundColor: theme.colorScheme.inversePrimary,
       ),
-      body: Center(
-        child: Text('Welcome to Home Page'),
-      ),
+      body: Center(child: Text('Welcome to Home Page')),
     );
   }
 }
