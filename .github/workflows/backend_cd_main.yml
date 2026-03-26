@@ -45,5 +45,3 @@ jobs:
           imageToBuild: xxxdkgxxx/dealmatcher-backend-prod:${{ github.sha }}
           _buildArgumentsKey_: |
             _buildArgumentsValues_
-
-
