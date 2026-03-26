@@ -1,14 +1,14 @@
-name: Trigger auto deployment for dealmatcher-backend-dev
+name: Trigger auto deployment for dealmatcher-backend-prod
 
 # When this action will be executed
 on:
   # Automatically trigger it when detected changes in repo
   push:
     branches: 
-      [ develop ]
+      [ main ]
     paths:
-    - '**'
-    - '.github/workflows/dealmatcher-backend-dev-AutoDeployTrigger-36041abe-f00b-4c35-b825-bc5e05604e24.yml'
+    - 'src/backend/**'
+    - '.github/workflows/backend_cd_main.yml'
 
   # Allow manual trigger 
   workflow_dispatch:      
@@ -27,9 +27,9 @@ jobs:
       - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.DEALMATCHERBACKENDDEV_AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.DEALMATCHERBACKENDDEV_AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.DEALMATCHERBACKENDDEV_AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.DEALMATCHERBACKENDPROD_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.DEALMATCHERBACKENDPROD_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.DEALMATCHERBACKENDPROD_AZURE_SUBSCRIPTION_ID }}
 
       - name: Build and push container image to registry
         uses: azure/container-apps-deploy-action@v2
@@ -38,12 +38,10 @@ jobs:
           _dockerfilePathKey_: _dockerfilePath_
           _targetLabelKey_: _targetLabel_
           registryUrl: docker.io
-          registryUsername: ${{ secrets.DEALMATCHERBACKENDDEV_REGISTRY_USERNAME }}
-          registryPassword: ${{ secrets.DEALMATCHERBACKENDDEV_REGISTRY_PASSWORD }}
-          containerAppName: dealmatcher-backend-dev
+          registryUsername: ${{ secrets.DEALMATCHERBACKENDPROD_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.DEALMATCHERBACKENDPROD_REGISTRY_PASSWORD }}
+          containerAppName: dealmatcher-backend-prod
           resourceGroup: rg-dealmatcher
-          imageToBuild: xxxdkgxxx/dealmatcher-backend-dev:${{ github.sha }}
+          imageToBuild: xxxdkgxxx/dealmatcher-backend-prod:${{ github.sha }}
           _buildArgumentsKey_: |
             _buildArgumentsValues_
-
-
