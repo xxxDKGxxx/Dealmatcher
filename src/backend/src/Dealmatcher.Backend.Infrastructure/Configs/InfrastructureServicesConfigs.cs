@@ -24,7 +24,9 @@ public static class InfrastructureServicesConfigs
         services.AddAutoMapperConfigs();
 
         services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>))
-            .AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
+            .AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>))
+            .AddScoped<IPasswordHasher, BCryptPasswordHasher>()
+            .AddScoped<ITokenService, JwtTokenService>();
 
         logger.LogInformation("{Project} services registered.", "Infrastructure");
 
