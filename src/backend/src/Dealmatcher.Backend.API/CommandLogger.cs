@@ -2,7 +2,7 @@
 
 public sealed class CommandLogger<TCommand, TResult>(ILogger<TCommand> logger) :
     ICommandMiddleware<TCommand, TResult>
-    where TCommand: FastEndpoints.ICommand<TResult>
+    where TCommand : FastEndpoints.ICommand<TResult>
 {
     private readonly ILogger<TCommand> _logger = logger;
 
