@@ -32,6 +32,10 @@ public sealed class Program
                         o.ShortSchemaNames = true;
                         o.MaxEndpointVersion = 1;
                     });
+            builder.Services.AddCommandMiddleware(c =>
+            {
+                c.Register(typeof(CommandLogger<,>));
+            });
 
             var app = builder.Build();
 
