@@ -1,5 +1,4 @@
-﻿
-namespace Dealmatcher.Backend.API.Configurations;
+﻿namespace Dealmatcher.Backend.API.Configurations;
 
 public static class AuthenticationConfigs
 {

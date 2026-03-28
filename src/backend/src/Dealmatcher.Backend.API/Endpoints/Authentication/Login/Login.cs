@@ -9,12 +9,12 @@ public sealed class Login(IMediator mediator) : Endpoint<LoginRequest, LoginDto>
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(LoginRequest request, CancellationToken ct)
+    public override async Task HandleAsync(LoginRequest request, CancellationToken cancellationToken)
     {
         var command = new LoginCommand(request.Email, request.Password);
 
-        var result = await mediator.Send(command, ct);
+        var result = await mediator.Send(command, cancellationToken);
 
-        await result.SendResult(this, ct: ct);
+        await result.SendResult(this, ct: cancellationToken);
     }
 }
