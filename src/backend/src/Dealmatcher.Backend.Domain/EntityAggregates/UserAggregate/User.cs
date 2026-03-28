@@ -33,7 +33,6 @@ public class User(string email, string passwordHash, string name, string surname
         }
     }
 
-
     public void UpdateSurname(string? surname)
     {
         if (!string.IsNullOrWhiteSpace(surname))
