@@ -1,4 +1,5 @@
 ﻿namespace Dealmatcher.Backend.UseCases.Mapping.Profiles;
+
 public sealed class LoginProfile : Profile
 {
     public LoginProfile()

@@ -63,9 +63,17 @@ public sealed class JwtTokenService(
             RequireExpirationTime = true
         };
 
-        tokenHandler.ValidateToken(token, validationParameters, out _);
-        logger.LogDebug("Successfully validated JWT token");
+        try
+        {
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
+            return Task.FromResult(principal?.Identity?.IsAuthenticated == true);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning("Token validation failed: {Message}", ex.Message);
+            Task.FromResult(false);
+        }
 
-        return Task.FromResult(true);
+        return Task.FromResult(false);
     }
 }
