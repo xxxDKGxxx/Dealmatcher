@@ -1,4 +1,6 @@
-﻿namespace Dealmatcher.Backend.API;
+﻿using Dealmatcher.Backend.API.Middleware;
+
+namespace Dealmatcher.Backend.API;
 
 public sealed class Program
 {

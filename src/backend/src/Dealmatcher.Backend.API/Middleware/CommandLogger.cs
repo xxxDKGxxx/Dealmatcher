@@ -1,4 +1,4 @@
-﻿namespace Dealmatcher.Backend.API;
+﻿namespace Dealmatcher.Backend.API.Middleware;
 
 public sealed class CommandLogger<TCommand, TResult>(ILogger<TCommand> logger) :
     ICommandMiddleware<TCommand, TResult>
