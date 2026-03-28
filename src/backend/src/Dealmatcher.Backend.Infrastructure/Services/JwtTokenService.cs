@@ -45,7 +45,8 @@ public sealed class JwtTokenService(
 
     public Task<bool> ValidateTokenAsync(string token)
     {
-        Guard.Against.NullOrEmpty(token, nameof(token));
+        if (string.IsNullOrEmpty(token))
+            return Task.FromResult(false);
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
@@ -71,7 +72,6 @@ public sealed class JwtTokenService(
         catch (Exception ex)
         {
             logger.LogWarning("Token validation failed: {Message}", ex.Message);
-            Task.FromResult(false);
         }
 
         return Task.FromResult(false);
