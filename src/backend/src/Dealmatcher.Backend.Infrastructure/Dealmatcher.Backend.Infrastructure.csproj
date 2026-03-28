@@ -23,6 +23,7 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+	<PackageReference Include="BCrypt.Net-Next" />
   </ItemGroup>
   
 </Project>

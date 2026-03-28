@@ -2,7 +2,13 @@
 global using Ardalis.Result;
 global using Ardalis.SharedKernel;
 global using AutoMapper;
+global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
+//global using ExampleEntity = Dealmatcher.Backend.Domain.EntityAggregates.ExampleAggregate.Example;
+global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Dto;
+global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Specifications;
+global using Dealmatcher.Backend.Domain.Interfaces;
+global using Dealmatcher.Backend.Domain.Interfaces.Authentication;
+global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 //global using Dealmatcher.Backend.Domain.EntityAggregates.ExampleAggregate.Dto;
 global using MediatR;
 global using Microsoft.Extensions.Logging;
-//global using ExampleEntity = Dealmatcher.Backend.Domain.EntityAggregates.ExampleAggregate.Example;
