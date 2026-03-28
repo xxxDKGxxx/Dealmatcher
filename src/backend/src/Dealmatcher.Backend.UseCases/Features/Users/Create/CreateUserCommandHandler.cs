@@ -7,7 +7,8 @@ public sealed class CreateUserCommandHandler(
 {
     public async Task<Result<UserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var spec = new UserByEmailSpec(request.Email);
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+        var spec = new UserByEmailSpec(normalizedEmail);
         var existingUser = await userRepository.SingleOrDefaultAsync(spec, cancellationToken);
 
         if (existingUser is not null)
@@ -15,7 +16,6 @@ public sealed class CreateUserCommandHandler(
             return Result.Conflict("Email is already taken");
         }
 
-        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
         var passwordHash = passwordHasher.HashPassword(request.Password);
 
         var newUser = new BasicUser(normalizedEmail, passwordHash, request.Name, request.Surname);
