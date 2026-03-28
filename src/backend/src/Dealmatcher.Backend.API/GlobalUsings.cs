@@ -15,6 +15,8 @@ global using FastEndpoints;
 global using FastEndpoints.Swagger;
 global using FluentValidation;
 global using MediatR;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.IdentityModel.Tokens;
 global using Serilog;
 global using Serilog.Extensions.Logging;
