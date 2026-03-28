@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace Dealmatcher.Backend.FunctionalTests.Endpoints.Authentication;
+﻿namespace Dealmatcher.Backend.FunctionalTests.Endpoints.Authentication;
 
 public class LoginTests(CustomWebApplicationFactory factory) : IClassFixture<CustomWebApplicationFactory>
 {

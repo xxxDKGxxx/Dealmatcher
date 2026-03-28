@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace Dealmatcher.Backend.FunctionalTests;
+﻿namespace Dealmatcher.Backend.FunctionalTests;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {

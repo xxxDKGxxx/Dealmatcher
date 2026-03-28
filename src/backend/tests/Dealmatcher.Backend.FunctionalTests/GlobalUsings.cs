@@ -1,5 +1,6 @@
 ﻿global using System.Net;
 global using System.Net.Http.Json;
+global using System.Text.Json;
 global using Dealmatcher.Backend.API;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Dealmatcher.Backend.Domain.Interfaces;
