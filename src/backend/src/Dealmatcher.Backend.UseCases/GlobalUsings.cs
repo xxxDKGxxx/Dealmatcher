@@ -11,4 +11,4 @@ global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 //global using Dealmatcher.Backend.Domain.EntityAggregates.ExampleAggregate.Dto;
 global using MediatR;
 global using Microsoft.Extensions.Logging;
-global using UserEntity = Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User;
+global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;

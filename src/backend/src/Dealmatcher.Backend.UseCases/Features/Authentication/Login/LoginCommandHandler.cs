@@ -1,7 +1,7 @@
 ﻿namespace Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 
 public sealed class LoginCommandHandler(
-    IReadRepository<UserEntity> userRepository,
+    IReadRepository<User> userRepository,
     IMapper mapper,
     ITokenService tokenService,
     IPasswordHasher passwordHasher) : ICommandHandler<LoginCommand, Result<LoginDto>>
