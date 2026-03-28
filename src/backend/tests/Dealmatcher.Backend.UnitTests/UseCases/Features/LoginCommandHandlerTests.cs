@@ -1,4 +1,5 @@
 ﻿namespace Dealmatcher.Backend.UnitTests.UseCases.Features;
+
 public class LoginCommandHandlerTests
 {
     private readonly IReadRepository<User> _userRepository;
