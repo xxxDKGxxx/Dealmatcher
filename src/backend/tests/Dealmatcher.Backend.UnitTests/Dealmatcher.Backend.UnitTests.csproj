@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Dealmatcher.Backend.Domain\Dealmatcher.Backend.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Dealmatcher.Backend.Infrastructure\Dealmatcher.Backend.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\Dealmatcher.Backend.UseCases\Dealmatcher.Backend.UseCases.csproj" />
   </ItemGroup>
 
