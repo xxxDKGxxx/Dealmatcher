@@ -1,1 +1,15 @@
-﻿
+﻿global using System.Net;
+global using System.Net.Http.Json;
+global using Dealmatcher.Backend.API;
+global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
+global using Dealmatcher.Backend.Domain.Interfaces;
+global using Dealmatcher.Backend.Infrastructure.Data;
+global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
+global using Microsoft.AspNetCore.Hosting;
+global using Microsoft.AspNetCore.Mvc.Testing;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Hosting;
+global using Microsoft.Extensions.Logging;
+global using Shouldly;
+global using Testcontainers.MsSql;

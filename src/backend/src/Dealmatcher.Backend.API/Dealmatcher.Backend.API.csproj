@@ -14,6 +14,10 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="Dealmatcher.Backend.FunctionalTests" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Ardalis.ListStartupServices" />
 		<PackageReference Include="Ardalis.Result" />
 		<PackageReference Include="Ardalis.Result.AspNetCore" />
