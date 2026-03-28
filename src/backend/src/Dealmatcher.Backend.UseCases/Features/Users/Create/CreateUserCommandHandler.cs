@@ -15,9 +15,10 @@ public sealed class CreateUserCommandHandler(
             return Result.Conflict("Email is already taken");
         }
 
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
         var passwordHash = passwordHasher.HashPassword(request.Password);
 
-        var newUser = new BasicUser(request.Email, passwordHash, request.Name, request.Surname);
+        var newUser = new BasicUser(normalizedEmail, passwordHash, request.Name, request.Surname);
 
         await userRepository.AddAsync(newUser, cancellationToken);
         await userRepository.SaveChangesAsync(cancellationToken);
