@@ -8,6 +8,7 @@ global using Ardalis.Result;
 global using Ardalis.SharedKernel;
 global using Dealmatcher.Backend.API.Configurations;
 global using Dealmatcher.Backend.API.Extensions;
+global using Dealmatcher.Backend.API.Middleware;
 global using Dealmatcher.Backend.Infrastructure.Configs;
 global using Dealmatcher.Backend.Infrastructure.Data;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
