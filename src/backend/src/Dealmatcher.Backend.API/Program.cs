@@ -21,6 +21,7 @@ public sealed class Program
         try
         {
             builder.Services.AddServiceConfigs(appLogger, builder);
+            builder.Services.AddAuthenticationConfigs(builder.Configuration);
             builder.Services.AddFastEndpoints()
                 .SwaggerDocument(o =>
                     {
@@ -44,7 +45,7 @@ public sealed class Program
         }
         catch (Exception ex)
         {
-            logger.Error(ex.Message);
+            logger.Error(ex, ex.Message);
             return;
         }
     }
