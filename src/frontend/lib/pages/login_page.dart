@@ -14,10 +14,14 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _login() {
+  void _login(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       String email = _emailController.text;
       String password = _passwordController.text;
+
+      if (context.mounted) {
+        context.push('/');
+      }
 
       ScaffoldMessenger.of(
         context,
@@ -62,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                       passwordFormField(controller: _passwordController),
                       const SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: _login,
+                        onPressed: () => _login(context),
                         child: const Text("Login"),
                       ),
                       const SizedBox(height: 16),
