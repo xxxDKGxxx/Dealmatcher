@@ -4,13 +4,14 @@ RUN apt-get update && apt-get install -y curl git unzip xz-utils libglu1-mesa
 RUN git clone https://github.com/flutter/flutter.git -b stable /usr/local/flutter
 
 ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
+ENV TAR_OPTIONS="--no-same-owner"
 
 RUN flutter doctor
 
 WORKDIR /app
 COPY . .
 
-RUN flutter build web --release
+RUN flutter build web --release -t lib/main_feature.dart
 
 FROM nginx:alpine
 
