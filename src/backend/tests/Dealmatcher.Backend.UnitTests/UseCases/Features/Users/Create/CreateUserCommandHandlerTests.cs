@@ -36,8 +36,9 @@ public class CreateUserCommandHandlerTests
         var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
         var expectedDto = CreateUserDto();
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns((User?)null);
+        _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns(new List<User>());
+
         _passwordHasher.HashPassword(ValidPassword)
             .Returns(ValidPasswordHash);
         _mapper.Map<UserDto>(Arg.Any<BasicUser>())
@@ -51,22 +52,46 @@ public class CreateUserCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_EmailAlreadyTaken_ReturnsConflict()
+    public async Task Handle_EmailAlreadyTakenByActiveUser_ReturnsConflict()
     {
         var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
         var existingUser = CreateUser();
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns(existingUser);
+        _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns(new List<User> { existingUser });
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.Status.ShouldBe(ResultStatus.Conflict);
-        result.Errors.ShouldContain("Email is already taken");
+        result.Errors.ShouldContain("Email is already taken by an active account");
 
         _passwordHasher.DidNotReceive().HashPassword(Arg.Any<string>());
         await _userRepository.DidNotReceive().AddAsync(Arg.Any<BasicUser>(), Arg.Any<CancellationToken>());
         await _userRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_EmailTakenByInactiveUser_CreatesUserAndReturnsSuccess()
+    {
+        var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
+        var expectedDto = CreateUserDto();
+
+        var existingInactiveUser = CreateUser();
+        existingInactiveUser.DeactivateUserAccount();
+
+        _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns(new List<User> { existingInactiveUser });
+
+        _passwordHasher.HashPassword(ValidPassword)
+            .Returns(ValidPasswordHash);
+        _mapper.Map<UserDto>(Arg.Any<BasicUser>())
+            .Returns(expectedDto);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsSuccess.ShouldBeTrue();
+
+        await _userRepository.Received(1).AddAsync(Arg.Any<BasicUser>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -75,8 +100,9 @@ public class CreateUserCommandHandlerTests
         var command = new CreateUserCommand("Jan.Kowalski@EMAIL.com", ValidPassword, "Jan", "Kowalski");
         const string NormalizedEmail = "jan.kowalski@email.com";
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns((User?)null);
+        _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns(new List<User>());
+
         _passwordHasher.HashPassword(ValidPassword)
             .Returns(ValidPasswordHash);
         _mapper.Map<UserDto>(Arg.Any<BasicUser>())
@@ -98,8 +124,9 @@ public class CreateUserCommandHandlerTests
     {
         var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns((User?)null);
+        _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns(new List<User>());
+
         _passwordHasher.HashPassword(ValidPassword)
             .Returns(ValidPasswordHash);
         _mapper.Map<UserDto>(Arg.Any<BasicUser>())
@@ -109,7 +136,7 @@ public class CreateUserCommandHandlerTests
 
         Received.InOrder(async () =>
         {
-            await _userRepository.SingleOrDefaultAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>());
+            await _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>());
             _passwordHasher.HashPassword(ValidPassword);
             await _userRepository.AddAsync(Arg.Any<BasicUser>(), Arg.Any<CancellationToken>());
             await _userRepository.SaveChangesAsync(Arg.Any<CancellationToken>());

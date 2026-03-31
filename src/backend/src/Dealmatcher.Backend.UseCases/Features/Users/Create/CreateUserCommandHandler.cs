@@ -8,12 +8,15 @@ public sealed class CreateUserCommandHandler(
     public async Task<Result<UserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         var normalizedEmail = request.Email.Trim().ToLowerInvariant();
-        var spec = new UserByEmailSpec(normalizedEmail);
-        var existingUser = await userRepository.SingleOrDefaultAsync(spec, cancellationToken);
 
-        if (existingUser is not null)
+        var spec = new UserByEmailSpec(normalizedEmail);
+        var existingUsers = await userRepository.ListAsync(spec, cancellationToken);
+
+        bool isEmailTakenByActiveUser = existingUsers.Any(u => u.Status == UserStatus.Active);
+
+        if (isEmailTakenByActiveUser)
         {
-            return Result.Conflict("Email is already taken");
+            return Result.Conflict("Email is already taken by an active account");
         }
 
         var passwordHash = passwordHasher.HashPassword(request.Password);
