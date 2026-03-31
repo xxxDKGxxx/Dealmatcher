@@ -37,7 +37,7 @@ public class CreateUserCommandHandlerTests
         var expectedDto = CreateUserDto();
 
         _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns(new List<User>());
+            .Returns([]);
 
         _passwordHasher.HashPassword(ValidPassword)
             .Returns(ValidPasswordHash);
@@ -58,7 +58,7 @@ public class CreateUserCommandHandlerTests
         var existingUser = CreateUser();
 
         _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns(new List<User> { existingUser });
+            .Returns([existingUser]);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -80,7 +80,7 @@ public class CreateUserCommandHandlerTests
         existingInactiveUser.DeactivateUserAccount();
 
         _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns(new List<User> { existingInactiveUser });
+            .Returns([existingInactiveUser]);
 
         _passwordHasher.HashPassword(ValidPassword)
             .Returns(ValidPasswordHash);
@@ -101,7 +101,7 @@ public class CreateUserCommandHandlerTests
         const string NormalizedEmail = "jan.kowalski@email.com";
 
         _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns(new List<User>());
+            .Returns([]);
 
         _passwordHasher.HashPassword(ValidPassword)
             .Returns(ValidPasswordHash);
@@ -125,7 +125,7 @@ public class CreateUserCommandHandlerTests
         var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
 
         _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns(new List<User>());
+            .Returns([]);
 
         _passwordHasher.HashPassword(ValidPassword)
             .Returns(ValidPasswordHash);
