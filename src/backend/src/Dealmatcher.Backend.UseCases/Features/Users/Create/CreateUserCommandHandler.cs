@@ -9,18 +9,15 @@ public sealed class CreateUserCommandHandler(
     {
         var normalizedEmail = request.Email.Trim().ToLowerInvariant();
 
-        var spec = new UserByEmailSpec(normalizedEmail);
-        var existingUsers = await userRepository.ListAsync(spec, cancellationToken);
+        var spec = new ActiveOrBannedUserByEmailSpec(normalizedEmail);
+        var conflictingUser = await userRepository.SingleOrDefaultAsync(spec, cancellationToken);
 
-        bool isEmailTakenByActiveUser = existingUsers.Any(u => u.Status == UserStatus.Active);
-
-        if (isEmailTakenByActiveUser)
+        if (conflictingUser is not null)
         {
-            return Result.Conflict("Email is already taken by an active account");
+            return Result.Conflict("Email is already taken by an active or banned account");
         }
 
         var passwordHash = passwordHasher.HashPassword(request.Password);
-
         var newUser = new BasicUser(normalizedEmail, passwordHash, request.Name, request.Surname);
 
         await userRepository.AddAsync(newUser, cancellationToken);

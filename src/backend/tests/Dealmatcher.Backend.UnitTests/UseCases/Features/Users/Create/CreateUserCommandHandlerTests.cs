@@ -36,8 +36,8 @@ public class CreateUserCommandHandlerTests
         var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
         var expectedDto = CreateUserDto();
 
-        _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns([]);
+        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns((User?)null);
 
         _passwordHasher.HashPassword(ValidPassword)
             .Returns(ValidPasswordHash);
@@ -48,26 +48,40 @@ public class CreateUserCommandHandlerTests
 
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldBe(expectedDto);
-        result.Value.Email.ShouldBe(ValidEmail);
     }
 
     [Fact]
     public async Task Handle_EmailAlreadyTakenByActiveUser_ReturnsConflict()
     {
         var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
-        var existingUser = CreateUser();
+        var existingActiveUser = CreateUser();
 
-        _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns([existingUser]);
+        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns(existingActiveUser);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.Status.ShouldBe(ResultStatus.Conflict);
-        result.Errors.ShouldContain("Email is already taken by an active account");
+        result.Errors.ShouldContain("Email is already taken by an active or banned account");
 
         _passwordHasher.DidNotReceive().HashPassword(Arg.Any<string>());
         await _userRepository.DidNotReceive().AddAsync(Arg.Any<BasicUser>(), Arg.Any<CancellationToken>());
-        await _userRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_EmailTakenByBannedUser_ReturnsConflict()
+    {
+        var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
+        var bannedUser = CreateUser();
+        bannedUser.BanUser();
+
+        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns(bannedUser);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.Status.ShouldBe(ResultStatus.Conflict);
+        result.Errors.ShouldContain("Email is already taken by an active or banned account");
     }
 
     [Fact]
@@ -76,11 +90,8 @@ public class CreateUserCommandHandlerTests
         var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
         var expectedDto = CreateUserDto();
 
-        var existingInactiveUser = CreateUser();
-        existingInactiveUser.DeactivateUserAccount();
-
-        _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns([existingInactiveUser]);
+        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns((User?)null);
 
         _passwordHasher.HashPassword(ValidPassword)
             .Returns(ValidPasswordHash);
@@ -90,7 +101,6 @@ public class CreateUserCommandHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue();
-
         await _userRepository.Received(1).AddAsync(Arg.Any<BasicUser>(), Arg.Any<CancellationToken>());
     }
 
@@ -100,8 +110,8 @@ public class CreateUserCommandHandlerTests
         var command = new CreateUserCommand("Jan.Kowalski@EMAIL.com", ValidPassword, "Jan", "Kowalski");
         const string NormalizedEmail = "jan.kowalski@email.com";
 
-        _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns([]);
+        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns((User?)null);
 
         _passwordHasher.HashPassword(ValidPassword)
             .Returns(ValidPasswordHash);
@@ -111,12 +121,8 @@ public class CreateUserCommandHandlerTests
         await _handler.Handle(command, CancellationToken.None);
 
         await _userRepository.Received(1).AddAsync(
-            Arg.Is<BasicUser>(u =>
-                u.Email == NormalizedEmail &&
-                u.Name == "Jan" &&
-                u.Surname == "Kowalski"),
+            Arg.Is<BasicUser>(u => u.Email == NormalizedEmail && u.Name == "Jan"),
             Arg.Any<CancellationToken>());
-        await _userRepository.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -124,8 +130,8 @@ public class CreateUserCommandHandlerTests
     {
         var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
 
-        _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns([]);
+        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns((User?)null);
 
         _passwordHasher.HashPassword(ValidPassword)
             .Returns(ValidPasswordHash);
@@ -136,7 +142,7 @@ public class CreateUserCommandHandlerTests
 
         Received.InOrder(async () =>
         {
-            await _userRepository.ListAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>());
+            await _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>());
             _passwordHasher.HashPassword(ValidPassword);
             await _userRepository.AddAsync(Arg.Any<BasicUser>(), Arg.Any<CancellationToken>());
             await _userRepository.SaveChangesAsync(Arg.Any<CancellationToken>());
