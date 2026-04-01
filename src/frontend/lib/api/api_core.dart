@@ -34,7 +34,7 @@ class ApiCore {
     if (_baseUrl == null) {
       throw Exception("ApiCore has not been initialized.");
     }
-    return Uri.parse('$_baseUrl$endpoint');
+    return Uri.parse('$_baseUrl/api/v1$endpoint');
   }
 
   // HTTP methods

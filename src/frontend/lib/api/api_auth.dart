@@ -22,6 +22,8 @@ class ApiAuth {
           throw Exception('Invalid credentials.');
         case 403:
           throw Exception('User is banned.');
+        case 404:
+          throw Exception('User does not exist.');
         case 500:
           throw Exception('Internal server error.');
         default:
