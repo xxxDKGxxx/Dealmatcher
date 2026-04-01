@@ -12,8 +12,6 @@ public class UserConfiguration : DealmatcherBaseEntityConfiguration<User>
             .HasValue<User>("User")
             .HasValue<BasicUser>("BasicUser");
 
-        builder.HasIndex(u => u.Email).IsUnique();
-
         builder.Property(u => u.Email)
             .IsRequired()
             .HasMaxLength(DataSchemaConstants.EmailMaxLength);
