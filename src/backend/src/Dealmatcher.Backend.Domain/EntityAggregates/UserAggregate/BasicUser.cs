@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
+﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 
 public sealed class BasicUser(string email, string passwordHash, string name, string surname) : User(email, passwordHash, name, surname)
 {
