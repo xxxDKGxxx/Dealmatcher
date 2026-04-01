@@ -7,7 +7,8 @@ public sealed class CreateUserCommandHandler(
 {
     public async Task<Result<UserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+        var normalizedEmail = request.Email.Trim()
+            .ToLowerInvariant();
 
         var spec = new ActiveOrBannedUserByEmailSpec(normalizedEmail);
         var conflictingUser = await userRepository.SingleOrDefaultAsync(spec, cancellationToken);
