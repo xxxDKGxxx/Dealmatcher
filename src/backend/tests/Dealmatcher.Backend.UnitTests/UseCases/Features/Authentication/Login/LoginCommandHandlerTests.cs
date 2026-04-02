@@ -1,4 +1,4 @@
-﻿namespace Dealmatcher.Backend.UnitTests.UseCases.Features;
+﻿namespace Dealmatcher.Backend.UnitTests.UseCases.Features.Authentication.Login;
 
 public class LoginCommandHandlerTests
 {
@@ -34,7 +34,7 @@ public class LoginCommandHandlerTests
         var command = new LoginCommand(ValidEmail, ValidPassword);
         var expectedDto = new LoginDto(ValidToken, new UserDto(0, ValidEmail, "Jan", "Kowalski", null, null, null, UserStatus.Active, default));
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns(user);
         _passwordHasher.VerifyPassword(ValidPassword, ValidPasswordHash)
             .Returns(true);
@@ -55,7 +55,7 @@ public class LoginCommandHandlerTests
     {
         var command = new LoginCommand("nonexistent@example.com", ValidPassword);
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns((User?)null);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -71,7 +71,7 @@ public class LoginCommandHandlerTests
         var user = CreateUser();
         var command = new LoginCommand(ValidEmail, "wrongpassword");
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns(user);
         _passwordHasher.VerifyPassword("wrongpassword", ValidPasswordHash)
             .Returns(false);
@@ -89,7 +89,7 @@ public class LoginCommandHandlerTests
         user.BanUser();
         var command = new LoginCommand(ValidEmail, ValidPassword);
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns(user);
         _passwordHasher.VerifyPassword(ValidPassword, ValidPasswordHash)
             .Returns(true);
@@ -101,20 +101,17 @@ public class LoginCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_InactiveUser_ReturnsForbidden()
+    public async Task Handle_InactiveUser_ReturnsUnauthorized()
     {
-        var user = CreateUser();
-        user.DeactivateUserAccount();
         var command = new LoginCommand(ValidEmail, ValidPassword);
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
-            .Returns(user);
-        _passwordHasher.VerifyPassword(ValidPassword, ValidPasswordHash)
-            .Returns(true);
+        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns((User?)null);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        result.Status.ShouldBe(ResultStatus.Forbidden);
+        result.Status.ShouldBe(ResultStatus.Unauthorized);
+        _passwordHasher.DidNotReceive().VerifyPassword(Arg.Any<string>(), Arg.Any<string>());
         _tokenService.DidNotReceive().GenerateToken(Arg.Any<User>());
     }
 
@@ -124,7 +121,7 @@ public class LoginCommandHandlerTests
         var user = CreateUser();
         var command = new LoginCommand(ValidEmail, ValidPassword);
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns(user);
         _passwordHasher.VerifyPassword(ValidPassword, ValidPasswordHash)
             .Returns(true);
@@ -137,7 +134,7 @@ public class LoginCommandHandlerTests
 
         Received.InOrder(() =>
         {
-            _userRepository.SingleOrDefaultAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>());
+            _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>());
             _passwordHasher.VerifyPassword(ValidPassword, ValidPasswordHash);
             _tokenService.GenerateToken(user);
             _mapper.Map<LoginDto>((ValidToken, user));

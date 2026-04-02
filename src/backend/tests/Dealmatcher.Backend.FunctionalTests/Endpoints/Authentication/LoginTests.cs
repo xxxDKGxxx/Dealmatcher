@@ -16,6 +16,18 @@ public class LoginTests(CustomWebApplicationFactory factory) : IClassFixture<Cus
         await db.SaveChangesAsync();
     }
 
+    private async Task SeedInactiveUser(string email, string password)
+    {
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+
+        var user = new User(email, hasher.HashPassword(password), "Test", "User");
+        user.Delete();
+        db.Set<User>().Add(user);
+        await db.SaveChangesAsync();
+    }
+
     [Fact]
     public async Task Login_ValidCredentials_ReturnsOkWithToken()
     {
@@ -84,5 +96,19 @@ public class LoginTests(CustomWebApplicationFactory factory) : IClassFixture<Cus
         });
 
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task Login_InactiveUser_ReturnsUnauthorized()
+    {
+        await SeedInactiveUser("inactive@example.com", "Password123!");
+
+        var response = await _client.PostAsJsonAsync("/api/v1/users/login", new
+        {
+            Email = "inactive@example.com",
+            Password = "Password123!"
+        });
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
 }
