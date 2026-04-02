@@ -2,12 +2,11 @@
 
 public sealed class ActiveOrBannedUserByEmailSpec : SingleResultSpecification<User>
 {
-    private static readonly int _activeValue = UserStatus.Active.Value;
-    private static readonly int _bannedValue = UserStatus.Banned.Value;
     public ActiveOrBannedUserByEmailSpec(string email)
     {
+        var blockingStatuses = new[] { UserStatus.Active, UserStatus.Banned };
+
         Query.Where(u => u.Email == email)
-             .Where(u => (int)(object)u.Status == _activeValue ||
-                         (int)(object)u.Status == _bannedValue);
+             .Where(u => blockingStatuses.Contains(u.Status));
     }
 }
