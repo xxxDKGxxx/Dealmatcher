@@ -1,4 +1,4 @@
-namespace Dealmatcher.Backend.API.Configurations;
+﻿namespace Dealmatcher.Backend.API.Configurations;
 
 public static class MiddlewareConfig
 {
@@ -23,9 +23,9 @@ public static class MiddlewareConfig
                     c.Versioning.PrependToRoute = true;
                 })
             .UseSwaggerGen(); // Includes AddFileServer and static files middleware
-        
+
         var frontendOrigin = app.Configuration["FrontendOrigin"];
-        
+
         if (frontendOrigin is not null)
         {
             app.UseCors(opt =>
@@ -58,7 +58,7 @@ public static class MiddlewareConfig
             {
                 await context.Database.EnsureCreatedAsync();
             }
-            
+
             if (app.Environment.IsDevelopment())
             {
                 await SeedData.InitializeTestAsync(context);

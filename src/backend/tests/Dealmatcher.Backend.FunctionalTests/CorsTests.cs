@@ -1,7 +1,4 @@
-namespace Dealmatcher.Backend.FunctionalTests;
-
-using System.Net;
-using Shouldly;
+﻿namespace Dealmatcher.Backend.FunctionalTests;
 
 public class CorsTests(CustomWebApplicationFactory factory) : IClassFixture<CustomWebApplicationFactory>
 {
@@ -25,7 +22,7 @@ public class CorsTests(CustomWebApplicationFactory factory) : IClassFixture<Cust
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
-        
+
         var allowOrigin = response.Headers.GetValues("Access-Control-Allow-Origin").FirstOrDefault();
         allowOrigin.ShouldBe(origin);
 
@@ -57,7 +54,7 @@ public class CorsTests(CustomWebApplicationFactory factory) : IClassFixture<Cust
         {
             throw new Exception("Access-Control-Allow-Origin header is missing");
         }
-        
+
         response.Headers.GetValues("Access-Control-Allow-Credentials").ShouldContain("true");
     }
 }

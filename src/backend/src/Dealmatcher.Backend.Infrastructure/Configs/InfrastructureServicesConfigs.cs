@@ -1,4 +1,4 @@
-namespace Dealmatcher.Backend.Infrastructure.Configs;
+﻿namespace Dealmatcher.Backend.Infrastructure.Configs;
 
 public static class InfrastructureServicesConfigs
 {

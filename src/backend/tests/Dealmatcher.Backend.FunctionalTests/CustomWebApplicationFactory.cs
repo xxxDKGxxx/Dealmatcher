@@ -1,10 +1,10 @@
+﻿using Dealmatcher.Backend.Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Dealmatcher.Backend.Infrastructure.Data;
 
 namespace Dealmatcher.Backend.FunctionalTests;
 
