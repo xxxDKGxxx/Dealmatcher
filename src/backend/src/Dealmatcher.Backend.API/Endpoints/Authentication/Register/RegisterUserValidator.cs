@@ -1,4 +1,6 @@
-﻿namespace Dealmatcher.Backend.API.Endpoints.Authentication.Register;
+﻿using Dealmatcher.Backend.Infrastructure.Data.Config;
+
+namespace Dealmatcher.Backend.API.Endpoints.Authentication.Register;
 
 public sealed class RegisterUserValidator : Validator<CreateUserRequest>
 {
@@ -6,6 +8,7 @@ public sealed class RegisterUserValidator : Validator<CreateUserRequest>
     {
         RuleFor(x => x.Email)
             .NotEmpty()
+            .MaximumLength(DataSchemaConstants.EmailMaxLength)
             .EmailAddress();
 
         RuleFor(x => x.Password)
@@ -14,9 +17,11 @@ public sealed class RegisterUserValidator : Validator<CreateUserRequest>
             .WithMessage("Password must be at least 6 characters long.");
 
         RuleFor(x => x.Name)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(DataSchemaConstants.NameMaxLength);
 
         RuleFor(x => x.Surname)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(DataSchemaConstants.SurnameMaxLength);
     }
 }
