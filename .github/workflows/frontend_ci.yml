@@ -70,5 +70,5 @@ jobs:
         run: flutter test
 
       - name: Build APK
-        run: flutter build appbundle --release
+        run: flutter build apk --release -t lib/main_feature.dart
 

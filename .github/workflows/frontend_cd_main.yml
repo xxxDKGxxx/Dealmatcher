@@ -60,7 +60,7 @@ jobs:
         run: flutter pub get
 
       - name: Build app
-        run: flutter build apk --release
+        run: flutter build apk --release -t lib/main_main.dart
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
