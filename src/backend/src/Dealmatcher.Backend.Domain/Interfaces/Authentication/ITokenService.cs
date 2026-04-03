@@ -1,4 +1,5 @@
 ﻿namespace Dealmatcher.Backend.Domain.Interfaces.Authentication;
+
 public interface ITokenService
 {
     public string GenerateToken(User user);

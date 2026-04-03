@@ -6,7 +6,8 @@ public static class MediatrConfigs
     {
         var mediatRAssemblies = new[]
         {
-            Assembly.GetAssembly(typeof(Program))
+            Assembly.GetAssembly(typeof(Program)),
+            Assembly.GetAssembly(typeof(LoginCommandHandler))
         };
 
         services.AddMediatR(cfg =>

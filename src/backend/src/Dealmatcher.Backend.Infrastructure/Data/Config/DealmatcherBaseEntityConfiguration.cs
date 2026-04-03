@@ -6,19 +6,10 @@ public class DealmatcherBaseEntityConfiguration<T> : IEntityTypeConfiguration<T>
     {
         builder.HasKey(e => e.Id);
 
-        builder.HasQueryFilter(e => !e.IsDeleted);
-
         builder.Property(e => e.CreatedAt)
             .IsRequired();
 
         builder.Property(e => e.UpdatedAt)
             .IsRequired(false);
-
-        builder.Property(e => e.DeletedAt).
-            IsRequired(false);
-
-        builder.Property(e => e.IsDeleted)
-            .HasDefaultValue(false)
-            .IsRequired();
     }
 }

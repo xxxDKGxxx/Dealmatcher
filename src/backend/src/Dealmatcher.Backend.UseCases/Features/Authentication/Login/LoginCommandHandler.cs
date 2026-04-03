@@ -1,7 +1,7 @@
 ﻿namespace Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 
 public sealed class LoginCommandHandler(
-    IReadRepository<UserEntity> userRepository,
+    IReadRepository<User> userRepository,
     IMapper mapper,
     ITokenService tokenService,
     IPasswordHasher passwordHasher) : ICommandHandler<LoginCommand, Result<LoginDto>>
@@ -21,7 +21,7 @@ public sealed class LoginCommandHandler(
             return Result.Unauthorized();
         }
 
-        if (user.Status == UserStatus.Banned)
+        if (!user.Status.CanLogin)
         {
             return Result.Forbidden();
         }

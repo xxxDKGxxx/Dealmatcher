@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/form_fields.dart';
+import 'package:go_router/go_router.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -28,7 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
     super.initState();
   }
 
-  void _register() {
+  void _register(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       String name = _nameController.text;
       String surname = _surnameController.text;
@@ -37,6 +39,10 @@ class _RegisterPageState extends State<RegisterPage> {
       String login = _loginController.text;
       String email = _emailController.text;
       String password = _passwordController.text;
+
+      if (context.mounted) {
+        context.push('/');
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -72,47 +78,6 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {});
     }
   }
-
-  Widget nonEmptyTextFormField({
-    required TextEditingController controller,
-    required String text,
-    bool Function(String)? additionalValidator,
-    bool obscureText = false,
-    String? errorText,
-  }) => TextFormField(
-    controller: controller,
-    obscureText: obscureText,
-    decoration: InputDecoration(
-      labelText: text,
-      border: const OutlineInputBorder(),
-    ),
-    validator: (value) {
-      if (value == null ||
-          value.trim().isEmpty ||
-          (additionalValidator != null && additionalValidator(value))) {
-        return errorText ?? "$text is invalid";
-      }
-      return null;
-    },
-  );
-
-  Widget numberFormField({
-    required TextEditingController controller,
-    required String text,
-  }) => TextFormField(
-    controller: controller,
-    readOnly: true,
-    decoration: InputDecoration(
-      labelText: text,
-      border: const OutlineInputBorder(),
-    ),
-    validator: (value) {
-      if (value == null || value.trim().isEmpty) {
-        return "$text is empty";
-      }
-      return null;
-    },
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -211,22 +176,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         text: 'Login',
                       ),
                       const SizedBox(height: 16),
-                      nonEmptyTextFormField(
-                        controller: _emailController,
-                        text: 'Email',
-                        additionalValidator: (s) => !RegExp(
-                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
-                        ).hasMatch(s),
-                      ),
+                      emailFormField(controller: _emailController),
                       const SizedBox(height: 16),
-                      nonEmptyTextFormField(
-                        controller: _passwordController,
-                        text: 'Password',
-                        obscureText: true,
-                        additionalValidator: (s) => s.length < 6,
-                        errorText:
-                            'Password must be at least 6 characters long',
-                      ),
+                      passwordFormField(controller: _passwordController),
                       const SizedBox(height: 16),
                       nonEmptyTextFormField(
                         controller: _confirmPasswordController,
@@ -240,7 +192,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       // Button
                       ElevatedButton(
-                        onPressed: _register,
+                        onPressed: () => _register(context),
                         child: const Text("Register"),
                       ),
                       const SizedBox(height: 64),

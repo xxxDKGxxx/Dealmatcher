@@ -4,6 +4,6 @@ public sealed class ExampleProfile : Profile
 {
     public ExampleProfile()
     {
-        CreateMap<ExampleEntity, ExampleDto>();
+        //CreateMap<ExampleEntity, ExampleDto>();
     }
 }

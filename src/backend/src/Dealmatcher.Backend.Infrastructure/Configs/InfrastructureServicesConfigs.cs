@@ -4,7 +4,7 @@ public static class InfrastructureServicesConfigs
 {
     public static IServiceCollection AddInfrastructureServices(
         this IServiceCollection services,
-        ConfigurationManager config,
+        IConfiguration config,
         Microsoft.Extensions.Logging.ILogger logger)
     {
         string? connectionString;

@@ -41,3 +41,6 @@ Desktop.ini
 .dotnet/
 
 .env
+
+# Rider files
+.idea
