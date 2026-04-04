@@ -1,12 +1,15 @@
 import 'dart:convert';
+import 'package:frontend/api/api_urls.dart';
+
 import 'api_core.dart';
 
 class ApiAuth {
   final ApiCore _apiCore = ApiCore();
+  final String _apiLoginUrl = ApiUrls().login;
 
   Future<void> login(String email, String password) async {
     try {
-      final response = await _apiCore.post('/users/login', {
+      final response = await _apiCore.post(_apiLoginUrl, {
         'email': email,
         'password': password,
       });

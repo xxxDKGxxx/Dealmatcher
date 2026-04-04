@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'package:frontend/api/api_urls.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCore {
   static final ApiCore _instance = ApiCore._internal();
   factory ApiCore() => _instance;
   ApiCore._internal();
+
+  final String _apiUrl = ApiUrls().apiUrl;
 
   String? _baseUrl;
   String? _token;
@@ -34,7 +37,7 @@ class ApiCore {
     if (_baseUrl == null) {
       throw Exception("ApiCore has not been initialized.");
     }
-    return Uri.parse('$_baseUrl/api/v1$endpoint');
+    return Uri.parse('$_baseUrl$_apiUrl$endpoint');
   }
 
   // HTTP methods
