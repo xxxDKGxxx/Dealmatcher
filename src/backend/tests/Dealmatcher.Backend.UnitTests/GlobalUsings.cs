@@ -12,6 +12,7 @@ global using Dealmatcher.Backend.Infrastructure.Services;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Users.Create;
 global using Dealmatcher.Backend.UseCases.Features.Users.Get;
+global using Dealmatcher.Backend.UseCases.Features.Users.Update;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Logging;
 global using NSubstitute;
