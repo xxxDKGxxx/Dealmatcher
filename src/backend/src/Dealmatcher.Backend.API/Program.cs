@@ -40,6 +40,8 @@ public sealed class Program
                 c.Register(typeof(CommandLogger<,>));
             });
 
+            builder.Services.AddCors();
+
             var app = builder.Build();
 
             app.UseAuthentication();

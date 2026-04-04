@@ -1,26 +1,20 @@
-﻿namespace Dealmatcher.Backend.FunctionalTests;
+﻿using Dealmatcher.Backend.Infrastructure.Data;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
+namespace Dealmatcher.Backend.FunctionalTests;
+
+public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
-    private readonly MsSqlContainer _dbContainer = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
-        .WithPassword("Test_password123!")
-        .Build();
-
-    public async Task InitializeAsync()
-    {
-        await _dbContainer.StartAsync();
-    }
-
-    public new async Task DisposeAsync()
-    {
-        await _dbContainer.DisposeAsync();
-    }
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
 
-        builder.UseSetting("ConnectionStrings:DefaultConnection", _dbContainer.GetConnectionString());
+        builder.UseSetting("FrontendOrigin", "http://localhost:8080");
         builder.UseSetting("Authentication:Jwt:SecretKey", "test-secret-key-that-is-at-least-32-characters-long!");
         builder.UseSetting("Authentication:Jwt:Issuer", "test-issuer");
         builder.UseSetting("Authentication:Jwt:Audience", "test-audience");
@@ -39,7 +33,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
 
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseSqlServer(_dbContainer.GetConnectionString());
+                options.UseInMemoryDatabase("TestingDatabase");
             });
         });
     }
@@ -57,7 +51,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
 
             try
             {
-                db.Database.Migrate();
+                db.Database.EnsureCreated();
             }
             catch (Exception ex)
             {
