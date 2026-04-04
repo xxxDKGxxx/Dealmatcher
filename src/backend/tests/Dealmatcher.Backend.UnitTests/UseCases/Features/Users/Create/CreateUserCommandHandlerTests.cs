@@ -36,7 +36,7 @@ public class CreateUserCommandHandlerTests
         var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
         var expectedDto = CreateUserDto();
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns((User?)null);
 
         _passwordHasher.HashPassword(ValidPassword)
@@ -56,7 +56,7 @@ public class CreateUserCommandHandlerTests
         var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
         var existingActiveUser = CreateUser();
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns(existingActiveUser);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -75,7 +75,7 @@ public class CreateUserCommandHandlerTests
         var bannedUser = CreateUser();
         bannedUser.BanUser();
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns(bannedUser);
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -90,7 +90,7 @@ public class CreateUserCommandHandlerTests
         var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
         var expectedDto = CreateUserDto();
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns((User?)null);
 
         _passwordHasher.HashPassword(ValidPassword)
@@ -110,7 +110,7 @@ public class CreateUserCommandHandlerTests
         var command = new CreateUserCommand("Jan.Kowalski@EMAIL.com", ValidPassword, "Jan", "Kowalski");
         const string NormalizedEmail = "jan.kowalski@email.com";
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns((User?)null);
 
         _passwordHasher.HashPassword(ValidPassword)
@@ -130,7 +130,7 @@ public class CreateUserCommandHandlerTests
     {
         var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns((User?)null);
 
         _passwordHasher.HashPassword(ValidPassword)
@@ -142,7 +142,7 @@ public class CreateUserCommandHandlerTests
 
         Received.InOrder(async () =>
         {
-            await _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>());
+            await _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>());
             _passwordHasher.HashPassword(ValidPassword);
             await _userRepository.AddAsync(Arg.Any<BasicUser>(), Arg.Any<CancellationToken>());
             await _userRepository.SaveChangesAsync(Arg.Any<CancellationToken>());

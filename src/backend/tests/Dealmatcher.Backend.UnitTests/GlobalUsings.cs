@@ -1,5 +1,4 @@
 ﻿global using System.IdentityModel.Tokens.Jwt;
-global using System.Runtime.CompilerServices;
 global using System.Security.Claims;
 global using Ardalis.Result;
 global using Ardalis.SharedKernel;
@@ -12,10 +11,9 @@ global using Dealmatcher.Backend.Domain.Interfaces.Authentication;
 global using Dealmatcher.Backend.Infrastructure.Services;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Users.Create;
-global using MediatR;
+global using Dealmatcher.Backend.UseCases.Features.Users.Get;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Logging;
 global using NSubstitute;
-global using Serilog.Extensions.Logging;
 global using Shouldly;
 global using Xunit;
