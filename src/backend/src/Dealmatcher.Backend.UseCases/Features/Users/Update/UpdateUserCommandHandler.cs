@@ -14,6 +14,11 @@ public class UpdateUserCommandHandler(
             return Result.NotFound();
         }
 
+        if (!user.Status.CanLogin)
+        {
+            return Result.Unauthorized();
+        }
+
         user.UpdateName(request.Name);
         user.UpdateSurname(request.Surname);
 

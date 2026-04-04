@@ -10,21 +10,21 @@ public class GetMe(
     public override void Configure()
     {
         Version(1);
-        Get("/users/me");
-
-        Description(d => d
-            .Produces<UserDto>(200, "application/json")
-            .Produces(401)
-            .Produces(500));
-
-        Summary(s =>
-        {
-            s.Summary = "Get current user profile";
-            s.Description = "Returns profile information for the authenticated user";
-            s.Response<UserDto>(200, "Profile retrieved successfully");
-            s.Response(401, "Unauthorized");
-            s.Response(500, "Internal server error");
-        });
+                   Get("/users/me");
+           
+                   Description(d => d
+                       .Produces<UserDto>(200, "application/json")
+                       .Produces(401)
+                       .Produces(500));
+           
+                   Summary(s =>
+                   {
+                       s.Summary = "Get current user profile";
+                       s.Description = "Returns profile information for the authenticated user";
+                       s.Response<UserDto>(200, "Profile retrieved successfully");
+                       s.Response(401, "Unauthorized");
+                       s.Response(500, "Internal server error");
+                   });
     }
 
     public override async Task HandleAsync(CancellationToken ct)
