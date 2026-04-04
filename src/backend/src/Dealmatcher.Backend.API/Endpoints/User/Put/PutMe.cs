@@ -3,21 +3,21 @@
 namespace Dealmatcher.Backend.API.Endpoints.User.Put;
 
 public class PutMe(
-    IMediator mediator, 
-    IClaimsPrincipalManager claimsPrincipalManager) : 
+    IMediator mediator,
+    IClaimsPrincipalManager claimsPrincipalManager) :
     Endpoint<PutMeRequest, UserDto>
 {
     public override void Configure()
     {
         Version(1);
         Put("/users/me");
-           
+
         Description(d => d
             .Produces<UserDto>(200, "application/json")
             .Produces(400)
             .Produces(401)
             .Produces(500));
-           
+
         Summary(s =>
         {
             s.Summary = "Update current user profile";
@@ -38,7 +38,7 @@ public class PutMe(
             await SendUnauthorizedAsync(ct);
             return;
         }
-        
+
         var request = new UpdateUserCommand(userId.Value, req.Name, req.Surname);
         var result = await mediator.Send(request, ct);
 
@@ -47,7 +47,7 @@ public class PutMe(
             await SendUnauthorizedAsync(ct);
             return;
         }
-        
+
         await result.SendResult(this, ct);
     }
 }

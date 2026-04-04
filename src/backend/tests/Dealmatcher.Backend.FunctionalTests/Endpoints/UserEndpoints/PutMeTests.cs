@@ -1,4 +1,4 @@
-namespace Dealmatcher.Backend.FunctionalTests.Endpoints.UserEndpoints;
+﻿namespace Dealmatcher.Backend.FunctionalTests.Endpoints.UserEndpoints;
 
 public class PutMeTests(CustomWebApplicationFactory factory) : IClassFixture<CustomWebApplicationFactory>
 {
