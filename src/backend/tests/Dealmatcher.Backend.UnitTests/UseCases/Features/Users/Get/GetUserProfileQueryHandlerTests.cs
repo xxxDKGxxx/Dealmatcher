@@ -33,7 +33,7 @@ public class GetUserProfileQueryHandlerTests
         var user = CreateUser();
         var expectedDto = CreateUserDto();
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<UserByIdSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.GetByIdAsync(query.UserId, Arg.Any<CancellationToken>())
             .Returns(user);
 
         _mapper.Map<UserDto>(user)
@@ -51,7 +51,7 @@ public class GetUserProfileQueryHandlerTests
     {
         var query = new GetUserProfileQuery(ValidId);
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<UserByIdSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.GetByIdAsync(query.UserId, Arg.Any<CancellationToken>())
             .Returns((User?)null);
 
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -61,17 +61,17 @@ public class GetUserProfileQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ValidQuery_UsesCorrectSpecification()
+    public async Task Handle_ValidQuery_CallsRepositoryWithCorrectId()
     {
         var query = new GetUserProfileQuery(ValidId);
 
-        _userRepository.SingleOrDefaultAsync(Arg.Any<UserByIdSpec>(), Arg.Any<CancellationToken>())
+        _userRepository.GetByIdAsync(ValidId, Arg.Any<CancellationToken>())
             .Returns((User?)null);
 
         await _handler.Handle(query, CancellationToken.None);
 
-        await _userRepository.Received(1).SingleOrDefaultAsync(
-            Arg.Is<UserByIdSpec>(spec => spec != null),
+        await _userRepository.Received(1).GetByIdAsync(
+            ValidId,
             Arg.Any<CancellationToken>());
     }
 }

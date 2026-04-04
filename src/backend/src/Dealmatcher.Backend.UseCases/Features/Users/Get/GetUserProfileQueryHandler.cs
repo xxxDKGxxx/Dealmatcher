@@ -7,8 +7,7 @@ public class GetUserProfileQueryHandler(
 {
     public async Task<Result<UserDto>> Handle(GetUserProfileQuery request, CancellationToken cancellationToken)
     {
-        var spec = new UserByIdSpec(request.UserId);
-        var user = await userRepository.SingleOrDefaultAsync(spec, cancellationToken);
+        var user = await userRepository.GetByIdAsync(request.UserId, cancellationToken);
 
         if (user is null)
         {
