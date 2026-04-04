@@ -27,7 +27,7 @@ public class CreateUserCommandHandlerTests
 
     private static UserDto CreateUserDto(string email = ValidEmail)
     {
-        return new UserDto(ValidId, email, "Jan", "Kowalski", null, null, null, UserStatus.Active, default);
+        return new UserDto(ValidId, email, "Jan", "Kowalski", UserStatus.Active, default);
     }
 
     [Fact]

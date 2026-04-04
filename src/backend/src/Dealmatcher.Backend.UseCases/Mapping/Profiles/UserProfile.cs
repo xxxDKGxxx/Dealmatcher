@@ -10,9 +10,6 @@ internal class UserProfile : Profile
                 src.Email,
                 src.Name,
                 src.Surname,
-                null,
-                null,
-                null,
                 src.Status,
                 src.CreatedAt
             ));
