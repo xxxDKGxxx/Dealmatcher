@@ -15,6 +15,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         builder.UseEnvironment("Testing");
 
         builder.UseSetting("FrontendOrigin", "http://localhost:8080");
+        builder.UseSetting("ConnectionStrings:DefaultConnection", "");
         builder.UseSetting("Authentication:Jwt:SecretKey", "test-secret-key-that-is-at-least-32-characters-long!");
         builder.UseSetting("Authentication:Jwt:Issuer", "test-issuer");
         builder.UseSetting("Authentication:Jwt:Audience", "test-audience");

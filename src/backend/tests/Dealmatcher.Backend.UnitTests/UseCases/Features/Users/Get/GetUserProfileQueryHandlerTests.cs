@@ -23,7 +23,7 @@ public class GetUserProfileQueryHandlerTests
 
     private static UserDto CreateUserDto()
     {
-        return new UserDto(ValidId, ValidEmail, "Jan", "Kowalski", UserStatus.Active, DateTime.UtcNow);
+        return new UserDto(ValidId, ValidEmail, "Jan", "Kowalski", "ACTIVE", DateTime.UtcNow);
     }
 
     [Fact]

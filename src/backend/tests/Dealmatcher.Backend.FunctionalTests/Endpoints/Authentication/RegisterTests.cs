@@ -37,7 +37,7 @@ public class RegisterTests(CustomWebApplicationFactory factory) : IClassFixture<
         var root = json.RootElement;
         root.GetProperty("email").GetString().ShouldBe("newuser@example.com");
         root.GetProperty("name").GetString().ShouldBe("Jan");
-        root.GetProperty("status").GetProperty("name").GetString().ShouldBe(UserStatus.Active.Name);
+        root.GetProperty("status").GetString().ShouldBe(UserStatus.Active.Name);
     }
 
     [Fact]

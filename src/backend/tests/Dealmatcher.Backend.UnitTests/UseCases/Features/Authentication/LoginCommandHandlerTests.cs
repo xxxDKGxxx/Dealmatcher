@@ -1,4 +1,4 @@
-﻿namespace Dealmatcher.Backend.UnitTests.UseCases.Features;
+﻿namespace Dealmatcher.Backend.UnitTests.UseCases.Features.Authentication;
 
 public class LoginCommandHandlerTests
 {
@@ -32,7 +32,7 @@ public class LoginCommandHandlerTests
     {
         var user = CreateUser();
         var command = new LoginCommand(ValidEmail, ValidPassword);
-        var expectedDto = new LoginDto(ValidToken, new UserDto(0, ValidEmail, "Jan", "Kowalski", UserStatus.Active, default));
+        var expectedDto = new LoginDto(ValidToken, new UserDto(0, ValidEmail, "Jan", "Kowalski", "ACTIVE", default));
 
         _userRepository.SingleOrDefaultAsync(Arg.Any<UserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns(user);
@@ -131,7 +131,7 @@ public class LoginCommandHandlerTests
         _tokenService.GenerateToken(user)
             .Returns(ValidToken);
         _mapper.Map<LoginDto>((ValidToken, user))
-            .Returns(new LoginDto(ValidToken, new UserDto(0, ValidEmail, "Jan", "Kowalski", UserStatus.Active, default)));
+            .Returns(new LoginDto(ValidToken, new UserDto(0, ValidEmail, "Jan", "Kowalski", "ACTIVE", default)));
 
         await _handler.Handle(command, CancellationToken.None);
 
