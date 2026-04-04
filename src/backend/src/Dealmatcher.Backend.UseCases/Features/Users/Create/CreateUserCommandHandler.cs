@@ -11,7 +11,7 @@ public sealed class CreateUserCommandHandler(
             .ToLowerInvariant();
 
         var spec = new ActiveOrBannedUserByEmailSpec(normalizedEmail);
-        var conflictingUser = await userRepository.SingleOrDefaultAsync(spec, cancellationToken);
+        var conflictingUser = await userRepository.FirstOrDefaultAsync(spec, cancellationToken);
 
         if (conflictingUser is not null)
         {
