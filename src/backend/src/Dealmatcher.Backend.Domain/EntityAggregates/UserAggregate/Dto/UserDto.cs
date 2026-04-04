@@ -5,6 +5,6 @@ public sealed record UserDto(
     string Email,
     string Name,
     string Surname,
-    UserStatus Status,
+    string Status,
     DateTime CreatedAt
 );

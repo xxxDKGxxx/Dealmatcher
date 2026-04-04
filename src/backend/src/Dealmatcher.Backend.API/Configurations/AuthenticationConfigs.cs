@@ -21,6 +21,9 @@ public static class AuthenticationConfigs
                 };
             });
         services.AddAuthorization();
+
+        services.AddScoped<IClaimsPrincipalManager, ClaimsPrincipalManager>();
+
         return services;
     }
 }

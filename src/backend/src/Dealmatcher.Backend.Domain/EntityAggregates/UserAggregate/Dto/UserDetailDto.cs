@@ -5,7 +5,7 @@ public sealed record UserDetailDto(
     string Email,
     string Name,
     string Surname,
-    UserStatus Status,
+    string Status,
     DateTime CreatedAt,
     int TotalOffers,
     int TotalSales,

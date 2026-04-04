@@ -14,6 +14,11 @@ public class GetUserProfileQueryHandler(
             return Result.NotFound();
         }
 
+        if (!user.Status.CanLogin)
+        {
+            return Result.Unauthorized();
+        }
+
         var userDto = mapper.Map<UserDto>(user);
 
         return Result.Success(userDto);
