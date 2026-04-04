@@ -32,7 +32,7 @@ public class LoginCommandHandlerTests
     {
         var user = CreateUser();
         var command = new LoginCommand(ValidEmail, ValidPassword);
-        var expectedDto = new LoginDto(ValidToken, new UserDto(0, ValidEmail, "Jan", "Kowalski", null, null, null, UserStatus.Active, default));
+        var expectedDto = new LoginDto(ValidToken, new UserDto(0, ValidEmail, "Jan", "Kowalski", UserStatus.Active.Name, default));
 
         _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns(user);
@@ -128,7 +128,7 @@ public class LoginCommandHandlerTests
         _tokenService.GenerateToken(user)
             .Returns(ValidToken);
         _mapper.Map<LoginDto>((ValidToken, user))
-            .Returns(new LoginDto(ValidToken, new UserDto(0, ValidEmail, "Jan", "Kowalski", null, null, null, UserStatus.Active, default)));
+            .Returns(new LoginDto(ValidToken, new UserDto(0, ValidEmail, "Jan", "Kowalski", UserStatus.Active.Name, default)));
 
         await _handler.Handle(command, CancellationToken.None);
 

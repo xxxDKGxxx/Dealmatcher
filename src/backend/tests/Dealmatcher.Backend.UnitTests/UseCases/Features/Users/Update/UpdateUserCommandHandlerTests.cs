@@ -27,7 +27,7 @@ public class UpdateUserCommandHandlerTests
 
     private static UserDto CreateUserDto()
     {
-        return new UserDto(ValidId, ValidEmail, NewName, NewSurname, UserStatus.Active, DateTime.UtcNow);
+        return new UserDto(ValidId, ValidEmail, NewName, NewSurname, UserStatus.Active.Name, DateTime.UtcNow);
     }
 
     [Fact]
