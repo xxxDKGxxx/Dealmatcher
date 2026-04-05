@@ -26,9 +26,10 @@ Widget nonEmptyTextFormField({
 Widget numberFormField({
   required TextEditingController controller,
   required String text,
+  TextInputType keyboardType = TextInputType.number,
 }) => TextFormField(
   controller: controller,
-  readOnly: true,
+  keyboardType: keyboardType,
   decoration: InputDecoration(
     labelText: text,
     border: const OutlineInputBorder(),
@@ -36,6 +37,9 @@ Widget numberFormField({
   validator: (value) {
     if (value == null || value.trim().isEmpty) {
       return "$text is empty";
+    }
+    if (double.tryParse(value) == null) {
+      return "$text must be a number";
     }
     return null;
   },
