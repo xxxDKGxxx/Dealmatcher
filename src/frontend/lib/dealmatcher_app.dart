@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/router/go_router.dart';
 
-void main() {
-  runApp(const DealMatcherApp());
-}
-
 class DealMatcherApp extends StatelessWidget {
   const DealMatcherApp({super.key});
 
