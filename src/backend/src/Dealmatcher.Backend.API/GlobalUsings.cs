@@ -2,7 +2,6 @@
 global using System.Reflection;
 global using System.Security.Claims;
 global using System.Text;
-global using System.Text.Json;
 global using Ardalis.ListStartupServices;
 global using Ardalis.Result;
 global using Ardalis.SharedKernel;
@@ -14,6 +13,7 @@ global using Dealmatcher.Backend.API.Services;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Dto;
 global using Dealmatcher.Backend.Infrastructure.Configs;
 global using Dealmatcher.Backend.Infrastructure.Data;
+global using Dealmatcher.Backend.Infrastructure.Data.Config;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Users.Create;
 global using FastEndpoints;
@@ -25,3 +25,4 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.IdentityModel.Tokens;
 global using Serilog;
 global using Serilog.Extensions.Logging;
+
