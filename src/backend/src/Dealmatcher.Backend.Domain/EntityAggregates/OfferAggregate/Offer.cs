@@ -57,12 +57,12 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
         }
     }
 
-    public void UpdateDescription(string description) 
+    public void UpdateDescription(string description)
     {
-        if (!string.IsNullOrWhiteSpace(description)) 
-        { 
-            Description = description; 
-        } 
+        if (!string.IsNullOrWhiteSpace(description))
+        {
+            Description = description;
+        }
     }
 
     public void UpdatePrice(decimal price)

@@ -7,7 +7,7 @@ public sealed class CategoryRelatedEnum : DealmatcherEntityBase
     private readonly List<CategoryRelatedEnumValue> _values = [];
     public IReadOnlyCollection<CategoryRelatedEnumValue> Values => _values.AsReadOnly();
 
-    public CategoryRelatedEnum(string name) 
+    public CategoryRelatedEnum(string name)
     {
         Name = name;
     }

@@ -14,7 +14,7 @@ public sealed class PropertyDefinition : DealmatcherEntityBase
         {
             throw new ArgumentException("SelectProperty requires CategoryRelatedEnumId");
         }
-        
+
         Name = name;
         Type = type;
         CategoryId = categoryId;

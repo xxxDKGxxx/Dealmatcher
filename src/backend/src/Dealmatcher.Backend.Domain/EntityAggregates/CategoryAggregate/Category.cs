@@ -1,15 +1,10 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.CategoryAggregate;
 
-public sealed class Category : DealmatcherEntityBase
+public sealed class Category(string name) : DealmatcherEntityBase
 {
-    public string Name { get; init; } = null!;
-    private readonly List<PropertyDefinition> _propertyDefinitions = new();
+    public string Name { get; init; } = name;
+    private readonly List<PropertyDefinition> _propertyDefinitions = [];
     public IReadOnlyCollection<PropertyDefinition> PropertyDefinitions => _propertyDefinitions.AsReadOnly();
-
-    public Category(string name)
-    {
-        Name = name;
-    }
 
     public void AddPropertyDefinition(PropertyDefinition propertyDefinitions)
     {

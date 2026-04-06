@@ -9,7 +9,7 @@ public sealed class NumericProperty : Property
         Value = value;
     }
     private NumericProperty() { }
-    
+
     public void SetValue(double value)
     {
         Value = value;
