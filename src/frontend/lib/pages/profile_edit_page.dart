@@ -27,7 +27,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       _surnameController.text,
     );
 
-    if(context.mounted) {
+    if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Successfully changed profile data.')),
       );
