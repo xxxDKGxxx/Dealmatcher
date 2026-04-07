@@ -8,20 +8,12 @@ class RegisterRequest extends RequestModel {
     required this.password,
     required this.name,
     required this.surname,
-    this.login,
-    this.birthday,
-    this.companyName,
   });
 
   final String email;
   final String password;
   final String name;
   final String surname;
-
-  // unused properties present in register form
-  final DateTime? birthday;
-  final String? login;
-  final String? companyName;
 
   @override
   String toJson() {
@@ -30,11 +22,6 @@ class RegisterRequest extends RequestModel {
       'password': password,
       'name': name,
       'surname': surname,
-
-      // unused properties present in register form
-      'birthday': birthday?.toIso8601String(),
-      'login': login,
-      'companyName': companyName,
     });
   }
 }

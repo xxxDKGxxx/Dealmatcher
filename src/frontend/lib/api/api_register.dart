@@ -12,9 +12,6 @@ class ApiRegister {
     String password,
     String name,
     String surname,
-    String? login,
-    String? companyName,
-    DateTime? birthday,
   ) async {
     try {
       final request = RegisterRequest(
@@ -22,9 +19,6 @@ class ApiRegister {
         password: password,
         name: name,
         surname: surname,
-        login: login,
-        companyName: companyName,
-        birthday: birthday,
       );
       final response = await _apiCore.post(_apiRegisterUrl, request);
 

@@ -44,6 +44,18 @@ class ApiCore {
     return Uri.parse('$_baseUrl$_apiUrl$endpoint');
   }
 
+  // intercept response to check status code
+  Future<http.Response> intercept(Future<http.Response> Function() httpMethod) async {
+    final response = await httpMethod();
+    switch (response.statusCode) {
+      case 401:
+      {
+        nullToken();
+      }
+    }
+    return response;
+  }
+
   // HTTP methods
   Future<http.Response> get(String endpoint) async {
     return await http.get(_getUri(endpoint), headers: _headers);

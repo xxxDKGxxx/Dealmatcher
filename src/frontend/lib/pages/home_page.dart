@@ -8,7 +8,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final themeColor = theme.colorScheme.inversePrimary;
     return Scaffold(
       appBar: AppBar(
         title: Text('DealMatcher'),
@@ -18,11 +17,12 @@ class HomePage extends StatelessWidget {
             icon: Icon(Icons.add_circle_outline),
             tooltip: 'Add offer',
             onPressed: () {
-              context.push('/add-offer');
+              context.go('/add-offer');
             },
           ),
         ],
       ),
+      drawer: MenuDrawer(),
       body: Center(child: Text('Welcome to Home Page')),
     );
   }
