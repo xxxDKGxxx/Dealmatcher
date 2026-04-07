@@ -43,10 +43,22 @@ class _RegisterPageState extends State<RegisterPage> {
       String password = _passwordController.text;
 
       try {
-        await _apiRegister.register(email, password, name, surname, login, company, _birthdayDate);
+        await _apiRegister.register(
+          email,
+          password,
+          name,
+          surname,
+          login,
+          company,
+          _birthdayDate,
+        );
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Successfully new account with mail $email')),
+            SnackBar(
+              content: Text(
+                'Successfully registered new account with mail $email',
+              ),
+            ),
           );
           context.go('/');
         }

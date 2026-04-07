@@ -12,7 +12,7 @@ final GoRouter globalRouter = GoRouter(
     const allowedUnauthenticatedPages = ['login', 'register'];
     final notOnAllowedPage = !allowedUnauthenticatedPages.contains(currentPage);
 
-    if(notAuthenticated && notOnAllowedPage) {
+    if (notAuthenticated && notOnAllowedPage) {
       ApiCore().nullToken();
       return '/login';
     }
