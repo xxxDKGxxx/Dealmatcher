@@ -60,34 +60,44 @@ class ApiCore {
 
   // HTTP methods
   Future<http.Response> get(String endpoint) async {
-    return await http.get(_getUri(endpoint), headers: _headers);
+    return await intercept(
+      () async => http.get(_getUri(endpoint), headers: _headers),
+    );
   }
 
   Future<http.Response> post(String endpoint, RequestModel request) async {
-    return await http.post(
-      _getUri(endpoint),
-      headers: _headers,
-      body: request.toJson(),
+    return await intercept(
+      () async => http.post(
+        _getUri(endpoint),
+        headers: _headers,
+        body: request.toJson(),
+      ),
     );
   }
 
   Future<http.Response> put(String endpoint, RequestModel request) async {
-    return await http.put(
-      _getUri(endpoint),
-      headers: _headers,
-      body: request.toJson(),
+    return await intercept(
+      () async => http.put(
+        _getUri(endpoint),
+        headers: _headers,
+        body: request.toJson(),
+      ),
     );
   }
 
   Future<http.Response> patch(String endpoint, RequestModel request) async {
-    return await http.patch(
-      _getUri(endpoint),
-      headers: _headers,
-      body: request.toJson(),
+    return await intercept(
+      () async => http.patch(
+        _getUri(endpoint),
+        headers: _headers,
+        body: request.toJson(),
+      ),
     );
   }
 
   Future<http.Response> delete(String endpoint) async {
-    return await http.delete(_getUri(endpoint), headers: _headers);
+    return await intercept(
+      () => http.delete(_getUri(endpoint), headers: _headers),
+    );
   }
 }
