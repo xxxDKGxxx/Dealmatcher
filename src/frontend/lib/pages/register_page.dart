@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api/api_register.dart';
 import 'package:frontend/widgets/form_fields.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,32 +26,40 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _birthdayYearController = TextEditingController();
   DateTime? _birthdayDate;
 
+  final _apiRegister = ApiRegister();
+
   @override
   void initState() {
     super.initState();
   }
 
-  void _register(BuildContext context) {
+  Future<void> _register(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       String name = _nameController.text;
       String surname = _surnameController.text;
-      String birthday = _birthdayDate!.toIso8601String();
       String company = _companyController.text;
       String login = _loginController.text;
       String email = _emailController.text;
       String password = _passwordController.text;
 
-      if (context.mounted) {
-        context.push('/');
+      try {
+        await _apiRegister.register(email, password, name, surname, login, company, _birthdayDate);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Successfully new account with mail $email')),
+          );
+          context.go('/');
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString().replaceAll('Exception: ', '')),
+              backgroundColor: Colors.red.shade700,
+            ),
+          );
+        }
       }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Registered: $name, $surname, $birthday, $company, $login, $email, $password',
-          ),
-        ),
-      );
     }
   }
 
