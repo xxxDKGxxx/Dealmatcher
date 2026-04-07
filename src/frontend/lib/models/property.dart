@@ -8,13 +8,8 @@ final class Property {
     required this.id,
     required this.name,
     required this.type,
-    required this.options
+    required this.options,
   });
 }
 
-enum PropertyType {
-  number,
-  boolean,
-  select,
-  text
-}
+enum PropertyType { number, boolean, select, text }

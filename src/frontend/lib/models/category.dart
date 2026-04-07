@@ -3,5 +3,5 @@ final class Category {
   final String name;
   final String description;
 
-  Category({ required this.id, required this.name, required this.description });
+  Category({required this.id, required this.name, required this.description});
 }

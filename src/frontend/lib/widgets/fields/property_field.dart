@@ -40,16 +40,14 @@ class PropertyField extends StatelessWidget {
           text: property.name,
           value: value,
           items: property.options
-              .map((opt) => DropdownMenuItem(
-                    value: opt,
-                    child: Text(opt),
-                  ))
+              .map((opt) => DropdownMenuItem(value: opt, child: Text(opt)))
               .toList(),
           onChanged: (newValue) {
             onChanged(newValue);
           },
-          validator: (val) =>
-              (val == null || val.isEmpty) ? "${property.name} is required" : null,
+          validator: (val) => (val == null || val.isEmpty)
+              ? "${property.name} is required"
+              : null,
         );
       case PropertyType.text:
         field = nonEmptyTextFormField(
@@ -61,9 +59,6 @@ class PropertyField extends StatelessWidget {
         );
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: field,
-    );
+    return Padding(padding: const EdgeInsets.only(bottom: 16.0), child: field);
   }
 }

@@ -9,26 +9,25 @@ Widget nonEmptyTextFormField({
   int? maxLines = 1,
   void Function(String)? onChanged,
   String? initialValue,
-}) =>
-    TextFormField(
-      controller: controller,
-      initialValue: initialValue,
-      obscureText: obscureText,
-      maxLines: maxLines,
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        labelText: text,
-        border: const OutlineInputBorder(),
-      ),
-      validator: (value) {
-        if (value == null ||
-            value.trim().isEmpty ||
-            (additionalValidator != null && additionalValidator(value))) {
-          return errorText ?? "$text is invalid";
-        }
-        return null;
-      },
-    );
+}) => TextFormField(
+  controller: controller,
+  initialValue: initialValue,
+  obscureText: obscureText,
+  maxLines: maxLines,
+  onChanged: onChanged,
+  decoration: InputDecoration(
+    labelText: text,
+    border: const OutlineInputBorder(),
+  ),
+  validator: (value) {
+    if (value == null ||
+        value.trim().isEmpty ||
+        (additionalValidator != null && additionalValidator(value))) {
+      return errorText ?? "$text is invalid";
+    }
+    return null;
+  },
+);
 
 Widget numberFormField({
   TextEditingController? controller,
@@ -37,27 +36,27 @@ Widget numberFormField({
   void Function(String)? onChanged,
   String? initialValue,
   String? Function(String?)? validator,
-}) =>
-    TextFormField(
-      controller: controller,
-      initialValue: initialValue,
-      keyboardType: keyboardType,
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        labelText: text,
-        border: const OutlineInputBorder(),
-      ),
-      validator: validator ??
-          (value) {
-            if (value == null || value.trim().isEmpty) {
-              return "$text is empty";
-            }
-            if (double.tryParse(value) == null) {
-              return "$text must be a number";
-            }
-            return null;
-          },
-    );
+}) => TextFormField(
+  controller: controller,
+  initialValue: initialValue,
+  keyboardType: keyboardType,
+  onChanged: onChanged,
+  decoration: InputDecoration(
+    labelText: text,
+    border: const OutlineInputBorder(),
+  ),
+  validator:
+      validator ??
+      (value) {
+        if (value == null || value.trim().isEmpty) {
+          return "$text is empty";
+        }
+        if (double.tryParse(value) == null) {
+          return "$text must be a number";
+        }
+        return null;
+      },
+);
 
 Widget emailFormField({required TextEditingController controller}) =>
     nonEmptyTextFormField(
@@ -85,33 +84,28 @@ Widget dropdownFormField<T>({
   String? Function(T?)? validator,
   Widget? icon,
   bool isExpanded = true,
-}) =>
-    DropdownButtonFormField<T>(
-      value: value,
-      items: items,
-      onChanged: onChanged,
-      isExpanded: isExpanded,
-      icon: icon,
-      decoration: InputDecoration(
-        labelText: text,
-        border: const OutlineInputBorder(),
-      ),
-      validator: validator ??
-          (value) {
-            if (value == null) {
-              return "$text is required";
-            }
-            return null;
-          },
-    );
+}) => DropdownButtonFormField<T>(
+  value: value,
+  items: items,
+  onChanged: onChanged,
+  isExpanded: isExpanded,
+  icon: icon,
+  decoration: InputDecoration(
+    labelText: text,
+    border: const OutlineInputBorder(),
+  ),
+  validator:
+      validator ??
+      (value) {
+        if (value == null) {
+          return "$text is required";
+        }
+        return null;
+      },
+);
 
 Widget switchFormField({
   required String text,
   required bool value,
   required void Function(bool) onChanged,
-}) =>
-    SwitchListTile(
-      title: Text(text),
-      value: value,
-      onChanged: onChanged,
-    );
+}) => SwitchListTile(title: Text(text), value: value, onChanged: onChanged);

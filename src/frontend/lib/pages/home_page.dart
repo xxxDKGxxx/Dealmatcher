@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               context.push('/add-offer');
             },
-          )
+          ),
         ],
       ),
       body: Center(child: Text('Welcome to Home Page')),
