@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/widgets/fields/form_fields.dart';
-import 'package:frontend/widgets/fields/property_field.dart';
+import 'package:frontend/widgets/form_fields.dart';
+import 'package:frontend/widgets/property_field.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-import '../../models/category.dart';
-import '../../models/property.dart';
+import '../models/category.dart';
+import '../models/property.dart';
 
 class CreateOfferPage extends StatefulWidget {
   const CreateOfferPage({super.key});

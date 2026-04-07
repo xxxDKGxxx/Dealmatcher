@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/property.dart';
+import '../models/property.dart';
 import 'form_fields.dart';
 
 class PropertyField extends StatelessWidget {
