@@ -4,6 +4,7 @@ import 'package:frontend/models/user.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/display_field.dart';
 import 'package:frontend/widgets/menu_drawer.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -20,7 +21,16 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: DealmatcherAppBar(),
+      appBar: DealmatcherAppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.push('/profile-edit');
+            },
+            icon: Icon(Icons.edit),
+          ),
+        ],
+      ),
       drawer: MenuDrawer(),
       body: FutureBuilder(
         future: _futureUser,
