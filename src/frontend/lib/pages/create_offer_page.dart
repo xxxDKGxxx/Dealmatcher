@@ -169,8 +169,6 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: DealmatcherAppBar(),
       body: Center(
