@@ -34,12 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
       String password = _passwordController.text;
 
       try {
-        await _apiRegister.register(
-          email,
-          password,
-          name,
-          surname,
-        );
+        await _apiRegister.register(email, password, name, surname);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

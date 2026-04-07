@@ -45,13 +45,15 @@ class ApiCore {
   }
 
   // intercept response to check status code
-  Future<http.Response> intercept(Future<http.Response> Function() httpMethod) async {
+  Future<http.Response> intercept(
+    Future<http.Response> Function() httpMethod,
+  ) async {
     final response = await httpMethod();
     switch (response.statusCode) {
       case 401:
-      {
-        nullToken();
-      }
+        {
+          nullToken();
+        }
     }
     return response;
   }
