@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:frontend/main.dart';
+import 'package:frontend/dealmatcher_app.dart';
 
 void main() {
   testWidgets('Test app title', (WidgetTester tester) async {

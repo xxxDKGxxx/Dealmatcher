@@ -2,8 +2,8 @@
 
 public sealed class UserByEmailSpec : SingleResultSpecification<User>
 {
-    public UserByEmailSpec(string Email)
+    public UserByEmailSpec(string email)
     {
-        Query.Where(u => u.Email == Email);
+        Query.Where(u => u.Email == email);
     }
 }
