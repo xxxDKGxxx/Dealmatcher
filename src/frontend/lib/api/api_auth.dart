@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:frontend/api/api_urls.dart';
 import 'package:frontend/api/models/auth_request.dart';
 import 'package:frontend/api/models/auth_response.dart';

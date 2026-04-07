@@ -20,6 +20,10 @@ class ApiCore {
     _token = token;
   }
 
+  void nullToken() {
+    _token = null;
+  }
+
   bool get isAuthenticated => _token != null;
 
   Map<String, String> get _headers {
