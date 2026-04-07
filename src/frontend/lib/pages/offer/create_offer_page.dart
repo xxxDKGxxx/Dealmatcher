@@ -2,6 +2,7 @@
 
   import 'package:flutter/material.dart';
   import 'package:frontend/widgets/fields/form_fields.dart';
+  import 'package:frontend/widgets/fields/property_field.dart';
   import 'package:image_picker/image_picker.dart';
   import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -369,68 +370,15 @@
                                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 16),
-                                ...properties.map((prop) {
-                                  switch (prop.type) {
-
-                                    case PropertyType.number:
-                                      return Padding(
-                                          padding: const EdgeInsets.only(bottom: 16.0),
-                                          child: numberFormField(
-                                              text: prop.name,
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  _properties[prop.name] = double.tryParse(newValue) ?? 0;
-                                                });
-                                              }
-                                          ));
-                                    case PropertyType.boolean:
-                                          return Padding(
-                                            padding: const EdgeInsets.only(bottom: 16.0),
-                                            child: switchFormField(
-                                            text: prop.name,
-                                            value: _properties[prop.name] ?? false,
-                                            onChanged: (newValue) {
-                                              setState(() {
-                                                _properties[prop.name] = newValue;
-                                              });
-                                            }));
-                                    case PropertyType.select:
-                                      return Padding(
-                                        padding: const EdgeInsets.only(bottom: 16.0),
-                                        child: dropdownFormField<String>(
-                                          text: prop.name,
-                                          value: _properties[prop.name],
-                                          items: prop.options
-                                              .map((opt) => DropdownMenuItem(
-                                            value: opt,
-                                            child: Text(opt),
-                                          ))
-                                              .toList(),
-                                          onChanged: (newValue) {
-                                            setState(() {
-                                              _properties[prop.name] = newValue;
-                                            });
-                                          },
-                                          validator: (value) =>
-                                          (value == null || value.isEmpty)
-                                              ? "${prop.name} is required"
-                                              : null,
-                                        ),
-                                      );
-                                    case PropertyType.text:
-                                      return Padding(
-                                        padding: const EdgeInsets.only(bottom: 16.0),
-                                        child: nonEmptyTextFormField(
-                                          text: prop.name,
-                                          initialValue: _properties[prop.name],
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _properties[prop.name] = value;
-                                            });
-                                          }
-                                        )
-                                      );
-                                  }}),
+                                ...properties.map((prop) => PropertyField(
+                                      property: prop,
+                                      value: _properties[prop.name],
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          _properties[prop.name] = newValue;
+                                        });
+                                      },
+                                    )),
                               ],
                             );
                           },
