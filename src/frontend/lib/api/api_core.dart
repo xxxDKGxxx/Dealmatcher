@@ -1,5 +1,5 @@
-import 'dart:convert';
 import 'package:frontend/api/api_urls.dart';
+import 'package:frontend/api/models/request_model.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCore {
@@ -45,36 +45,27 @@ class ApiCore {
     return await http.get(_getUri(endpoint), headers: _headers);
   }
 
-  Future<http.Response> post(
-    String endpoint, [
-    Map<String, dynamic>? body,
-  ]) async {
+  Future<http.Response> post(String endpoint, RequestModel request) async {
     return await http.post(
       _getUri(endpoint),
       headers: _headers,
-      body: body != null ? jsonEncode(body) : null,
+      body: request.toJson(),
     );
   }
 
-  Future<http.Response> put(
-    String endpoint, [
-    Map<String, dynamic>? body,
-  ]) async {
+  Future<http.Response> put(String endpoint, RequestModel request) async {
     return await http.put(
       _getUri(endpoint),
       headers: _headers,
-      body: body != null ? jsonEncode(body) : null,
+      body: request.toJson(),
     );
   }
 
-  Future<http.Response> patch(
-    String endpoint, [
-    Map<String, dynamic>? body,
-  ]) async {
+  Future<http.Response> patch(String endpoint, RequestModel request) async {
     return await http.patch(
       _getUri(endpoint),
       headers: _headers,
-      body: body != null ? jsonEncode(body) : null,
+      body: request.toJson(),
     );
   }
 

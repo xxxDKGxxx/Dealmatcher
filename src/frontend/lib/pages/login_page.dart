@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Logged in successfully with mail $email')),
           );
-          context.push('/');
+          context.go('/');
         }
       } catch (e) {
         if (context.mounted) {
