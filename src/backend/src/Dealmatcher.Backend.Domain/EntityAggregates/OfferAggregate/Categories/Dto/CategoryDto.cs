@@ -1,4 +1,4 @@
-﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.CategoryAggregate.Dto;
+﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories.Dto;
 
 public sealed record CategoryDto(
     int Id,

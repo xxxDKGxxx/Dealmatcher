@@ -1,4 +1,4 @@
-﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.CategoryAggregate;
+﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
 
 public sealed class Category(string name) : DealmatcherEntityBase
 {
@@ -10,11 +10,11 @@ public sealed class Category(string name) : DealmatcherEntityBase
     {
         _propertyDefinitions.Add(propertyDefinitions);
     }
+
     public void RemovePropertyDefinition(PropertyDefinition propertyDefinition)
     {
         _propertyDefinitions.Remove(propertyDefinition);
     }
-    public override void Delete()
-    {
-    }
+
+    public override void Delete() { }
 }

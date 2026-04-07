@@ -1,4 +1,7 @@
-﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
+﻿using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
+using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
+
+namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
 
 public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
 {
@@ -7,30 +10,34 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
     public decimal Price { get; private set; }
     private readonly List<string> _images = [];
     public IReadOnlyCollection<string> Images => _images.AsReadOnly();
-    public int SellerId { get; init; }
     public User Seller { get; private set; } = null!;
     public OfferStatus Status { get; private set; } = null!;
     private readonly List<string> _tags = [];
     public IReadOnlyCollection<string> Tags => _tags.AsReadOnly();
     public int Availability { get; private set; }
-    public int CategoryId { get; private set; }
     public Category Category { get; private set; } = null!;
-
     private readonly List<Property> _properties = [];
     public IReadOnlyCollection<Property> Properties => _properties.AsReadOnly();
 
-    public Offer(string title, string description, decimal price, List<string> images,
-                 int sellerId, List<string> tags, int availability, int categoryId)
+    public Offer(
+        string title,
+        string description,
+        decimal price,
+        List<string> images,
+        List<string> tags,
+        int availability,
+        Category category,
+        List<Property> properties)
     {
         Title = title;
         Description = description;
         Price = price;
         _images = images;
-        SellerId = sellerId;
         Status = OfferStatus.Draft;
         _tags = tags;
         Availability = availability;
-        CategoryId = categoryId;
+        Category = category;
+        _properties = properties;
     }
 
     private Offer() { }
@@ -147,9 +154,9 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
         _properties.Clear();
         _properties.AddRange(properties);
     }
-    public void SetCategory(int categoryId, IEnumerable<Property> properties)
+    public void SetCategory(Category category, IEnumerable<Property> properties)
     {
-        CategoryId = categoryId;
+        Category = category;
         SetProperties(properties);
     }
 }
