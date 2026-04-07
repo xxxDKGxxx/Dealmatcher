@@ -1,4 +1,5 @@
 import 'package:frontend/api/api_core.dart';
+import 'package:frontend/pages/create_offer_page.dart';
 import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/register_page.dart';
@@ -19,6 +20,7 @@ final GoRouter globalRouter = GoRouter(
     return null;
   },
   routes: [
+    GoRoute(path: '/add-offer', builder: (context, state) => CreateOfferPage()),
     GoRoute(path: '/', builder: (context, state) => HomePage()),
     GoRoute(path: '/register', builder: (context, state) => RegisterPage()),
     GoRoute(path: '/login', builder: (context, state) => LoginPage()),
