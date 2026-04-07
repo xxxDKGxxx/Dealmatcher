@@ -17,7 +17,10 @@ class MenuDrawer extends StatelessWidget {
         children: [
           DrawerHeader(
             decoration: BoxDecoration(color: themeColor),
-            child: Text('Menu', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
+            child: Text(
+              'Menu',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+            ),
           ),
           ListTile(
             leading: Icon(Icons.exit_to_app_rounded, color: redColor),
@@ -25,13 +28,13 @@ class MenuDrawer extends StatelessWidget {
             onTap: () {
               ApiCore().nullToken();
               context.go('/login');
-              if(context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Logged out')),
-                );
+              if (context.mounted) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('Logged out')));
               }
             },
-          )
+          ),
         ],
       ),
     );

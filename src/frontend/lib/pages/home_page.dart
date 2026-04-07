@@ -9,10 +9,7 @@ class HomePage extends StatelessWidget {
     final theme = Theme.of(context);
     final themeColor = theme.colorScheme.inversePrimary;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('DealMatcher'),
-        backgroundColor: themeColor,
-      ),
+      appBar: AppBar(title: Text('DealMatcher'), backgroundColor: themeColor),
       drawer: MenuDrawer(),
       body: Center(child: Text('Welcome to Home Page')),
     );
