@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_auth.dart';
-import 'package:frontend/widgets/form_fields.dart';
+import 'package:frontend/widgets/fields/form_fields.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatefulWidget {

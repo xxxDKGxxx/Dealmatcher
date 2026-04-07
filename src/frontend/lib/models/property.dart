@@ -13,7 +13,8 @@ final class Property {
 }
 
 enum PropertyType {
-  NUMBER,
-  BOOLEAN,
-  SELECT
+  number,
+  boolean,
+  select,
+  text
 }
