@@ -23,6 +23,19 @@ class MenuDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
+            leading: Icon(Icons.person),
+            title: Text('Profile'),
+            onTap: () {
+              context.go('/profile');
+            },
+          ),
+
+          // Log out button
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Divider(height: 1),
+          ),
+          ListTile(
             leading: Icon(Icons.exit_to_app_rounded, color: redColor),
             title: Text('Log out', style: TextStyle(color: redColor)),
             onTap: () {
