@@ -1,20 +1,10 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
 
-internal class TextProperty : Property
+internal class TextProperty : Property<string>
 {
-    public string Value { get; private set; } = null!;
-
-    public TextProperty(PropertyDefinition propertyDefinition, Offer offer, string value) : base(propertyDefinition, offer)
-    {
-        Value = value;
-    }
+    public TextProperty(TextPropertyDefinition propertyDefinition, string value) : base(propertyDefinition, value) { }
 
     private TextProperty() { }
-
-    public void SetValue(string value)
-    {
-        Value = value;
-    }
 
     public override void Delete() { }
 }

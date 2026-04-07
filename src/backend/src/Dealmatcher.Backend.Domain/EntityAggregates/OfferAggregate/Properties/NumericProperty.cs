@@ -1,20 +1,10 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
 
-public sealed class NumericProperty : Property
+public sealed class NumericProperty : Property<double>
 {
-    public double Value { get; private set; }
-
-    public NumericProperty(PropertyDefinition propertyDefinition, Offer offer, double value) : base(propertyDefinition, offer)
-    {
-        Value = value;
-    }
+    public NumericProperty(PropertyDefinition<double> propertyDefinition, double value) : base(propertyDefinition, value) { }
 
     private NumericProperty() { }
-
-    public void SetValue(double value)
-    {
-        Value = value;
-    }
 
     public override void Delete() { }
 }

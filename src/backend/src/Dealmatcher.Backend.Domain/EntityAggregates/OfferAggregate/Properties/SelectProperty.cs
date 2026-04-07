@@ -1,20 +1,10 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
 
-internal class SelectProperty : Property
+internal class SelectProperty : Property<int>
 {
-    public int Value { get; private set; }
-
-    public SelectProperty(PropertyDefinition propertyDefinition, Offer offer, int value) : base(propertyDefinition, offer)
-    {
-        Value = value;
-    }
+    public SelectProperty(SelectPropertyDefinition propertyDefinition, int value) : base(propertyDefinition, value) { }
 
     private SelectProperty() { }
-
-    public void SetValue(int value)
-    {
-        Value = value;
-    }
 
     public override void Delete() { }
 }

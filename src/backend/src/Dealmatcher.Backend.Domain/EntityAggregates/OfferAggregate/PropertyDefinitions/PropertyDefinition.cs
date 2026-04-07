@@ -1,38 +1,32 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
 
-public sealed class PropertyDefinition : DealmatcherEntityBase
+public abstract class PropertyDefinition : DealmatcherEntityBase
 {
     public string Name { get; init; } = null!;
     public PropertyType Type { get; init; }
-    public PropertyRelatedEnum? PropertyRelatedEnum { get; private set; }
-    public Category Category { get; private set; } = null!;
 
-    public PropertyDefinition(string name, PropertyType type, Category category, PropertyRelatedEnum? propertyRelatedEnum = null)
+    public PropertyDefinition(string name, PropertyType type)
     {
-        if (type == PropertyType.Select && propertyRelatedEnum is null)
-        {
-            throw new ArgumentException("SelectProperty requires PropertyRelatedEnumId");
-        }
-
         Name = name;
         Type = type;
-        Category = category;
-        PropertyRelatedEnum = propertyRelatedEnum;
     }
 
-    private PropertyDefinition() { }
+    protected PropertyDefinition() { }
 
-    public Property CreateProperty(Offer offer, object value)
-    {
-        return Type switch
-        {
-            PropertyType.Boolean => new BooleanProperty(this, offer, Convert.ToBoolean(value)),
-            PropertyType.Numeric => new NumericProperty(this, offer, Convert.ToDouble(value)),
-            PropertyType.Select => new SelectProperty(this, offer, Convert.ToInt32(value)),
-            PropertyType.Text => new TextProperty(this, offer, Convert.ToString(value)!),
-            _ => throw new ArgumentException("Invalid property type")
-        };
-    }
-
+    public abstract Property CreateProperty(object value);
     public override void Delete() { }
+}
+
+public abstract class PropertyDefinition<T> : PropertyDefinition
+{
+    public PropertyDefinition(string name, PropertyType type) : base(name, type) { }
+
+    protected PropertyDefinition() { }
+
+    public abstract Property<T> CreatePropertyTyped(T value);
+
+    public override Property CreateProperty(object value)
+    {
+        return CreatePropertyTyped((T)Convert.ChangeType(value, typeof(T))!);
+    }
 }
