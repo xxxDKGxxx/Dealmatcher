@@ -32,8 +32,9 @@ void main() {
   ) async {
     final originalOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails details) {
-      if (details.exceptionAsString().contains('A RenderFlex overflowed'))
+      if (details.exceptionAsString().contains('A RenderFlex overflowed')) {
         return;
+      }
       originalOnError?.call(details);
     };
 
@@ -78,8 +79,9 @@ void main() {
   ) async {
     final originalOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails details) {
-      if (details.exceptionAsString().contains('A RenderFlex overflowed'))
+      if (details.exceptionAsString().contains('A RenderFlex overflowed')) {
         return;
+      }
       originalOnError?.call(details);
     };
 
@@ -105,8 +107,9 @@ void main() {
   ) async {
     final originalOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails details) {
-      if (details.exceptionAsString().contains('A RenderFlex overflowed'))
+      if (details.exceptionAsString().contains('A RenderFlex overflowed')) {
         return;
+      }
       originalOnError?.call(details);
     };
 

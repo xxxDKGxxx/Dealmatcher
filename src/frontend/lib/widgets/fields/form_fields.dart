@@ -85,7 +85,7 @@ Widget dropdownFormField<T>({
   Widget? icon,
   bool isExpanded = true,
 }) => DropdownButtonFormField<T>(
-  value: value,
+  initialValue: value,
   items: items,
   onChanged: onChanged,
   isExpanded: isExpanded,
