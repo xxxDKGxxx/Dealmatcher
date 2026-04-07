@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/menu_drawer.dart';
 import 'package:go_router/go_router.dart';
 
 class HomePage extends StatelessWidget {
@@ -6,7 +7,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('DealMatcher'),
@@ -16,11 +17,12 @@ class HomePage extends StatelessWidget {
             icon: Icon(Icons.add_circle_outline),
             tooltip: 'Add offer',
             onPressed: () {
-              context.push('/add-offer');
+              context.go('/add-offer');
             },
           ),
         ],
       ),
+      drawer: MenuDrawer(),
       body: Center(child: Text('Welcome to Home Page')),
     );
   }

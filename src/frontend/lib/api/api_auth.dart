@@ -1,5 +1,6 @@
-import 'dart:convert';
 import 'package:frontend/api/api_urls.dart';
+import 'package:frontend/api/models/auth_request.dart';
+import 'package:frontend/api/models/auth_response.dart';
 
 import 'api_core.dart';
 
@@ -9,17 +10,15 @@ class ApiAuth {
 
   Future<void> login(String email, String password) async {
     try {
-      final response = await _apiCore.post(_apiLoginUrl, {
-        'email': email,
-        'password': password,
-      });
+      final request = AuthRequest(email: email, password: password);
+      final response = await _apiCore.post(_apiLoginUrl, request);
 
       switch (response.statusCode) {
         case 200:
           {
-            final data = jsonDecode(response.body);
-            _apiCore.setToken(data['accessToken']);
-            return data;
+            final responseModel = AuthResponse(response: response);
+            responseModel.fromJson();
+            _apiCore.setToken(responseModel.token);
           }
         case 401:
           throw Exception('Invalid credentials.');
