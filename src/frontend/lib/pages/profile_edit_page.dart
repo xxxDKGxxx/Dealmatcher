@@ -31,7 +31,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Successfully changed profile data.')),
       );
-      context.go('/profile');
+      context.replace('/profile');
     }
   }
 

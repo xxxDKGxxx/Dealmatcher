@@ -40,7 +40,6 @@ class ApiProfile {
 
       switch (response.statusCode) {
         case 200:
-        case 201:
           {}
         case 400:
           throw Exception('Invalid update data.');
