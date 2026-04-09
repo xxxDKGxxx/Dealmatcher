@@ -1,12 +1,9 @@
-﻿using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
-using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
-
-namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
+﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
 
 public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
 {
     public string Title { get; private set; } = null!;
-    public string Description { get; private set; } = null!;
+    public string? Description { get; private set; } = null!;
     public decimal Price { get; private set; }
     private readonly List<string> _images = [];
     public IReadOnlyCollection<string> Images => _images.AsReadOnly();
@@ -33,7 +30,7 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
         Description = description;
         Price = price;
         _images = images;
-        Status = OfferStatus.Draft;
+        Status = OfferStatus.Active;
         _tags = tags;
         Availability = availability;
         Category = category;
@@ -51,11 +48,6 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
         }
     }
 
-    public bool IsBeingPromoted()
-    {
-        return Status == OfferStatus.Promoted;
-    }
-
     public void UpdateTitle(string title)
     {
         if (!string.IsNullOrWhiteSpace(title))
@@ -66,10 +58,7 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
 
     public void UpdateDescription(string description)
     {
-        if (!string.IsNullOrWhiteSpace(description))
-        {
-            Description = description;
-        }
+        Description = description;
     }
 
     public void UpdatePrice(decimal price)
@@ -77,22 +66,6 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
         if (price >= 0)
         {
             Price = price;
-        }
-    }
-
-    public void Promote()
-    {
-        if (Status.CanBePromoted)
-        {
-            Status = OfferStatus.Promoted;
-        }
-    }
-
-    public void StopPromoting()
-    {
-        if (Status == OfferStatus.Promoted)
-        {
-            Status = OfferStatus.Active;
         }
     }
 
