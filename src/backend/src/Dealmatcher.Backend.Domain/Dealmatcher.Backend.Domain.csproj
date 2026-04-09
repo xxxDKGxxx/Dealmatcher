@@ -13,4 +13,8 @@
     <PackageReference Include="Ardalis.Specification" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="EntityAggregates\OfferAggregate\Specifications\" />
+  </ItemGroup>
 </Project>
