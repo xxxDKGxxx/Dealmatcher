@@ -6,7 +6,7 @@ public sealed class CategoryConfiguration : DealmatcherBaseEntityConfiguration<C
     {
         base.Configure(builder);
 
-        builder.ToTable($"{nameof(Category)}s");
+        builder.ToTable("Categories");
 
         builder.Property(c => c.Name)
             .IsRequired()
@@ -15,6 +15,7 @@ public sealed class CategoryConfiguration : DealmatcherBaseEntityConfiguration<C
         builder.HasMany(c => c.PropertyDefinitions)
             .WithOne()
             .HasForeignKey("CategoryId")
+            .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Navigation(c => c.PropertyDefinitions)

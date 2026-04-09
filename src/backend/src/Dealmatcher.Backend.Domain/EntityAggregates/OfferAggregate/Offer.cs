@@ -56,7 +56,7 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
         }
     }
 
-    public void UpdateDescription(string description)
+    public void UpdateDescription(string? description)
     {
         Description = description;
     }

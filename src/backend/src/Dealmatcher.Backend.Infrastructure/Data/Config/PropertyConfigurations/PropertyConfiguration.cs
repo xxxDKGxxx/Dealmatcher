@@ -6,7 +6,7 @@ public sealed class PropertyConfiguration : DealmatcherBaseEntityConfiguration<P
     {
         base.Configure(builder);
 
-        builder.ToTable($"{nameof(Property)}s");
+        builder.ToTable("Properties");
 
         builder.HasDiscriminator<string>("PropertyType")
             .HasValue<BooleanProperty>("Boolean")

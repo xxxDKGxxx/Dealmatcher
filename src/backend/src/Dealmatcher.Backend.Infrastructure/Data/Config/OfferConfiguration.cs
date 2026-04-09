@@ -42,6 +42,7 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
         builder.HasMany(o => o.Properties)
             .WithOne()
             .HasForeignKey("OfferId")
+            .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Navigation(o => o.Properties)
