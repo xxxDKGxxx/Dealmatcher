@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/form_fields.dart';
 import 'package:frontend/widgets/property_field.dart';
 import 'package:image_picker/image_picker.dart';
@@ -168,13 +169,8 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dealmatcher'),
-        backgroundColor: theme.colorScheme.inversePrimary,
-      ),
+      appBar: DealmatcherAppBar(),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),

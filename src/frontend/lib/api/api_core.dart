@@ -52,6 +52,8 @@ class ApiCore {
     switch (response.statusCode) {
       case 401:
         {
+          // TODO: add running check and logout if 401 received
+          // now it logs out only when page is changed but should every time a 401 is received
           nullToken();
         }
     }
