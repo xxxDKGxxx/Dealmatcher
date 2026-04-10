@@ -13,18 +13,22 @@ public abstract class PropertyDefinition : DealmatcherEntityBase
 
     protected PropertyDefinition() { }
 
+    public abstract Property CreatePropertyString(string value);
     public abstract Property CreateProperty(object value);
     public override void Delete() { }
 }
 
-public abstract class PropertyDefinition<T> : PropertyDefinition
+public abstract class PropertyDefinition<T> : PropertyDefinition where T : IParsable<T>
 {
     public PropertyDefinition(string name, PropertyType type) : base(name, type) { }
 
     protected PropertyDefinition() { }
 
     public abstract Property<T> CreatePropertyTyped(T value);
-
+    public override Property CreatePropertyString(string value)
+    {
+        return CreatePropertyTyped(T.Parse(value, null));
+    }
     public override Property CreateProperty(object value)
     {
         return CreatePropertyTyped((T)Convert.ChangeType(value, typeof(T))!);

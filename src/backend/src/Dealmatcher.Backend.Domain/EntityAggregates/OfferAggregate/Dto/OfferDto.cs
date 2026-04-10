@@ -11,7 +11,7 @@ public sealed record OfferDto(
     List<string> Tags,
     List<PropertyDto> properties,
     int Availability,
-    OfferStatus Status,
+    string Status,
     DateTime CreatedAt,
     DateTime UpdatedAt
 );

@@ -1,6 +1,6 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
 
-public sealed class SelectPropertyDefinition : PropertyDefinition<int>
+public sealed class SelectPropertyDefinition : PropertyDefinition<string>
 {
     public PropertyRelatedEnum PropertyRelatedEnum { get; private set; } = null!;
 
@@ -15,8 +15,12 @@ public sealed class SelectPropertyDefinition : PropertyDefinition<int>
 
     private SelectPropertyDefinition() { }
 
-    public override Property<int> CreatePropertyTyped(int value)
+    public override Property<string> CreatePropertyTyped(string value)
     {
+        if (!PropertyRelatedEnum.Values.Any(pev => pev.Value == value))
+        {
+            throw new ArgumentException($"Invalid SelectProperty value:{value} for Enum:{PropertyRelatedEnum.Name}");
+        }
         return new SelectProperty(this, value);
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
 
-public sealed class SelectProperty : Property<int>
+public sealed class SelectProperty : Property<string>
 {
-    public SelectProperty(SelectPropertyDefinition propertyDefinition, int value) : base(propertyDefinition, value) { }
+    public SelectProperty(SelectPropertyDefinition propertyDefinition, string value) : base(propertyDefinition, value) { }
 
     private SelectProperty() { }
 

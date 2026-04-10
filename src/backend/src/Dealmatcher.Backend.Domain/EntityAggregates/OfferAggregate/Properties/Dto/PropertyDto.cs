@@ -1,5 +1,5 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties.Dto;
 
 public sealed record PropertyDto(
-    int Id,
+    string Name,
     string Value);

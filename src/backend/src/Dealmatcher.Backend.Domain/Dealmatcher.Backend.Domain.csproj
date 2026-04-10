@@ -14,7 +14,4 @@
     <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EntityAggregates\OfferAggregate\Specifications\" />
-  </ItemGroup>
 </Project>

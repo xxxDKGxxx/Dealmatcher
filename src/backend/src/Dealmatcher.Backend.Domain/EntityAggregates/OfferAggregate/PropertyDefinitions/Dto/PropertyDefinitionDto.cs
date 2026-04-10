@@ -3,6 +3,5 @@
 public sealed record PropertyDefinitionDto(
     int Id,
     string Name,
-    PropertyType Type,
-    PropertyRelatedEnumDto? PropertyRelatedEnum,
+    string Type,
     List<string>? options);
