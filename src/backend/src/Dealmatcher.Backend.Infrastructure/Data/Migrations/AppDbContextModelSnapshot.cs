@@ -276,12 +276,6 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
-=======
-                    b.HasIndex("Email")
-                        .IsUnique();
-
->>>>>>> 080d380cd0cecd5435e22b722f31ff8c34f0f5de
                     b.ToTable("Users", (string)null);
 
                     b.HasDiscriminator<string>("UserType").HasValue("User");
