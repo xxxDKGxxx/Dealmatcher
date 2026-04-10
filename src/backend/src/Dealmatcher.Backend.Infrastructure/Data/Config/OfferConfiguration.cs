@@ -13,6 +13,7 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
             .HasMaxLength(DataSchemaConstants.OfferTitleMaxLength);
 
         builder.Property(o => o.Description)
+            .IsRequired()
             .HasMaxLength(DataSchemaConstants.OfferDescriptionMaxLength);
 
         builder.Property(o => o.Price)
