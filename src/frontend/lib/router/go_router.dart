@@ -1,19 +1,13 @@
-<<<<<<< HEAD
 import 'package:frontend/api/api_core.dart';
 import 'package:frontend/pages/create_offer_page.dart';
 import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/profile_edit_page.dart';
 import 'package:frontend/pages/profile_page.dart';
-=======
-import 'package:frontend/pages/home_page.dart';
-import 'package:frontend/pages/login_page.dart';
->>>>>>> 080d380cd0cecd5435e22b722f31ff8c34f0f5de
 import 'package:frontend/pages/register_page.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter globalRouter = GoRouter(
-<<<<<<< HEAD
   initialLocation: '/',
   redirect: (context, state) {
     final notAuthenticated = !ApiCore().isAuthenticated;
@@ -37,12 +31,5 @@ final GoRouter globalRouter = GoRouter(
       path: '/profile-edit',
       builder: (context, state) => ProfileEditPage(),
     ),
-=======
-  initialLocation: '/login',
-  routes: [
-    GoRoute(path: '/', builder: (context, state) => HomePage()),
-    GoRoute(path: '/register', builder: (context, state) => RegisterPage()),
-    GoRoute(path: '/login', builder: (context, state) => LoginPage()),
->>>>>>> 080d380cd0cecd5435e22b722f31ff8c34f0f5de
   ],
 );
