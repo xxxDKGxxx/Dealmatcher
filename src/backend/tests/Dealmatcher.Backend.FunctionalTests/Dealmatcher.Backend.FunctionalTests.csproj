@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <<<<<<< HEAD
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
@@ -22,12 +23,18 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Shouldly" />
+=======
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+>>>>>>> 080d380cd0cecd5435e22b722f31ff8c34f0f5de
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Dealmatcher.Backend.API\Dealmatcher.Backend.API.csproj" />
     <ProjectReference Include="..\..\src\Dealmatcher.Backend.Infrastructure\Dealmatcher.Backend.Infrastructure.csproj" />
-	  <ProjectReference Include="..\..\src\Dealmatcher.Backend.UseCases\Dealmatcher.Backend.UseCases.csproj" />
+    <ProjectReference Include="..\..\src\Dealmatcher.Backend.UseCases\Dealmatcher.Backend.UseCases.csproj" />
   </ItemGroup>
 
   <ItemGroup>

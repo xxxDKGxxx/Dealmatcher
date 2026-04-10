@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:frontend/api/api_register.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/form_fields.dart';
 import 'package:go_router/go_router.dart';
+=======
+import 'package:frontend/widgets/form_fields.dart';
+>>>>>>> 080d380cd0cecd5435e22b722f31ff8c34f0f5de
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -13,20 +17,34 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
+<<<<<<< HEAD
+=======
+  final TextEditingController _loginController = TextEditingController();
+>>>>>>> 080d380cd0cecd5435e22b722f31ff8c34f0f5de
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
+<<<<<<< HEAD
 
   final _apiRegister = ApiRegister();
+=======
+  final TextEditingController _companyController = TextEditingController();
+  final TextEditingController _birthdayDayController = TextEditingController();
+  final TextEditingController _birthdayMonthController =
+      TextEditingController();
+  final TextEditingController _birthdayYearController = TextEditingController();
+  DateTime? _birthdayDate;
+>>>>>>> 080d380cd0cecd5435e22b722f31ff8c34f0f5de
 
   @override
   void initState() {
     super.initState();
   }
 
+<<<<<<< HEAD
   Future<void> _register(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       String name = _nameController.text;
@@ -56,16 +74,72 @@ class _RegisterPageState extends State<RegisterPage> {
           );
         }
       }
+=======
+  void _register() {
+    if (_formKey.currentState!.validate()) {
+      String name = _nameController.text;
+      String surname = _surnameController.text;
+      String birthday = _birthdayDate!.toIso8601String();
+      String company = _companyController.text;
+      String login = _loginController.text;
+      String email = _emailController.text;
+      String password = _passwordController.text;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Registered: $name, $surname, $birthday, $company, $login, $email, $password',
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> pickDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (picked != null) {
+      _birthdayDate = picked;
+
+      _birthdayDayController.text = _birthdayDate!.day.toString().padLeft(
+        2,
+        '0',
+      );
+      _birthdayMonthController.text = _birthdayDate!.month.toString().padLeft(
+        2,
+        '0',
+      );
+      _birthdayYearController.text = _birthdayDate!.year.toString();
+
+      setState(() {});
+>>>>>>> 080d380cd0cecd5435e22b722f31ff8c34f0f5de
     }
   }
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return Scaffold(
       appBar: DealmatcherAppBar(),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 700),
+=======
+    final theme = Theme.of(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('DealMatcher'),
+        backgroundColor: theme.colorScheme.inversePrimary,
+      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 700),
+>>>>>>> 080d380cd0cecd5435e22b722f31ff8c34f0f5de
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Form(
@@ -96,9 +170,68 @@ class _RegisterPageState extends State<RegisterPage> {
                         controller: _surnameController,
                         text: 'Surname',
                       ),
+<<<<<<< HEAD
                       const SizedBox(height: 48),
 
                       // Account info
+=======
+                      const SizedBox(height: 16),
+                      Text(
+                        'Birthday:',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: numberFormField(
+                              controller: _birthdayDayController,
+                              text: 'Day',
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: numberFormField(
+                              controller: _birthdayMonthController,
+                              text: 'Month',
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: numberFormField(
+                              controller: _birthdayYearController,
+                              text: 'Year',
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Flexible(
+                            fit: FlexFit.tight,
+                            child: ElevatedButton(
+                              onPressed: () async => pickDate(context),
+                              child: Text('Date'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _companyController,
+                        decoration: InputDecoration(
+                          labelText: 'Company Name',
+                          border: const OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 48),
+
+                      // Account info
+                      nonEmptyTextFormField(
+                        controller: _loginController,
+                        text: 'Login',
+                      ),
+                      const SizedBox(height: 16),
+>>>>>>> 080d380cd0cecd5435e22b722f31ff8c34f0f5de
                       emailFormField(controller: _emailController),
                       const SizedBox(height: 16),
                       passwordFormField(controller: _passwordController),
@@ -115,7 +248,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       // Button
                       ElevatedButton(
+<<<<<<< HEAD
                         onPressed: () => _register(context),
+=======
+                        onPressed: _register,
+>>>>>>> 080d380cd0cecd5435e22b722f31ff8c34f0f5de
                         child: const Text("Register"),
                       ),
                       const SizedBox(height: 64),
