@@ -3,7 +3,7 @@
 public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
 {
     public string Title { get; private set; } = null!;
-    public string Description { get; private set; } = null!;
+    public string? Description { get; private set; } = null!;
     public decimal Price { get; private set; }
     private readonly List<string> _images = [];
     public IReadOnlyCollection<string> Images => _images.AsReadOnly();
@@ -58,10 +58,7 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
 
     public void UpdateDescription(string? description)
     {
-        if (!string.IsNullOrWhiteSpace(description))
-        {
-            Description = description;
-        }
+        Description = description;
     }
 
     public void UpdatePrice(decimal price)
