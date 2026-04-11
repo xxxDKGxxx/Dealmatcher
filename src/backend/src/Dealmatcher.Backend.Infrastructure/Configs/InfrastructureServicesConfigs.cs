@@ -4,27 +4,29 @@ public static class InfrastructureServicesConfigs
 {
     public static IServiceCollection AddInfrastructureServices(
         this IServiceCollection services,
-        ConfigurationManager config,
-        Microsoft.Extensions.Logging.ILogger logger)
+        IConfiguration config,
+        Microsoft.Extensions.Logging.ILogger logger,
+        bool isProduction = false)
     {
-        string? connectionString;
+        string? connectionString = config.GetConnectionString("DefaultConnection");
 
-        try
-        {
-            connectionString = config.GetConnectionString("DefaultConnection");
-            Guard.Against.Null(connectionString);
-        }
-        catch
+        if (isProduction && string.IsNullOrWhiteSpace(connectionString))
         {
             logger.LogError("Default connection string was not defined in the environment");
-            throw;
+            throw new InvalidOperationException("Default connection string was not defined in the environment");
         }
 
-        services.AddApplicationDbContext(connectionString);
+        if (!string.IsNullOrWhiteSpace(connectionString))
+        {
+            services.AddApplicationDbContext(connectionString);
+        }
+
         services.AddAutoMapperConfigs();
 
         services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>))
-            .AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
+            .AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>))
+            .AddScoped<IPasswordHasher, BCryptPasswordHasher>()
+            .AddScoped<ITokenService, JwtTokenService>();
 
         logger.LogInformation("{Project} services registered.", "Infrastructure");
 

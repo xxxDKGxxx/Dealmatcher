@@ -24,6 +24,19 @@ public static class MiddlewareConfig
                 })
             .UseSwaggerGen(); // Includes AddFileServer and static files middleware
 
+        var frontendOrigin = app.Configuration["FrontendOrigin"];
+
+        if (frontendOrigin is not null)
+        {
+            app.UseCors(opt =>
+            {
+                opt.WithOrigins(frontendOrigin)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
+            });
+        } // else we are in prod environment and FrontendOrigin is not set
+
         await SeedDatabase(app);
 
         return app;
@@ -37,7 +50,15 @@ public static class MiddlewareConfig
         try
         {
             var context = services.GetRequiredService<AppDbContext>();
-            await context.Database.MigrateAsync();
+            if (context.Database.IsRelational())
+            {
+                await context.Database.MigrateAsync();
+            }
+            else
+            {
+                await context.Database.EnsureCreatedAsync();
+            }
+
             if (app.Environment.IsDevelopment())
             {
                 await SeedData.InitializeTestAsync(context);

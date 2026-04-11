@@ -1,4 +1,6 @@
-﻿namespace Dealmatcher.Backend.API;
+﻿using Dealmatcher.Backend.API.Middleware;
+
+namespace Dealmatcher.Backend.API;
 
 public sealed class Program
 {
@@ -21,6 +23,7 @@ public sealed class Program
         try
         {
             builder.Services.AddServiceConfigs(appLogger, builder);
+            builder.Services.AddAuthenticationConfigs(builder.Configuration);
             builder.Services.AddFastEndpoints()
                 .SwaggerDocument(o =>
                     {
@@ -32,6 +35,12 @@ public sealed class Program
                         o.ShortSchemaNames = true;
                         o.MaxEndpointVersion = 1;
                     });
+            builder.Services.AddCommandMiddleware(c =>
+            {
+                c.Register(typeof(CommandLogger<,>));
+            });
+
+            builder.Services.AddCors();
 
             var app = builder.Build();
 
@@ -44,7 +53,7 @@ public sealed class Program
         }
         catch (Exception ex)
         {
-            logger.Error(ex.Message);
+            logger.Error(ex, ex.Message);
             return;
         }
     }

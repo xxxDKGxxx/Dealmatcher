@@ -1,0 +1,152 @@
+﻿namespace Dealmatcher.Backend.UnitTests.UseCases.Features.Users.Create;
+
+public class CreateUserCommandHandlerTests
+{
+    private readonly IRepository<User> _userRepository;
+    private readonly IMapper _mapper;
+    private readonly IPasswordHasher _passwordHasher;
+    private readonly CreateUserCommandHandler _handler;
+
+    private const string ValidEmail = "test@example.com";
+    private const string ValidPassword = "correctpassword!";
+    private const string ValidPasswordHash = "hashed_password";
+    private const int ValidId = 1;
+
+    public CreateUserCommandHandlerTests()
+    {
+        _userRepository = Substitute.For<IRepository<User>>();
+        _mapper = Substitute.For<IMapper>();
+        _passwordHasher = Substitute.For<IPasswordHasher>();
+        _handler = new CreateUserCommandHandler(_userRepository, _mapper, _passwordHasher);
+    }
+
+    private static User CreateUser(string email = ValidEmail)
+    {
+        return new User(email, ValidPasswordHash, "Jan", "Kowalski");
+    }
+
+    private static UserDto CreateUserDto(string email = ValidEmail)
+    {
+        return new UserDto(ValidId, email, "Jan", "Kowalski", "ACTIVE", default);
+    }
+
+    [Fact]
+    public async Task Handle_ValidData_CreatesUserAndReturnsSuccess()
+    {
+        var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
+        var expectedDto = CreateUserDto();
+
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns((User?)null);
+
+        _passwordHasher.HashPassword(ValidPassword)
+            .Returns(ValidPasswordHash);
+        _mapper.Map<UserDto>(Arg.Any<BasicUser>())
+            .Returns(expectedDto);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldBe(expectedDto);
+    }
+
+    [Fact]
+    public async Task Handle_EmailAlreadyTakenByActiveUser_ReturnsConflict()
+    {
+        var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
+        var existingActiveUser = CreateUser();
+
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns(existingActiveUser);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.Status.ShouldBe(ResultStatus.Conflict);
+        result.Errors.ShouldContain("Email is already taken by an active or banned account");
+
+        _passwordHasher.DidNotReceive().HashPassword(Arg.Any<string>());
+        await _userRepository.DidNotReceive().AddAsync(Arg.Any<BasicUser>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_EmailTakenByBannedUser_ReturnsConflict()
+    {
+        var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
+        var bannedUser = CreateUser();
+        bannedUser.BanUser();
+
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns(bannedUser);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.Status.ShouldBe(ResultStatus.Conflict);
+        result.Errors.ShouldContain("Email is already taken by an active or banned account");
+    }
+
+    [Fact]
+    public async Task Handle_EmailTakenByInactiveUser_CreatesUserAndReturnsSuccess()
+    {
+        var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
+        var expectedDto = CreateUserDto();
+
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns((User?)null);
+
+        _passwordHasher.HashPassword(ValidPassword)
+            .Returns(ValidPasswordHash);
+        _mapper.Map<UserDto>(Arg.Any<BasicUser>())
+            .Returns(expectedDto);
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsSuccess.ShouldBeTrue();
+        await _userRepository.Received(1).AddAsync(Arg.Any<BasicUser>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WithUnnormalizedEmail_NormalizesEmailBeforeSaving()
+    {
+        var command = new CreateUserCommand("Jan.Kowalski@EMAIL.com", ValidPassword, "Jan", "Kowalski");
+        const string NormalizedEmail = "jan.kowalski@email.com";
+
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns((User?)null);
+
+        _passwordHasher.HashPassword(ValidPassword)
+            .Returns(ValidPasswordHash);
+        _mapper.Map<UserDto>(Arg.Any<BasicUser>())
+            .Returns(CreateUserDto(NormalizedEmail));
+
+        await _handler.Handle(command, CancellationToken.None);
+
+        await _userRepository.Received(1).AddAsync(
+            Arg.Is<BasicUser>(u => u.Email == NormalizedEmail && u.Name == "Jan"),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_ValidData_CallsServicesInCorrectOrder()
+    {
+        var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
+
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
+            .Returns((User?)null);
+
+        _passwordHasher.HashPassword(ValidPassword)
+            .Returns(ValidPasswordHash);
+        _mapper.Map<UserDto>(Arg.Any<BasicUser>())
+            .Returns(CreateUserDto());
+
+        await _handler.Handle(command, CancellationToken.None);
+
+        Received.InOrder(async () =>
+        {
+            await _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>());
+            _passwordHasher.HashPassword(ValidPassword);
+            await _userRepository.AddAsync(Arg.Any<BasicUser>(), Arg.Any<CancellationToken>());
+            await _userRepository.SaveChangesAsync(Arg.Any<CancellationToken>());
+            _mapper.Map<UserDto>(Arg.Any<BasicUser>());
+        });
+    }
+}

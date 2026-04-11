@@ -22,6 +22,214 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories", (string)null);
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Offer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Availability")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SellerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasMaxLength(20)
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("SellerId");
+
+                    b.ToTable("Offers", (string)null);
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties.Property", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OfferId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PropertyDefinitionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PropertyType")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OfferId");
+
+                    b.HasIndex("PropertyDefinitionId");
+
+                    b.ToTable("Properties", (string)null);
+
+                    b.HasDiscriminator<string>("PropertyType").HasValue("Property");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.PropertyDefinition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DefinitionType")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("nvarchar(21)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("PropertyDefinitions", (string)null);
+
+                    b.HasDiscriminator<string>("DefinitionType").HasValue("PropertyDefinition");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums.PropertyRelatedEnum", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PropertyRelatedEnums", (string)null);
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums.PropertyRelatedEnumValue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("PropertyRelatedEnumId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyRelatedEnumId");
+
+                    b.ToTable("PropertyRelatedEnumValues", (string)null);
+                });
+
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", b =>
                 {
                     b.Property<int>("Id")
@@ -68,14 +276,90 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.ToTable("Users", (string)null);
 
                     b.HasDiscriminator<string>("UserType").HasValue("User");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties.BooleanProperty", b =>
+                {
+                    b.HasBaseType("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties.Property");
+
+                    b.Property<bool>("Value")
+                        .HasColumnType("bit")
+                        .HasColumnName("BooleanValue");
+
+                    b.HasDiscriminator().HasValue("Boolean");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties.NumericProperty", b =>
+                {
+                    b.HasBaseType("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties.Property");
+
+                    b.Property<double>("Value")
+                        .HasColumnType("float")
+                        .HasColumnName("NumericValue");
+
+                    b.HasDiscriminator().HasValue("Numeric");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties.SelectProperty", b =>
+                {
+                    b.HasBaseType("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties.Property");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int")
+                        .HasColumnName("SelectValue");
+
+                    b.HasDiscriminator().HasValue("Select");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties.TextProperty", b =>
+                {
+                    b.HasBaseType("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties.Property");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("TextValue");
+
+                    b.HasDiscriminator().HasValue("Text");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.BooleanPropertyDefinition", b =>
+                {
+                    b.HasBaseType("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.PropertyDefinition");
+
+                    b.HasDiscriminator().HasValue("Boolean");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.NumericPropertyDefinition", b =>
+                {
+                    b.HasBaseType("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.PropertyDefinition");
+
+                    b.HasDiscriminator().HasValue("Numeric");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.SelectPropertyDefinition", b =>
+                {
+                    b.HasBaseType("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.PropertyDefinition");
+
+                    b.Property<int>("PropertyRelatedEnumId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("PropertyRelatedEnumId");
+
+                    b.HasDiscriminator().HasValue("Select");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.TextPropertyDefinition", b =>
+                {
+                    b.HasBaseType("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.PropertyDefinition");
+
+                    b.HasDiscriminator().HasValue("Text");
                 });
 
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.BasicUser", b =>
@@ -98,6 +382,88 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.HasDiscriminator().HasValue("BasicUser");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Offer", b =>
+                {
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", "Seller")
+                        .WithMany()
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties.Property", b =>
+                {
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Offer", null)
+                        .WithMany("Properties")
+                        .HasForeignKey("OfferId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.PropertyDefinition", "PropertyDefinition")
+                        .WithMany()
+                        .HasForeignKey("PropertyDefinitionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("PropertyDefinition");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.PropertyDefinition", b =>
+                {
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories.Category", null)
+                        .WithMany("PropertyDefinitions")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums.PropertyRelatedEnumValue", b =>
+                {
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums.PropertyRelatedEnum", "PropertyRelatedEnum")
+                        .WithMany("Values")
+                        .HasForeignKey("PropertyRelatedEnumId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("PropertyRelatedEnum");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.SelectPropertyDefinition", b =>
+                {
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums.PropertyRelatedEnum", "PropertyRelatedEnum")
+                        .WithMany()
+                        .HasForeignKey("PropertyRelatedEnumId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("PropertyRelatedEnum");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories.Category", b =>
+                {
+                    b.Navigation("PropertyDefinitions");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Offer", b =>
+                {
+                    b.Navigation("Properties");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums.PropertyRelatedEnum", b =>
+                {
+                    b.Navigation("Values");
                 });
 #pragma warning restore 612, 618
         }

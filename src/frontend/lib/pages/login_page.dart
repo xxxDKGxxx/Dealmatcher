@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api/api_auth.dart';
+import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/form_fields.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,26 +15,38 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final ApiAuth _authApi = ApiAuth();
 
-  void _login() {
+  Future<void> _login(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       String email = _emailController.text;
       String password = _passwordController.text;
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Logged in: $email, $password')));
+      try {
+        await _authApi.login(email, password);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Logged in successfully with mail $email')),
+          );
+          context.go('/');
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString().replaceAll('Exception: ', '')),
+              backgroundColor: Colors.red.shade700,
+            ),
+          );
+        }
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('DealMatcher'),
-        backgroundColor: theme.colorScheme.inversePrimary,
-      ),
+      appBar: DealmatcherAppBar(),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 700),
@@ -62,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                       passwordFormField(controller: _passwordController),
                       const SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: _login,
+                        onPressed: () => _login(context),
                         child: const Text("Login"),
                       ),
                       const SizedBox(height: 16),

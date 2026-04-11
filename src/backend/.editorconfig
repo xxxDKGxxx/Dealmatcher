@@ -53,6 +53,7 @@ dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
 dotnet_style_prefer_auto_properties = true:silent
 dotnet_style_prefer_conditional_expression_over_assignment = true:silent
 dotnet_style_prefer_conditional_expression_over_return = true:silent
+dotnet_style_allow_multiple_blank_lines_experimental = false:warning
 ###############################
 # Naming Conventions          #
 ###############################
@@ -118,6 +119,9 @@ csharp_new_line_before_finally = true
 csharp_new_line_before_members_in_object_initializers = true
 csharp_new_line_before_members_in_anonymous_types = true
 csharp_new_line_between_query_expression_clauses = true
+csharp_style_allow_blank_lines_between_consecutive_braces_experimental = false:warning
+csharp_style_allow_blank_line_after_token_in_object_initializer_experimental = false:warning
+csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = false:warning
 # Indentation preferences
 csharp_indent_case_contents = true
 csharp_indent_switch_labels = true
@@ -153,6 +157,7 @@ csharp_prefer_static_local_function = true:suggestion
 csharp_prefer_static_anonymous_function = true:suggestion
 csharp_style_prefer_readonly_struct = true:suggestion
 csharp_style_prefer_readonly_struct_member = true:suggestion
+csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental = false:warning
 ###############################
 # VB Coding Conventions       #
 ###############################

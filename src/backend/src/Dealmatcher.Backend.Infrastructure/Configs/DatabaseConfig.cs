@@ -1,4 +1,4 @@
-﻿namespace Dealmatcher.Backend.Infrastructure.Data.Config;
+﻿namespace Dealmatcher.Backend.Infrastructure.Configs;
 
 public static class DatabaseConfig
 {
