@@ -8,9 +8,9 @@ public sealed class PropertyDefinitionProfile : Profile
             .ConstructUsing((src, ctx) => new PropertyDefinitionDto(
                 src.Id,
                 src.Name,
-                src.Type,
+                src.Type.ToString(),
                 src is SelectPropertyDefinition spd
-                    ? spd.PropertyRelatedEnum.Values.Select(v => v.Value).ToList()
+                    ? [.. spd.Values]
                     : null
             ));
     }

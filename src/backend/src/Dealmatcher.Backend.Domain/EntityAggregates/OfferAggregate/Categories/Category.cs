@@ -1,6 +1,6 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
 
-public sealed class Category(string name, string description) : DealmatcherEntityBase
+public sealed class Category(string name, string description) : DealmatcherEntityBase, IAggregateRoot
 {
     public string Name { get; private set; } = name;
     public string Description { get; private set; } = description;

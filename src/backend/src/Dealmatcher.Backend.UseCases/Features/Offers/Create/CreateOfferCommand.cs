@@ -4,7 +4,7 @@ public sealed record CreateOfferCommand(
     string Title,
     string Description,
     decimal Price,
-    //List<Image> images,
+    //TODO: List<Image> images,
     int SellerId,
     int CategoryId,
     List<string> Tags,

@@ -2,7 +2,7 @@
 
 public sealed class CategoryProfile : Profile
 {
-    public CategoryProfile() 
+    public CategoryProfile()
     {
         CreateMap<Category, CategoryDto>()
             .ConstructUsing(src => new CategoryDto(src.Id, src.Name, src.Description));
