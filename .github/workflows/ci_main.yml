@@ -1,4 +1,3 @@
-# .github/workflows/ci-main.yml
 name: Dealmatcher CI - Main
 
 on:
