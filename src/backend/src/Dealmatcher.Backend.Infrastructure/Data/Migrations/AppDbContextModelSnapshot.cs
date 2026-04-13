@@ -33,6 +33,10 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -175,62 +179,6 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums.PropertyRelatedEnum", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PropertyRelatedEnums", (string)null);
-                });
-
-            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums.PropertyRelatedEnumValue", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("PropertyRelatedEnumId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PropertyRelatedEnumId");
-
-                    b.ToTable("PropertyRelatedEnumValues", (string)null);
-                });
-
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", b =>
                 {
                     b.Property<int>("Id")
@@ -310,8 +258,9 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                 {
                     b.HasBaseType("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties.Property");
 
-                    b.Property<int>("Value")
-                        .HasColumnType("int")
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("SelectValue");
 
                     b.HasDiscriminator().HasValue("Select");
@@ -348,10 +297,10 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                 {
                     b.HasBaseType("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.PropertyDefinition");
 
-                    b.Property<int>("PropertyRelatedEnumId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("PropertyRelatedEnumId");
+                    b.Property<string>("_values")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Values");
 
                     b.HasDiscriminator().HasValue("Select");
                 });
@@ -430,28 +379,6 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums.PropertyRelatedEnumValue", b =>
-                {
-                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums.PropertyRelatedEnum", "PropertyRelatedEnum")
-                        .WithMany("Values")
-                        .HasForeignKey("PropertyRelatedEnumId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("PropertyRelatedEnum");
-                });
-
-            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.SelectPropertyDefinition", b =>
-                {
-                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums.PropertyRelatedEnum", "PropertyRelatedEnum")
-                        .WithMany()
-                        .HasForeignKey("PropertyRelatedEnumId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("PropertyRelatedEnum");
-                });
-
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories.Category", b =>
                 {
                     b.Navigation("PropertyDefinitions");
@@ -460,11 +387,6 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Offer", b =>
                 {
                     b.Navigation("Properties");
-                });
-
-            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums.PropertyRelatedEnum", b =>
-                {
-                    b.Navigation("Values");
                 });
 #pragma warning restore 612, 618
         }

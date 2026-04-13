@@ -9,9 +9,9 @@ public sealed record OfferDto(
     SellerDto Seller,
     CategoryDto Category,
     List<string> Tags,
-    List<PropertyDto> properties,
+    List<PropertyDto> Properties,
     int Availability,
-    OfferStatus Status,
+    string Status,
     DateTime CreatedAt,
     DateTime UpdatedAt
 );

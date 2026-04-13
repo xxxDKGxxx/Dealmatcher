@@ -12,7 +12,5 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properti
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.Dto;
-global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums;
-global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyRelatedEnums.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Microsoft.Extensions.Logging;
