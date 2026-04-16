@@ -51,7 +51,7 @@ public sealed class AzureBlobStorageService : IImageStorageService
             throw new ArgumentException("Invalid file URL format. Container name not found.", nameof(fileUrl));
         }
 
-        var blobName = decodedUrl.Substring(index + containerSegment.Length);
+        var blobName = decodedUrl[(index + containerSegment.Length)..];
 
         var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
         var blobClient = containerClient.GetBlobClient(blobName);
