@@ -1,4 +1,4 @@
-name: Dealmatcher CI - Main
+name: Dealmatcher Frontend CI - Main
 
 on:
   push:
@@ -8,48 +8,6 @@ on:
     branches: ["main"]
 
 jobs:
-  backend-build:
-    name: Dealmatcher Backend Build & Test (.NET 9)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 9.0.x
-
-      - name: Restore dependencies
-        working-directory: src/backend
-        run: dotnet restore
-
-      - name: Build
-        working-directory: src/backend
-        run: dotnet build --no-restore
-
-      - name: Test
-        working-directory: src/backend
-        run: dotnet test --no-build --verbosity normal
-
-  backend-format:
-    name: EditorConfig Checker
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 9.0.x
-
-      - name: Install dotnet-format
-        working-directory: src/backend
-        run: dotnet tool install -g dotnet-format
-
-      - name: Run dotnet format
-        working-directory: src/backend
-        run: dotnet format --severity info --verify-no-changes
-
   frontend-ci:
     name: Dealmatcher frontend CI
     runs-on: ubuntu-latest

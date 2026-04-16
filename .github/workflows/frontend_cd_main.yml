@@ -1,4 +1,4 @@
-name: Dealmatcher CD - main
+name: Dealmatcher Frontend CD - main
 
 on:
   push:
@@ -6,38 +6,6 @@ on:
       [ main ]
 
 jobs:
-  backend-build-and-deploy:
-    runs-on: ubuntu-latest
-    permissions: 
-      id-token: write #This is required for requesting the OIDC JWT Token
-      contents: read #Required when GH token is used to authenticate with private repo
-
-    steps:
-      - name: Checkout to the branch
-        uses: actions/checkout@v2
-
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.DEALMATCHERBACKENDPROD_AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.DEALMATCHERBACKENDPROD_AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.DEALMATCHERBACKENDPROD_AZURE_SUBSCRIPTION_ID }}
-
-      - name: Build and push container image to registry
-        uses: azure/container-apps-deploy-action@v2
-        with:
-          appSourcePath: ${{ github.workspace }}/src/backend
-          _dockerfilePathKey_: _dockerfilePath_
-          _targetLabelKey_: _targetLabel_
-          registryUrl: docker.io
-          registryUsername: ${{ secrets.DEALMATCHERBACKENDPROD_REGISTRY_USERNAME }}
-          registryPassword: ${{ secrets.DEALMATCHERBACKENDPROD_REGISTRY_PASSWORD }}
-          containerAppName: dealmatcher-backend-prod
-          resourceGroup: rg-dealmatcher
-          imageToBuild: xxxdkgxxx/dealmatcher-backend-prod:${{ github.sha }}
-          _buildArgumentsKey_: |
-            _buildArgumentsValues_
-
   frontend-cd-main:
     name: Dealmatcher main frontend CD - main
     runs-on: ubuntu-latest

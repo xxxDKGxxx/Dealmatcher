@@ -1,19 +1,14 @@
-name: Dealmatcher Backend CI
+name: Dealmatcher Backend CI - Main
 
 on:
   push:
-    branches: ["develop"]
-    paths:
-      - "src/backend/**"
-      - ".github/workflows/backend-ci.yml"
+    branches: ["main"]
+  
   pull_request:
-    branches: ["develop"]
-    paths:
-      - "src/backend/**"
-      - ".github/workflows/backend-ci.yml"
+    branches: ["main"]
 
 jobs:
-  build:
+  backend-build:
     name: Dealmatcher Backend Build & Test (.NET 9)
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +31,7 @@ jobs:
         working-directory: src/backend
         run: dotnet test --no-build --verbosity normal
 
-  editorconfig:
+  backend-format:
     name: EditorConfig Checker
     runs-on: ubuntu-latest
     steps:
