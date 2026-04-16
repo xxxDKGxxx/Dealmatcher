@@ -1,7 +1,4 @@
-﻿using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Containers;
-
-namespace Dealmatcher.Backend.IntegrationTests.Infrastructure;
+﻿namespace Dealmatcher.Backend.IntegrationTests.Infrastructure.Services;
 
 public class BlobStorageIntegrationTests : IAsyncLifetime
 {
