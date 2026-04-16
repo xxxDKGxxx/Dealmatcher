@@ -130,7 +130,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                       label: Text(offer.status.name.toUpperCase()),
                       backgroundColor: _getStatusColor(
                         offer.status,
-                      ).withOpacity(0.1),
+                      ).withValues(alpha: 0.1),
                       labelStyle: TextStyle(
                         color: _getStatusColor(offer.status),
                       ),
