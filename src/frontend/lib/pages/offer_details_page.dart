@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/models/category.dart';
+import 'package:frontend/models/property_definition.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/display_field.dart';
 
@@ -14,12 +15,18 @@ class OfferDetailsPage extends StatefulWidget {
 }
 
 class _OfferDetailsPageState extends State<OfferDetailsPage> {
-  late Future<Offer> _offerFuture;
+  late Future<(Offer, List<PropertyDefinition>)> _dataFuture;
 
   @override
   void initState() {
     super.initState();
-    _offerFuture = _fetchOfferDetails(widget.offerId);
+    _dataFuture = _fetchData();
+  }
+
+  Future<(Offer, List<PropertyDefinition>)> _fetchData() async {
+    final offer = await _fetchOfferDetails(widget.offerId);
+    final properties = await _fetchProperties(offer.category.id);
+    return (offer, properties);
   }
 
   // Mock fetch method - easy to replace with API call later
@@ -40,20 +47,18 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
       ],
       seller: const Seller(id: 1, name: "TechStore Poland"),
       category: Category(
-        id: 1,
+        id: 0,
         name: "Laptops",
         description: "Portable personal computers for mobile use.",
       ),
       tags: ["Gaming", "RTX", "Laptop", "Performance"],
-      properties: [
-        const OfferProperty(id: 1, name: "CPU", value: "Intel Core i9-13900HX"),
-        const OfferProperty(id: 2, name: "GPU", value: "NVIDIA RTX 4080"),
-        const OfferProperty(id: 3, name: "RAM (GB)", value: "32"),
-        const OfferProperty(id: 4, name: "Storage (GB)", value: "1000"),
-        const OfferProperty(id: 5, name: "OS", value: "Windows 11 Home"),
-        const OfferProperty(id: 6, name: "Has RGB Keyboard", value: "true"),
-        const OfferProperty(id: 7, name: "In Stock", value: "false"),
-      ],
+      properties: {
+        0: "Intel Core i9-13900HX",
+        1: "32",
+        2: "1000",
+        3: "Windows 11 Home",
+        4: "false",
+      },
       availability: 5,
       status: OfferStatus.active,
       createdAt: DateTime.now().subtract(const Duration(days: 2)),
@@ -61,12 +66,80 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
     );
   }
 
+  Future<List<PropertyDefinition>> _fetchProperties(int categoryId) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (categoryId == 0) {
+      // Computers/Laptops
+      return [
+        PropertyDefinition(
+          id: 0,
+          name: 'Model',
+          type: PropertyType.text,
+          options: [],
+        ),
+        PropertyDefinition(
+          id: 1,
+          name: "RAM (GB)",
+          type: PropertyType.number,
+          options: [],
+        ),
+        PropertyDefinition(
+          id: 2,
+          name: "Storage (GB)",
+          type: PropertyType.number,
+          options: [],
+        ),
+        PropertyDefinition(
+          id: 3,
+          name: "OS",
+          type: PropertyType.select,
+          options: ["Windows", "Linux", "MacOS"],
+        ),
+        PropertyDefinition(
+          id: 4,
+          name: "Is New",
+          type: PropertyType.boolean,
+          options: [],
+        ),
+      ];
+    } else if (categoryId == 1) {
+      // Apartments
+      return [
+        PropertyDefinition(
+          id: 5,
+          name: "Rooms",
+          type: PropertyType.number,
+          options: [],
+        ),
+        PropertyDefinition(
+          id: 6,
+          name: "Floor",
+          type: PropertyType.number,
+          options: [],
+        ),
+        PropertyDefinition(
+          id: 7,
+          name: "Has Balcony",
+          type: PropertyType.boolean,
+          options: [],
+        ),
+        PropertyDefinition(
+          id: 8,
+          name: "Heating",
+          type: PropertyType.select,
+          options: ["Gas", "Electric", "Central"],
+        ),
+      ];
+    }
+    return [];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const DealmatcherAppBar(),
-      body: FutureBuilder<Offer>(
-        future: _offerFuture,
+      body: FutureBuilder<(Offer, List<PropertyDefinition>)>(
+        future: _dataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -78,14 +151,17 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
             return const Center(child: Text('Offer not found'));
           }
 
-          final offer = snapshot.data!;
-          return _buildOfferDetails(offer);
+          final data = snapshot.data!;
+          return _buildOfferDetails(data.$1, data.$2);
         },
       ),
     );
   }
 
-  Widget _buildOfferDetails(Offer offer) {
+  Widget _buildOfferDetails(
+    Offer offer,
+    List<PropertyDefinition> propertyDefinitions,
+  ) {
     final theme = Theme.of(context);
 
     return SingleChildScrollView(
@@ -164,7 +240,19 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  ...offer.properties.map((prop) => _buildPropertyRow(prop)),
+                  ...offer.properties.entries.map((entry) {
+                    final definition = propertyDefinitions.firstWhere(
+                      (d) => d.id == entry.key,
+                      orElse:
+                          () => PropertyDefinition(
+                            id: entry.key,
+                            name: "Property ${entry.key}",
+                            type: PropertyType.text,
+                            options: [],
+                          ),
+                    );
+                    return _buildPropertyRow(definition, entry.value);
+                  }),
                   const SizedBox(height: 24),
                 ],
 
@@ -293,11 +381,11 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
     );
   }
 
-  Widget _buildPropertyRow(OfferProperty prop) {
+  Widget _buildPropertyRow(PropertyDefinition definition, String value) {
     Widget valueWidget;
 
-    final valueLower = prop.value.toLowerCase();
-    if (valueLower == 'true' || valueLower == 'false') {
+    final valueLower = value.toLowerCase();
+    if (definition.type == PropertyType.boolean) {
       final bool val = valueLower == 'true';
       valueWidget = Icon(
         val ? Icons.check_circle : Icons.cancel,
@@ -305,7 +393,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
         size: 20,
       );
     } else {
-      valueWidget = Text(prop.value);
+      valueWidget = Text(value);
     }
 
     return Padding(
@@ -315,7 +403,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
           Expanded(
             flex: 2,
             child: Text(
-              prop.name,
+              definition.name,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.grey,

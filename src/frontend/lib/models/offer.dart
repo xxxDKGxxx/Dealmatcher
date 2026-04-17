@@ -25,7 +25,7 @@ class Offer {
   final Seller seller;
   final Category category;
   final List<String> tags;
-  final List<OfferProperty> properties;
+  final Map<int, String> properties;
   final int availability;
   final OfferStatus status;
   final DateTime createdAt;
@@ -36,17 +36,6 @@ class Seller {
   const Seller({required this.id, required this.name});
   final int id;
   final String name;
-}
-
-class OfferProperty {
-  const OfferProperty({
-    required this.id,
-    required this.name,
-    required this.value,
-  });
-  final int id;
-  final String name;
-  final String value;
 }
 
 enum OfferStatus {
