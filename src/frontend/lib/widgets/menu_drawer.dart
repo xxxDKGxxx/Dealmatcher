@@ -22,6 +22,15 @@ class MenuDrawer extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
             ),
           ),
+          // My offers page
+          ListTile(
+            leading: Icon(Icons.local_offer),
+            title: Text('My Offers'),
+            onTap: () {
+              context.go('/my_offers');
+            },
+          ),
+          // Profile Page
           ListTile(
             leading: Icon(Icons.person),
             title: Text('Profile'),

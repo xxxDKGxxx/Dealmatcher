@@ -2,6 +2,7 @@ import 'package:frontend/api/api_core.dart';
 import 'package:frontend/pages/create_offer_page.dart';
 import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/login_page.dart';
+import 'package:frontend/pages/my_offers_page.dart';
 import 'package:frontend/pages/profile_edit_page.dart';
 import 'package:frontend/pages/profile_page.dart';
 import 'package:frontend/pages/register_page.dart';
@@ -31,5 +32,6 @@ final GoRouter globalRouter = GoRouter(
       path: '/profile-edit',
       builder: (context, state) => ProfileEditPage(),
     ),
+    GoRoute(path: '/my_offers', builder: (context, state) => MyOffersPage()),
   ],
 );

@@ -11,7 +11,14 @@ class DealmatcherAppBar extends StatelessWidget implements PreferredSizeWidget {
     final theme = Theme.of(context);
     return AppBar(
       title: TextButton(
-        child: Text('DealMatcher', style: theme.textTheme.titleLarge),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Icon(Icons.home, size: 24),
+            const SizedBox(width: 8),
+            Text('DealMatcher', style: theme.textTheme.titleLarge),
+          ],
+        ),
         onPressed: () => context.go('/'),
       ),
       backgroundColor: theme.colorScheme.inversePrimary,
