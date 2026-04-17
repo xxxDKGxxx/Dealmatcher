@@ -10,6 +10,8 @@ global using Dealmatcher.Backend.API.Extensions;
 global using Dealmatcher.Backend.API.Interfaces;
 global using Dealmatcher.Backend.API.Middleware;
 global using Dealmatcher.Backend.API.Services;
+global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
+global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Dto;
 global using Dealmatcher.Backend.Infrastructure.Configs;
 global using Dealmatcher.Backend.Infrastructure.Data;
