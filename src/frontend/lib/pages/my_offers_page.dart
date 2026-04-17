@@ -4,7 +4,9 @@ import 'package:frontend/models/offer.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 
 class MyOffersPage extends StatefulWidget {
-  const MyOffersPage({super.key});
+  const MyOffersPage({super.key, this.offersFuture});
+
+  final Future<List<Offer>>? offersFuture;
 
   @override
   State<StatefulWidget> createState() => _MyOffersPageState();
@@ -16,7 +18,7 @@ class _MyOffersPageState extends State<MyOffersPage> {
   @override
   void initState() {
     super.initState();
-    _dataFuture = _fetchData();
+    _dataFuture = widget.offersFuture ?? _fetchData();
   }
 
   Future<List<Offer>> _fetchData() async {
