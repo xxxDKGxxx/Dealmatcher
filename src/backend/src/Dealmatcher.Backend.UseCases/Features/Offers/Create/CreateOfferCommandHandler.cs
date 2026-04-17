@@ -23,9 +23,13 @@ public sealed class CreateOfferCommandHandler(
         }
 
         List<Property> properties = [];
-        foreach (var propertyName in request.Properties.Keys)
+        foreach (var propertyId in request.Properties.Keys)
         {
-            var propertyDefinition = category.PropertyDefinitions.Where(pd => pd.Name == propertyName).FirstOrDefault();
+            if (!int.TryParse(propertyId, out int propertyIdParsed))
+            {
+                return Result.Invalid();
+            }
+            var propertyDefinition = category.PropertyDefinitions.Where(pd => pd.Id == propertyIdParsed).FirstOrDefault();
             if (propertyDefinition is null)
             {
                 return Result.Invalid();
@@ -33,7 +37,7 @@ public sealed class CreateOfferCommandHandler(
 
             try
             {
-                var property = propertyDefinition.CreatePropertyString(request.Properties[propertyName]);
+                var property = propertyDefinition.CreatePropertyString(request.Properties[propertyId]);
                 properties.Add(property);
             }
             catch
