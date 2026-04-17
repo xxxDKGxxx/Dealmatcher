@@ -64,12 +64,73 @@ class _MockHttpClientResponse implements HttpClientResponse {
 }
 
 const List<int> _transparentImage = [
-  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49,
-  0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06,
-  0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4, 0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44,
-  0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00, 0x05, 0x00, 0x01, 0x0D,
-  0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42,
-  0x60, 0x82,
+  0x89,
+  0x50,
+  0x4E,
+  0x47,
+  0x0D,
+  0x0A,
+  0x1A,
+  0x0A,
+  0x00,
+  0x00,
+  0x00,
+  0x0D,
+  0x49,
+  0x48,
+  0x44,
+  0x52,
+  0x00,
+  0x00,
+  0x00,
+  0x01,
+  0x00,
+  0x00,
+  0x00,
+  0x01,
+  0x08,
+  0x06,
+  0x00,
+  0x00,
+  0x00,
+  0x1F,
+  0x15,
+  0xC4,
+  0x89,
+  0x00,
+  0x00,
+  0x00,
+  0x0A,
+  0x49,
+  0x44,
+  0x41,
+  0x54,
+  0x78,
+  0x9C,
+  0x63,
+  0x00,
+  0x01,
+  0x00,
+  0x00,
+  0x05,
+  0x00,
+  0x01,
+  0x0D,
+  0x0A,
+  0x2D,
+  0xB4,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x49,
+  0x45,
+  0x4E,
+  0x44,
+  0xAE,
+  0x42,
+  0x60,
+  0x82,
 ];
 
 void main() {
@@ -78,9 +139,7 @@ void main() {
   });
 
   Widget createWidgetUnderTest() {
-    return const MaterialApp(
-      home: OfferDetailsPage(offerId: 1),
-    );
+    return const MaterialApp(home: OfferDetailsPage(offerId: 1));
   }
 
   testWidgets('shows loading indicator initially', (WidgetTester tester) async {
@@ -94,7 +153,9 @@ void main() {
     await tester.pumpAndSettle(const Duration(seconds: 2));
   });
 
-  testWidgets('displays offer details after data is loaded', (WidgetTester tester) async {
+  testWidgets('displays offer details after data is loaded', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
     // Wait for the mock delays to complete (1 second for offer + 0.5s for properties)
@@ -108,7 +169,12 @@ void main() {
     expect(find.text('4500.00 PLN'), findsOneWidget);
     expect(find.text('ACTIVE'), findsOneWidget); // Status
     expect(find.text('Laptops'), findsOneWidget); // Category
-    expect(find.text('A powerful gaming laptop with the latest components, perfect for gaming and professional workloads. Lightly used, excellent condition.'), findsOneWidget);
+    expect(
+      find.text(
+        'A powerful gaming laptop with the latest components, perfect for gaming and professional workloads. Lightly used, excellent condition.',
+      ),
+      findsOneWidget,
+    );
 
     // Verify properties
     expect(find.text('Intel Core i9-13900HX'), findsOneWidget);
@@ -128,7 +194,9 @@ void main() {
     expect(find.text('CONTACT SELLER'), findsOneWidget);
   });
 
-  testWidgets('verifies boolean property icon is displayed', (WidgetTester tester) async {
+  testWidgets('verifies boolean property icon is displayed', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle(const Duration(seconds: 2));
 

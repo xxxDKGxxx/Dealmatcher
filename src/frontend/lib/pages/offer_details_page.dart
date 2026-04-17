@@ -243,13 +243,12 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                   ...offer.properties.entries.map((entry) {
                     final definition = propertyDefinitions.firstWhere(
                       (d) => d.id == entry.key,
-                      orElse:
-                          () => PropertyDefinition(
-                            id: entry.key,
-                            name: "Property ${entry.key}",
-                            type: PropertyType.text,
-                            options: [],
-                          ),
+                      orElse: () => PropertyDefinition(
+                        id: entry.key,
+                        name: "Property ${entry.key}",
+                        type: PropertyType.text,
+                        options: [],
+                      ),
                     );
                     return _buildPropertyRow(definition, entry.value);
                   }),
