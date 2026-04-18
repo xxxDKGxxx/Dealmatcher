@@ -1,27 +1,12 @@
 ﻿namespace Dealmatcher.Backend.FunctionalTests.Endpoints.Authentication;
 
-public class LoginTests(CustomWebApplicationFactory factory) : IClassFixture<CustomWebApplicationFactory>
+public class LoginTests(CustomWebApplicationFactory factory) : EndpointTestBase(factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
-    private readonly CustomWebApplicationFactory _factory = factory;
-
-    private async Task SeedUser(string email, string password)
-    {
-        using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-
-        var user = new User(email, hasher.HashPassword(password), "Test", "User");
-        db.Set<User>().Add(user);
-        await db.SaveChangesAsync();
-    }
-
     private async Task SeedInactiveUser(string email, string password)
     {
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-
         var user = new User(email, hasher.HashPassword(password), "Test", "User");
         user.Delete();
         db.Set<User>().Add(user);

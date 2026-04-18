@@ -1,33 +1,17 @@
 ﻿namespace Dealmatcher.Backend.FunctionalTests.Endpoints.Authentication;
 
-public class RegisterTests(CustomWebApplicationFactory factory) : IClassFixture<CustomWebApplicationFactory>
+public class RegisterTests(CustomWebApplicationFactory factory) : EndpointTestBase(factory)
 {
-    private readonly HttpClient _client = factory.CreateClient();
-    private readonly CustomWebApplicationFactory _factory = factory;
-
-    private async Task SeedUser(string email, string password)
-    {
-        using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-
-        var user = new User(email, hasher.HashPassword(password), "Test", "User");
-        db.Set<User>().Add(user);
-        await db.SaveChangesAsync();
-    }
-
     [Fact]
     public async Task Register_ValidData_ReturnsCreated()
     {
-        var request = new
+        var response = await _client.PostAsJsonAsync("/api/v1/users/register", new
         {
             Email = "newuser@example.com",
             Password = "ValidPassword123",
             Name = "Jan",
             Surname = "Kowalski"
-        };
-
-        var response = await _client.PostAsJsonAsync("/api/v1/users/register", request);
+        });
 
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
@@ -43,15 +27,13 @@ public class RegisterTests(CustomWebApplicationFactory factory) : IClassFixture<
     [Fact]
     public async Task Register_InvalidData_ReturnsBadRequest()
     {
-        var request = new
+        var response = await _client.PostAsJsonAsync("/api/v1/users/register", new
         {
             Email = "bad-email-format",
             Password = "123",
             Name = "",
             Surname = "Kowalski"
-        };
-
-        var response = await _client.PostAsJsonAsync("/api/v1/users/register", request);
+        });
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
@@ -61,15 +43,13 @@ public class RegisterTests(CustomWebApplicationFactory factory) : IClassFixture<
     {
         await SeedUser("active@example.com", "Password123!");
 
-        var request = new
+        var response = await _client.PostAsJsonAsync("/api/v1/users/register", new
         {
             Email = "active@example.com",
             Password = "ValidPassword123",
             Name = "Jan",
             Surname = "Kowalski"
-        };
-
-        var response = await _client.PostAsJsonAsync("/api/v1/users/register", request);
+        });
 
         response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
     }
@@ -87,15 +67,13 @@ public class RegisterTests(CustomWebApplicationFactory factory) : IClassFixture<
             await db.SaveChangesAsync();
         }
 
-        var request = new
+        var response = await _client.PostAsJsonAsync("/api/v1/users/register", new
         {
             Email = "banned@example.com",
             Password = "ValidPassword123",
             Name = "Jan",
             Surname = "Kowalski"
-        };
-
-        var response = await _client.PostAsJsonAsync("/api/v1/users/register", request);
+        });
 
         response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
     }
@@ -113,15 +91,13 @@ public class RegisterTests(CustomWebApplicationFactory factory) : IClassFixture<
             await db.SaveChangesAsync();
         }
 
-        var request = new
+        var response = await _client.PostAsJsonAsync("/api/v1/users/register", new
         {
             Email = "inactive@example.com",
             Password = "ValidPassword123",
             Name = "NowyJan",
             Surname = "NowyKowalski"
-        };
-
-        var response = await _client.PostAsJsonAsync("/api/v1/users/register", request);
+        });
 
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
     }
