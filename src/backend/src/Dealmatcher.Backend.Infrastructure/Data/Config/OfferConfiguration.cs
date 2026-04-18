@@ -8,6 +8,8 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
 
         builder.ToTable($"{nameof(Offer)}s");
 
+        builder.HasQueryFilter(o => !o.Seller.IsDeleted);
+
         builder.Property(o => o.Title)
             .IsRequired()
             .HasMaxLength(DataSchemaConstants.OfferTitleMaxLength);
