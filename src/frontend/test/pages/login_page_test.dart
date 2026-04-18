@@ -8,22 +8,16 @@ void main() {
     final router = GoRouter(
       initialLocation: '/login',
       routes: [
-        GoRoute(
-          path: '/login',
-          builder: (context, state) => const LoginPage(),
-        ),
+        GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
         GoRoute(
           path: '/register',
-          builder: (context, state) => const Scaffold(
-            body: Text('register page'),
-          ),
+          builder: (context, state) =>
+              const Scaffold(body: Text('register page')),
         ),
       ],
     );
 
-    return MaterialApp.router(
-      routerConfig: router,
-    );
+    return MaterialApp.router(routerConfig: router);
   }
 
   testWidgets('Display default UI elements', (WidgetTester tester) async {
@@ -35,7 +29,9 @@ void main() {
     expect(find.byType(ElevatedButton), findsOneWidget);
   });
 
-  testWidgets('Registration link click goes to registration page', (WidgetTester tester) async {
+  testWidgets('Registration link click goes to registration page', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle();
 
@@ -47,7 +43,9 @@ void main() {
     expect(find.text('register page'), findsOneWidget);
   });
 
-  testWidgets('Filling form and clicking Login shows snackbar', (WidgetTester tester) async {
+  testWidgets('Filling form and clicking Login shows snackbar', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle();
 

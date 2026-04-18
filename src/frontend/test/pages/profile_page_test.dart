@@ -19,14 +19,13 @@ void main() {
         ),
         GoRoute(
           path: '/profile-edit',
-          builder: (context, state) => const Scaffold(body: Text('Edit Profile Page')),
+          builder: (context, state) =>
+              const Scaffold(body: Text('Edit Profile Page')),
         ),
       ],
     );
 
-    return MaterialApp.router(
-      routerConfig: router,
-    );
+    return MaterialApp.router(routerConfig: router);
   }
 
   testWidgets('Shows loader during data fetch', (WidgetTester tester) async {
@@ -38,7 +37,9 @@ void main() {
     await tester.pumpAndSettle(const Duration(seconds: 2));
   });
 
-  testWidgets('Handles API error and shows message', (WidgetTester tester) async {
+  testWidgets('Handles API error and shows message', (
+    WidgetTester tester,
+  ) async {
     setDesktopSize(tester);
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -54,7 +55,9 @@ void main() {
     expect(find.byType(SnackBar), findsOneWidget);
   });
 
-  testWidgets('Edit button press goes to profile edit page', (WidgetTester tester) async {
+  testWidgets('Edit button press goes to profile edit page', (
+    WidgetTester tester,
+  ) async {
     setDesktopSize(tester);
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle(const Duration(seconds: 2));

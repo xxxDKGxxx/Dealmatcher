@@ -13,17 +13,16 @@ void main() {
     final router = GoRouter(
       initialLocation: '/',
       routes: [
-        GoRoute(
-          path: '/',
-          builder: (context, state) => const HomePage(),
-        ),
+        GoRoute(path: '/', builder: (context, state) => const HomePage()),
         GoRoute(
           path: '/add-offer',
-          builder: (context, state) => const Scaffold(body: Text('Add Offer Page')),
+          builder: (context, state) =>
+              const Scaffold(body: Text('Add Offer Page')),
         ),
         GoRoute(
           path: '/profile',
-          builder: (context, state) => const Scaffold(body: Text('Profile Page')),
+          builder: (context, state) =>
+              const Scaffold(body: Text('Profile Page')),
         ),
         GoRoute(
           path: '/login',
@@ -32,12 +31,12 @@ void main() {
       ],
     );
 
-    return MaterialApp.router(
-      routerConfig: router,
-    );
+    return MaterialApp.router(routerConfig: router);
   }
 
-  testWidgets('Welcome test and add offer icon on home page', (WidgetTester tester) async {
+  testWidgets('Welcome test and add offer icon on home page', (
+    WidgetTester tester,
+  ) async {
     setDesktopSize(tester);
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle();
@@ -58,7 +57,9 @@ void main() {
     expect(find.text('Add Offer Page'), findsOneWidget);
   });
 
-  testWidgets('Drawer opening and navigation to profile page', (WidgetTester tester) async {
+  testWidgets('Drawer opening and navigation to profile page', (
+    WidgetTester tester,
+  ) async {
     setDesktopSize(tester);
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle();
@@ -76,7 +77,9 @@ void main() {
     expect(find.text('Profile Page'), findsOneWidget);
   });
 
-  testWidgets('Logout cleans session and shows snackbar', (WidgetTester tester) async {
+  testWidgets('Logout cleans session and shows snackbar', (
+    WidgetTester tester,
+  ) async {
     setDesktopSize(tester);
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle();

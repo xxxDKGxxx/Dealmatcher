@@ -19,17 +19,18 @@ void main() {
         ),
         GoRoute(
           path: '/profile',
-          builder: (context, state) => const Scaffold(body: Text('Profile Page')),
+          builder: (context, state) =>
+              const Scaffold(body: Text('Profile Page')),
         ),
       ],
     );
 
-    return MaterialApp.router(
-      routerConfig: router,
-    );
+    return MaterialApp.router(routerConfig: router);
   }
 
-  testWidgets('Displays loader and then error (because tests are offline)', (WidgetTester tester) async {
+  testWidgets('Displays loader and then error (because tests are offline)', (
+    WidgetTester tester,
+  ) async {
     setDesktopSize(tester);
     await tester.pumpWidget(createWidgetUnderTest());
 
@@ -40,7 +41,9 @@ void main() {
     expect(find.text('Error loading user data.'), findsOneWidget);
   });
 
-  testWidgets('Update button is visible and clickable', (WidgetTester tester) async {
+  testWidgets('Update button is visible and clickable', (
+    WidgetTester tester,
+  ) async {
     setDesktopSize(tester);
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle(const Duration(seconds: 2));

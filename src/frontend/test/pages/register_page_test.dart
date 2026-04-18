@@ -9,8 +9,7 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
   }
 
-  tearDown(() {
-  });
+  tearDown(() {});
 
   Widget createWidgetUnderTest() {
     final router = GoRouter(
@@ -27,9 +26,7 @@ void main() {
       ],
     );
 
-    return MaterialApp.router(
-      routerConfig: router,
-    );
+    return MaterialApp.router(routerConfig: router);
   }
 
   testWidgets('Display UI', (WidgetTester tester) async {
