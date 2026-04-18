@@ -8,7 +8,7 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
 
         builder.ToTable($"{nameof(Offer)}s");
 
-        builder.HasQueryFilter(o => !o.Seller.IsDeleted);
+        builder.HasQueryFilter(o => o.Seller.Status == UserStatus.Active);
 
         builder.Property(o => o.Title)
             .IsRequired()
