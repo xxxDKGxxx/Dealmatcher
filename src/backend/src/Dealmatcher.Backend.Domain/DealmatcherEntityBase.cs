@@ -8,12 +8,12 @@ public abstract class DealmatcherEntityBase : EntityBase
 
     public virtual void Delete()
     {
-        IsDeleted = false;
+        IsDeleted = true;
     }
 
     public virtual void UnDelete()
     {
-        IsDeleted = true;
+        IsDeleted = false;
     }
 
     public void MarkUpdated()
