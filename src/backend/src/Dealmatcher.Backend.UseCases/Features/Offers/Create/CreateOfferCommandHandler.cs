@@ -37,7 +37,7 @@ public sealed class CreateOfferCommandHandler(
 
             try
             {
-                var property = propertyDefinition.CreatePropertyString(request.Properties[propertyId]);
+                var property = propertyDefinition.CreatePropertyFromString(request.Properties[propertyId]);
                 properties.Add(property);
             }
             catch
