@@ -14,9 +14,7 @@ public sealed class SelectProperty : Property<string>
         {
             throw new ArgumentException($"Invalid {nameof(SelectProperty)} value: '{value}' for {nameof(SelectPropertyDefinition)}: '{PropertyDefinition.Name}'");
         }
-        else
-        {
-            Value = value;
-        }
+
+        Value = value;
     }
 }

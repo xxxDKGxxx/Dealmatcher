@@ -27,11 +27,14 @@ public sealed class CreateOfferCommandHandler(
         {
             if (!int.TryParse(propertyId, out int propertyIdParsed))
             {
+                // nieprawidłowy format requesta
                 return Result.Invalid();
             }
+
             var propertyDefinition = category.PropertyDefinitions.Where(pd => pd.Id == propertyIdParsed).FirstOrDefault();
             if (propertyDefinition is null)
             {
+                // nieprawidłowe id property
                 return Result.Invalid();
             }
 
@@ -42,6 +45,7 @@ public sealed class CreateOfferCommandHandler(
             }
             catch
             {
+                // nieprawidłowa wartość property
                 return Result.Invalid();
             }
         }
