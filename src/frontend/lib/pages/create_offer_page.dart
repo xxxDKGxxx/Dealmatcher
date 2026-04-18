@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../models/category.dart';
-import '../models/property.dart';
+import '../models/property_definition.dart';
 
 class CreateOfferPage extends StatefulWidget {
   const CreateOfferPage({super.key});
@@ -32,7 +32,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
   final TextEditingController _tagController = TextEditingController();
   final List<String> _tags = [];
 
-  Future<List<Property>>? _propertiesFuture;
+  Future<List<PropertyDefinition>>? _propertiesFuture;
   final Map<String, dynamic> _properties = {};
 
   final List<XFile> _images = [];
@@ -108,31 +108,36 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     ];
   }
 
-  Future<List<Property>> _fetchProperties(int categoryId) async {
+  Future<List<PropertyDefinition>> _fetchProperties(int categoryId) async {
     await Future.delayed(const Duration(seconds: 1));
     if (categoryId == 0) {
       // Computers
       return [
-        Property(id: 0, name: 'Model', type: PropertyType.text, options: []),
-        Property(
+        PropertyDefinition(
+          id: 0,
+          name: 'Model',
+          type: PropertyType.text,
+          options: [],
+        ),
+        PropertyDefinition(
           id: 1,
           name: "RAM (GB)",
           type: PropertyType.number,
           options: [],
         ),
-        Property(
+        PropertyDefinition(
           id: 2,
           name: "Storage (GB)",
           type: PropertyType.number,
           options: [],
         ),
-        Property(
+        PropertyDefinition(
           id: 3,
           name: "OS",
           type: PropertyType.select,
           options: ["Windows", "Linux", "MacOS"],
         ),
-        Property(
+        PropertyDefinition(
           id: 4,
           name: "Is New",
           type: PropertyType.boolean,
@@ -142,15 +147,25 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     } else if (categoryId == 1) {
       // Apartments
       return [
-        Property(id: 5, name: "Rooms", type: PropertyType.number, options: []),
-        Property(id: 6, name: "Floor", type: PropertyType.number, options: []),
-        Property(
+        PropertyDefinition(
+          id: 5,
+          name: "Rooms",
+          type: PropertyType.number,
+          options: [],
+        ),
+        PropertyDefinition(
+          id: 6,
+          name: "Floor",
+          type: PropertyType.number,
+          options: [],
+        ),
+        PropertyDefinition(
           id: 7,
           name: "Has Balcony",
           type: PropertyType.boolean,
           options: [],
         ),
-        Property(
+        PropertyDefinition(
           id: 8,
           name: "Heating",
           type: PropertyType.select,
@@ -406,7 +421,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                       const SizedBox(height: 32),
 
                       // Properties Section
-                      FutureBuilder<List<Property>>(
+                      FutureBuilder<List<PropertyDefinition>>(
                         future: _propertiesFuture,
                         builder: (context, snapshot) {
                           if (_selectedCategory == null) {
