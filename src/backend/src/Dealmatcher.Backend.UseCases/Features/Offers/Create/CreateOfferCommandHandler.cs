@@ -12,14 +12,14 @@ public sealed class CreateOfferCommandHandler(
         var seller = await userRepository.FirstOrDefaultAsync(activeUserByIdSpec, cancellationToken);
         if (seller is null)
         {
-            return Result.Invalid();
+            return Result.Invalid(new ValidationError($"Invalid seller Id: {request.SellerId}"));
         }
 
         var categoryByIdWithDefinitionsSpec = new CategoryWithDefinitionsByIdSpec(request.CategoryId);
         var category = await categoryRepository.FirstOrDefaultAsync(categoryByIdWithDefinitionsSpec, cancellationToken);
         if (category is null)
         {
-            return Result.Invalid();
+            return Result.Invalid(new ValidationError($"Invalid category Id: {request.CategoryId}"));
         }
 
         List<Property> properties = [];
@@ -27,15 +27,13 @@ public sealed class CreateOfferCommandHandler(
         {
             if (!int.TryParse(propertyId, out int propertyIdParsed))
             {
-                // nieprawidłowy format requesta
-                return Result.Invalid();
+                return Result.Invalid(new ValidationError($"Invalid property Id: {propertyId}"));
             }
 
             var propertyDefinition = category.PropertyDefinitions.Where(pd => pd.Id == propertyIdParsed).FirstOrDefault();
             if (propertyDefinition is null)
             {
-                // nieprawidłowe id property
-                return Result.Invalid();
+                return Result.Invalid(new ValidationError($"Invalid property Id: {propertyId}"));
             }
 
             try
@@ -45,8 +43,7 @@ public sealed class CreateOfferCommandHandler(
             }
             catch
             {
-                // nieprawidłowa wartość property
-                return Result.Invalid();
+                return Result.Invalid(new ValidationError($"Invalid property value: {request.Properties[propertyId]}"));
             }
         }
 
