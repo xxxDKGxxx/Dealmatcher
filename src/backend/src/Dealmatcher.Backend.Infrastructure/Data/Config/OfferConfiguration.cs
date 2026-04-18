@@ -35,10 +35,16 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
             .HasForeignKey("SellerId")
             .OnDelete(DeleteBehavior.NoAction);
 
+        builder.Navigation(o => o.Seller)
+            .AutoInclude();
+
         builder.HasOne(o => o.Category)
             .WithMany()
             .HasForeignKey("CategoryId")
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Navigation(o => o.Category)
+            .AutoInclude();
 
         builder.HasMany(o => o.Properties)
             .WithOne()
@@ -47,6 +53,7 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Navigation(o => o.Properties)
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .AutoInclude();
     }
 }
