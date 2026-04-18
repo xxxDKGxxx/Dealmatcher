@@ -6,8 +6,6 @@ public sealed class SelectProperty : Property<string>
 
     private SelectProperty() { }
 
-    public override void Delete() { }
-
     public override void SetValue(string value)
     {
         if (!(PropertyDefinition as SelectPropertyDefinition)?.Values.Contains(value) ?? throw new InvalidCastException($"{PropertyDefinition.Name} is not a {nameof(SelectPropertyDefinition)}"))

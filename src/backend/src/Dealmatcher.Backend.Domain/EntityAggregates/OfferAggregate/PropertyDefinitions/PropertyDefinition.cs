@@ -14,7 +14,6 @@ public abstract class PropertyDefinition : DealmatcherEntityBase
     protected PropertyDefinition() { }
 
     public abstract Property CreatePropertyFromString(string value);
-    public override void Delete() { }
 }
 
 public abstract class PropertyDefinition<T> : PropertyDefinition where T : IParsable<T>
