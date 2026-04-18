@@ -1,6 +1,6 @@
 ﻿using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
-using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
 using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
+using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
 using FastEndpoints;
 
 namespace Dealmatcher.Backend.FunctionalTests.Endpoints;
@@ -11,14 +11,14 @@ public abstract class EndpointTestBase(CustomWebApplicationFactory factory) : IA
     protected readonly HttpClient _client = factory.CreateClient();
     protected readonly CustomWebApplicationFactory _factory = factory;
 
-    private async Task CleanDatabaseAsync(IServiceProvider services)
+    private static async Task CleanDatabaseAsync(IServiceProvider services)
     {
         using var scope = services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.EnsureDeletedAsync();
         await db.Database.EnsureCreatedAsync();
     }
-    
+
     public async Task InitializeAsync()
     {
         await CleanDatabaseAsync(_factory.Services);
