@@ -1,4 +1,6 @@
-﻿namespace Dealmatcher.Backend.UseCases.Mapping.Profiles;
+﻿using AutoMapper.Execution;
+
+namespace Dealmatcher.Backend.UseCases.Mapping.Profiles;
 
 public sealed class OfferProfile : Profile
 {

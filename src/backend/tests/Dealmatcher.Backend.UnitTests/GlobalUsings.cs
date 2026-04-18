@@ -2,6 +2,7 @@
 global using System.Security.Claims;
 global using Ardalis.Result;
 global using Ardalis.SharedKernel;
+global using Ardalis.Specification;
 global using AutoMapper;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
@@ -18,6 +19,7 @@ global using Dealmatcher.Backend.Domain.Interfaces.Authentication;
 global using Dealmatcher.Backend.Infrastructure.Services;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Offers.Create;
+global using Dealmatcher.Backend.UseCases.Features.Offers.List;
 global using Dealmatcher.Backend.UseCases.Features.Users.Create;
 global using Dealmatcher.Backend.UseCases.Features.Users.Get;
 global using Dealmatcher.Backend.UseCases.Features.Users.Update;

@@ -2,15 +2,15 @@ name: Dealmatcher frontend CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ develop ]
     paths:
       - "src/frontend/**"
-      - ".github/workflows/frontend_ci.yml"
+      - ".github/workflows/frontend_ci_develop.yml"
   pull_request:
-    branches: [ main, develop ]
+    branches: [ develop ]
     paths:
       - "src/frontend/**"
-      - ".github/workflows/frontend_ci.yml"
+      - ".github/workflows/frontend_ci_develop.yml"
 
 jobs:
   frontend-ci:

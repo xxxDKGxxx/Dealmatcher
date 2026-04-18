@@ -26,7 +26,8 @@ public static class InfrastructureServicesConfigs
         services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>))
             .AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>))
             .AddScoped<IPasswordHasher, BCryptPasswordHasher>()
-            .AddScoped<ITokenService, JwtTokenService>();
+            .AddScoped<ITokenService, JwtTokenService>()
+            .AddScoped<IImageStorageService, AzureBlobStorageService>();
 
         logger.LogInformation("{Project} services registered.", "Infrastructure");
 
