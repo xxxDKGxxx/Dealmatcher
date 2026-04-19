@@ -9,7 +9,7 @@ public sealed record OfferDto(
     SellerDto Seller,
     CategoryDto Category,
     List<string> Tags,
-    List<PropertyDto> Properties,
+    Dictionary<string, string> Properties,
     int Availability,
     string Status,
     DateTime CreatedAt,

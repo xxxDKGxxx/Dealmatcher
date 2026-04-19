@@ -12,33 +12,38 @@ public sealed class CreateOfferCommandHandler(
         var seller = await userRepository.FirstOrDefaultAsync(activeUserByIdSpec, cancellationToken);
         if (seller is null)
         {
-            return Result.Invalid();
+            return Result.Invalid(new ValidationError($"Invalid seller Id: {request.SellerId}"));
         }
 
         var categoryByIdWithDefinitionsSpec = new CategoryWithDefinitionsByIdSpec(request.CategoryId);
         var category = await categoryRepository.FirstOrDefaultAsync(categoryByIdWithDefinitionsSpec, cancellationToken);
         if (category is null)
         {
-            return Result.Invalid();
+            return Result.Invalid(new ValidationError($"Invalid category Id: {request.CategoryId}"));
         }
 
         List<Property> properties = [];
-        foreach (var propertyName in request.Properties.Keys)
+        foreach (var propertyId in request.Properties.Keys)
         {
-            var propertyDefinition = category.PropertyDefinitions.Where(pd => pd.Name == propertyName).FirstOrDefault();
+            if (!int.TryParse(propertyId, out int propertyIdParsed))
+            {
+                return Result.Invalid(new ValidationError($"Invalid property Id: {propertyId}"));
+            }
+
+            var propertyDefinition = category.PropertyDefinitions.Where(pd => pd.Id == propertyIdParsed).FirstOrDefault();
             if (propertyDefinition is null)
             {
-                return Result.Invalid();
+                return Result.Invalid(new ValidationError($"Invalid property Id: {propertyId}"));
             }
 
             try
             {
-                var property = propertyDefinition.CreatePropertyString(request.Properties[propertyName]);
+                var property = propertyDefinition.CreatePropertyFromString(request.Properties[propertyId]);
                 properties.Add(property);
             }
             catch
             {
-                return Result.Invalid();
+                return Result.Invalid(new ValidationError($"Invalid property value: {request.Properties[propertyId]}"));
             }
         }
 

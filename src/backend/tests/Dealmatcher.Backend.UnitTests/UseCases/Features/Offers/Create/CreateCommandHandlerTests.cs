@@ -10,6 +10,9 @@ public class CreateOfferCommandHandlerTests
 
     private static readonly User _validUser = new("seller@example.com", "hash", "Jan", "Kowalski");
     private static readonly Category _validCategory = new("Samochody", "Kategoria samochodów");
+    private static readonly int _przebiegId = 1;
+    private static readonly int _uszkodzonyId = 2;
+    private static readonly int _markaId = 3;
 
     public CreateOfferCommandHandlerTests()
     {
@@ -23,9 +26,22 @@ public class CreateOfferCommandHandlerTests
     private static Category CreateCategoryWithDefinitions()
     {
         var category = new Category("Samochody", "Kategoria samochodów");
-        category.AddPropertyDefinition(new NumericPropertyDefinition("Przebieg", PropertyType.Numeric));
-        category.AddPropertyDefinition(new BooleanPropertyDefinition("Uszkodzony", PropertyType.Boolean));
-        category.AddPropertyDefinition(new SelectPropertyDefinition("Marka", PropertyType.Select, ["BMW", "Audi", "Mercedes"]));
+        var przebieg = new NumericPropertyDefinition("Przebieg", PropertyType.Numeric)
+        {
+            Id = _przebiegId
+        };
+        var uszkodzony = new BooleanPropertyDefinition("Uszkodzony", PropertyType.Boolean)
+        {
+            Id = _uszkodzonyId
+        };
+        var marka = new SelectPropertyDefinition("Marka", PropertyType.Select, ["BMW", "Audi", "Mercedes"])
+        {
+            Id = _markaId
+        };
+
+        category.AddPropertyDefinition(przebieg);
+        category.AddPropertyDefinition(uszkodzony);
+        category.AddPropertyDefinition(marka);
         return category;
     }
 
@@ -40,9 +56,9 @@ public class CreateOfferCommandHandlerTests
             Tags: ["samochód", "bmw"],
             Properties: properties ?? new Dictionary<string, string>
             {
-                ["Przebieg"] = "180000",
-                ["Uszkodzony"] = "false",
-                ["Marka"] = "BMW"
+                [_przebiegId.ToString()] = "180000",
+                [_uszkodzonyId.ToString()] = "false",
+                [_markaId.ToString()] = "BMW"
             },
             Availability: 1);
     }
@@ -73,7 +89,7 @@ public class CreateOfferCommandHandlerTests
                     new SellerDto(0, "Jan"),
                     new CategoryDto(0, "Samochody", "Kategoria samochodów"),
                     [.. offer.Tags],
-                    [.. offer.Properties.Select(p => new PropertyDto(p.PropertyDefinition.Name, p.StringValue))],
+                    offer.Properties.ToDictionary(p => p.PropertyDefinition.Name, p => p.StringValue),
                     offer.Availability,
                     "ACTIVE",
                     DateTime.UtcNow,
@@ -148,7 +164,7 @@ public class CreateOfferCommandHandlerTests
         SetupValidCategory();
         var command = CreateValidCommand(new Dictionary<string, string>
         {
-            ["Przebieg"] = "nie-liczba"
+            [_przebiegId.ToString()] = "nie-liczba"
         });
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -164,7 +180,7 @@ public class CreateOfferCommandHandlerTests
         SetupValidCategory();
         var command = CreateValidCommand(new Dictionary<string, string>
         {
-            ["Uszkodzony"] = "nie-bool"
+            [_uszkodzonyId.ToString()] = "nie-bool"
         });
 
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -180,7 +196,7 @@ public class CreateOfferCommandHandlerTests
         SetupValidCategory();
         var command = CreateValidCommand(new Dictionary<string, string>
         {
-            ["Marka"] = "Toyota"
+            [_markaId.ToString()] = "Toyota"
         });
 
         var result = await _handler.Handle(command, CancellationToken.None);

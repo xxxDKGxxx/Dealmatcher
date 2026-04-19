@@ -102,7 +102,7 @@ public class ListOffersByUserIdQueryHandlerTests
             new SellerDto(offer.Seller.Id, offer.Seller.Name),
             new CategoryDto(offer.Category.Id, offer.Category.Name, offer.Category.Description),
             [.. offer.Tags],
-            [.. offer.Properties.Select(p => new PropertyDto(p.PropertyDefinition.Name, p.StringValue))],
+            offer.Properties.ToDictionary(p => p.PropertyDefinition.Id.ToString(), p => p.StringValue),
             offer.Availability,
             "ACTIVE",
             DateTime.UtcNow,
