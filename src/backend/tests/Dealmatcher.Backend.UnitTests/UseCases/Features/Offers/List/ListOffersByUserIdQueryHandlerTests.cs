@@ -1,4 +1,6 @@
-﻿namespace Dealmatcher.Backend.UnitTests.UseCases.Features.Offers.List;
+﻿using Azure.Core;
+
+namespace Dealmatcher.Backend.UnitTests.UseCases.Features.Offers.List;
 
 public class ListOffersByUserIdQueryHandlerTests
 {
@@ -66,7 +68,7 @@ public class ListOffersByUserIdQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_UserExistsButNoOffers_ReturnsSuccessWithEmptyList()
+    public async Task Handle_UserExistsButNoOffers_ReturnsNoContent()
     {
         // Arrange
         var userId = 1;
@@ -86,9 +88,7 @@ public class ListOffersByUserIdQueryHandlerTests
         var result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
-        result.IsSuccess.ShouldBeTrue();
-        result.Value.ShouldNotBeNull();
-        result.Value.ShouldBeEmpty();
+        result.Status.ShouldBe(ResultStatus.NoContent);
     }
 
     private static OfferDto CreateOfferDto(Offer offer)

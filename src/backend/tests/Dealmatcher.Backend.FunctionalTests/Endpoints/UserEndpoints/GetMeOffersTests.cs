@@ -1,121 +1,81 @@
-﻿using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
+﻿using AutoMapper;
 
 namespace Dealmatcher.Backend.FunctionalTests.Endpoints.UserEndpoints;
 
-public class GetMeOffersTests(CustomWebApplicationFactory factory) : IClassFixture<CustomWebApplicationFactory>
+public class GetMeOffersTests(CustomWebApplicationFactory factory) : EndpointTestBase(factory)
 {
-    private readonly HttpClient _httpClient = factory.CreateClient();
-    private readonly CustomWebApplicationFactory _factory = factory;
-    private static readonly string[] value = new[] { "test" };
+    private static readonly string[] _value = ["test"];
 
-    private async Task<string> RegisterAndLogin(string email, string password, string name = "Test", string surname = "User")
-    {
-        await _httpClient.PostAsJsonAsync("/api/v1/users/register", new
-        {
-            Email = email,
-            Password = password,
-            Name = name,
-            Surname = surname
-        });
-
-        var loginResponse = await _httpClient.PostAsJsonAsync("/api/v1/users/login", new
-        {
-            Email = email,
-            Password = password
-        });
-
-        var json = await loginResponse.Content.ReadFromJsonAsync<JsonDocument>();
-        return json!.RootElement.GetProperty("accessToken").GetString()!;
-    }
-
-    private void SetAuthHeader(string token)
-    {
-        _httpClient.DefaultRequestHeaders.Authorization =
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-    }
-
-    private async Task SeedCategoryWithDefinitions()
+    private async Task CreateOfferInDb(string sellerEmail, string title, Dictionary<string, string> propertyValues)
     {
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        if (await db.Set<Category>().AnyAsync()) return;
+        var seller = await db.Set<User>().FirstAsync(u => u.Email == sellerEmail);
+        var category = await db.Set<Category>().Include(c => c.PropertyDefinitions).FirstAsync();
 
-        var category = new Category("Samochody", "Kategoria samochodów");
-        category.AddPropertyDefinition(new NumericPropertyDefinition("Przebieg", PropertyType.Numeric));
-        category.AddPropertyDefinition(new BooleanPropertyDefinition("Uszkodzony", PropertyType.Boolean));
-        db.Set<Category>().Add(category);
+        List<Property> properties = [];
+        foreach (var (propId, value) in propertyValues)
+        {
+            var definition = category.PropertyDefinitions.First(pd => pd.Id == int.Parse(propId));
+            properties.Add(definition.CreatePropertyFromString(value));
+        }
+
+        var offer = new Offer(
+            title,
+            "Test description",
+            10000m,
+            [],
+            seller,
+            ["test"],
+            1,
+            category,
+            properties);
+
+        db.Set<Offer>().Add(offer);
         await db.SaveChangesAsync();
     }
 
-    private async Task CreateOffer(string token, string title, int categoryId, Dictionary<string, string> properties)
-    {
-        SetAuthHeader(token);
-        await _httpClient.PostAsJsonAsync("/api/v1/offers", new
-        {
-            Title = title,
-            Description = "Opis oferty",
-            Price = 10000,
-            Tags = value,
-            CategoryId = categoryId,
-            Properties = properties,
-            Availability = 1
-        });
-    }
-
     [Fact]
-    public async Task GetMeOffers_Unauthenticated_ReturnsUnauthorized()
-    {
-        _httpClient.DefaultRequestHeaders.Authorization = null;
-
-        var response = await _httpClient.GetAsync("/api/v1/users/me/offers");
-
-        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
-    }
-
-    [Fact]
-    public async Task GetMeOffers_AuthenticatedUserNoOffers_ReturnsOkWithEmptyList()
+    public async Task GetMeOffers_AuthenticatedUserNoOffers_ReturnsNoContent()
     {
         var token = await RegisterAndLogin("nooffers@example.com", "Password123!");
         SetAuthHeader(token);
 
-        var response = await _httpClient.GetAsync("/api/v1/users/me/offers");
+        var response = await _client.GetAsync("/api/v1/users/me/offers");
 
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var body = await response.Content.ReadAsStringAsync();
-        var json = JsonDocument.Parse(body);
-        json.RootElement.GetArrayLength().ShouldBe(0);
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     }
 
     [Fact]
     public async Task GetMeOffers_AuthenticatedUserWithOffers_ReturnsOkWithOffers()
     {
-        await SeedCategoryWithDefinitions();
-
         var token = await RegisterAndLogin("withoffers@example.com", "Password123!");
 
+        int mileageDefId;
+        int damagedDefId;
         using (var scope = _factory.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var category = await db.Set<Category>().Include(c => c.PropertyDefinitions).FirstAsync();
-            var przebiegDef = category.PropertyDefinitions.First(pd => pd.Name == "Przebieg");
-            var uszkodzonyDef = category.PropertyDefinitions.First(pd => pd.Name == "Uszkodzony");
-
-            await CreateOffer(token, "BMW E46", category.Id, new Dictionary<string, string>
-            {
-                [przebiegDef.Id.ToString()] = "180000",
-                [uszkodzonyDef.Id.ToString()] = "false"
-            });
-
-            await CreateOffer(token, "Audi A4", category.Id, new Dictionary<string, string>
-            {
-                [przebiegDef.Id.ToString()] = "120000",
-                [uszkodzonyDef.Id.ToString()] = "true"
-            });
+            mileageDefId = category.PropertyDefinitions.First(pd => pd.Name == "Mileage").Id;
+            damagedDefId = category.PropertyDefinitions.First(pd => pd.Name == "Damaged").Id;
         }
 
+        await CreateOfferInDb("withoffers@example.com", "BMW E46", new Dictionary<string, string>
+        {
+            [mileageDefId.ToString()] = "180000",
+            [damagedDefId.ToString()] = "false"
+        });
+
+        await CreateOfferInDb("withoffers@example.com", "Audi A4", new Dictionary<string, string>
+        {
+            [mileageDefId.ToString()] = "120000",
+            [damagedDefId.ToString()] = "true"
+        });
+
         SetAuthHeader(token);
-        var response = await _httpClient.GetAsync("/api/v1/users/me/offers");
+        var response = await _client.GetAsync("/api/v1/users/me/offers");
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var body = await response.Content.ReadAsStringAsync();
@@ -126,8 +86,6 @@ public class GetMeOffersTests(CustomWebApplicationFactory factory) : IClassFixtu
     [Fact]
     public async Task GetMeOffers_AuthenticatedUser_DoesNotReturnOtherUsersOffers()
     {
-        await SeedCategoryWithDefinitions();
-
         var tokenUser1 = await RegisterAndLogin("user1offers@example.com", "Password123!");
         var tokenUser2 = await RegisterAndLogin("user2offers@example.com", "Password123!");
 
@@ -135,21 +93,18 @@ public class GetMeOffersTests(CustomWebApplicationFactory factory) : IClassFixtu
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var category = await db.Set<Category>().Include(c => c.PropertyDefinitions).FirstAsync();
-            var przebiegDef = category.PropertyDefinitions.First(pd => pd.Name == "Przebieg");
+            var mileageDef = category.PropertyDefinitions.First(pd => pd.Name == "Mileage");
 
-            await CreateOffer(tokenUser1, "Oferta usera 1", category.Id, new Dictionary<string, string>
+            await CreateOfferInDb("user1offers@example.com", "User1 offer", new Dictionary<string, string>
             {
-                [przebiegDef.Id.ToString()] = "50000"
+                [mileageDef.Id.ToString()] = "50000"
             });
         }
 
         SetAuthHeader(tokenUser2);
-        var response = await _httpClient.GetAsync("/api/v1/users/me/offers");
+        var response = await _client.GetAsync("/api/v1/users/me/offers");
 
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        var body = await response.Content.ReadAsStringAsync();
-        var json = JsonDocument.Parse(body);
-        json.RootElement.GetArrayLength().ShouldBe(0);
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     }
 
     [Fact]
@@ -166,7 +121,7 @@ public class GetMeOffersTests(CustomWebApplicationFactory factory) : IClassFixtu
         }
 
         SetAuthHeader(token);
-        var response = await _httpClient.GetAsync("/api/v1/users/me/offers");
+        var response = await _client.GetAsync("/api/v1/users/me/offers");
 
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }

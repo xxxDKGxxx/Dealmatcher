@@ -20,6 +20,12 @@ public sealed class OfferProfile : Profile
                 src.Availability,
                 src.Status.Name,
                 src.CreatedAt,
-                src.UpdatedAt ?? src.CreatedAt));
+                src.UpdatedAt ?? src.CreatedAt))
+            .ForMember(d => d.Properties, o => o.Ignore())
+            .ForMember(d => d.Seller, o => o.Ignore())
+            .ForMember(d => d.Category, o => o.Ignore())
+            .ForMember(d => d.Tags, o => o.Ignore())
+            .ForMember(d => d.Images, o => o.Ignore())
+            .ForMember(d => d.Status, o => o.Ignore());
     }
 }
