@@ -32,6 +32,4 @@ public sealed class Category(string name, string description) : DealmatcherEntit
             Description = description;
         }
     }
-
-    public override void Delete() { }
 }
