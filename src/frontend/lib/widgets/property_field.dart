@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../models/property.dart';
+import '../models/property_definition.dart';
 import 'form_fields.dart';
 
 class PropertyField extends StatelessWidget {
-  final Property property;
+  final PropertyDefinition property;
   final dynamic value;
   final ValueChanged<dynamic> onChanged;
 

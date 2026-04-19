@@ -1,20 +1,12 @@
-name: Trigger auto deployment for dealmatcher-backend-prod
+name: Dealmatcher Backend CD - main
 
-# When this action will be executed
 on:
-  # Automatically trigger it when detected changes in repo
   push:
     branches: 
       [ main ]
-    paths:
-    - 'src/backend/**'
-    - '.github/workflows/backend_cd_main.yml'
-
-  # Allow manual trigger 
-  workflow_dispatch:      
 
 jobs:
-  build-and-deploy:
+  backend-build-and-deploy:
     runs-on: ubuntu-latest
     permissions: 
       id-token: write #This is required for requesting the OIDC JWT Token

@@ -7,7 +7,7 @@ on:
       - closed
     paths:
       - "src/frontend/**"
-      - ".github/workflows/frontend_main.yml"
+      - ".github/workflows/frontend_cd_develop.yml"
 
 jobs:
   frontend-cd-dev:
