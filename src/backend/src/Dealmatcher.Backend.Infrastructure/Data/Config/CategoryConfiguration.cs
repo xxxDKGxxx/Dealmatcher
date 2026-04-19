@@ -19,6 +19,7 @@ public sealed class CategoryConfiguration : DealmatcherBaseEntityConfiguration<C
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Navigation(c => c.PropertyDefinitions)
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .AutoInclude();
     }
 }

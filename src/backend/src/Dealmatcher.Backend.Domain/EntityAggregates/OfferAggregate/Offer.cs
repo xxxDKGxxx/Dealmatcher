@@ -43,6 +43,8 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
 
     public override void Delete()
     {
+        base.Delete();
+
         Status = OfferStatus.Deleted;
         foreach (var property in _properties)
         {

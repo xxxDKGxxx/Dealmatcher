@@ -5,6 +5,4 @@ public sealed class TextProperty : Property<string>
     public TextProperty(TextPropertyDefinition propertyDefinition, string value) : base(propertyDefinition, value) { }
 
     private TextProperty() { }
-
-    public override void Delete() { }
 }

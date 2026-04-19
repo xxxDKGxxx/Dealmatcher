@@ -8,6 +8,8 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
 
         builder.ToTable($"{nameof(Offer)}s");
 
+        builder.HasQueryFilter(o => o.Seller.Status == UserStatus.Active);
+
         builder.Property(o => o.Title)
             .IsRequired()
             .HasMaxLength(DataSchemaConstants.OfferTitleMaxLength);
@@ -35,10 +37,16 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
             .HasForeignKey("SellerId")
             .OnDelete(DeleteBehavior.NoAction);
 
+        builder.Navigation(o => o.Seller)
+            .AutoInclude();
+
         builder.HasOne(o => o.Category)
             .WithMany()
             .HasForeignKey("CategoryId")
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Navigation(o => o.Category)
+            .AutoInclude();
 
         builder.HasMany(o => o.Properties)
             .WithOne()
@@ -47,6 +55,7 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Navigation(o => o.Properties)
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .AutoInclude();
     }
 }

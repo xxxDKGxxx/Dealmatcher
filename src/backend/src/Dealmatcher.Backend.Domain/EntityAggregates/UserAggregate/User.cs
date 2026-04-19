@@ -68,6 +68,8 @@ public class User(string email, string passwordHash, string name, string surname
 
     public override void Delete()
     {
+        base.Delete();
+
         DeactivateUserAccount();
     }
 }
