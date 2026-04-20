@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
 
 namespace Dealmatcher.Backend.FunctionalTests.Endpoints.UserEndpoints;
 
@@ -21,7 +22,7 @@ public class GetMeOffersTests(CustomWebApplicationFactory factory) : EndpointTes
             properties.Add(definition.CreatePropertyFromString(value));
         }
 
-        var offer = new Offer(
+        var offer = new OfferEntity(
             title,
             "Test description",
             10000m,
@@ -32,7 +33,7 @@ public class GetMeOffersTests(CustomWebApplicationFactory factory) : EndpointTes
             category,
             properties);
 
-        db.Set<Offer>().Add(offer);
+        db.Set<OfferEntity>().Add(offer);
         await db.SaveChangesAsync();
     }
 
