@@ -33,3 +33,5 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.IdentityModel.Tokens;
+global using Dealmatcher.Backend.Domain.Interfaces.OfferSearching;
+global using Dealmatcher.Backend.Infrastructure.Services.OfferSearchers;
