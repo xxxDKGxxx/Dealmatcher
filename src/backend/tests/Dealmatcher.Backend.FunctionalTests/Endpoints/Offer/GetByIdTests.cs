@@ -47,7 +47,7 @@ public class GetByIdTests(CustomWebApplicationFactory factory) : EndpointTestBas
 
         var category = db.Set<Category>().First(c => c.Name == "Cars");
 
-        var offer = new Offer(
+        var offer = new OfferEntity(
             "Test Offer",
             "Test Description",
             100,
@@ -59,7 +59,7 @@ public class GetByIdTests(CustomWebApplicationFactory factory) : EndpointTestBas
             []
         );
 
-        db.Set<Offer>().Add(offer);
+        db.Set<OfferEntity>().Add(offer);
 
         await db.SaveChangesAsync();
 
