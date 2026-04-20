@@ -1,10 +1,14 @@
-﻿namespace Dealmatcher.Backend.UnitTests.UseCases.Features.Offers.Create;
+﻿using Dealmatcher.Backend.UseCases.Interfaces;
+using static System.Net.Mime.MediaTypeNames;
+
+namespace Dealmatcher.Backend.UnitTests.UseCases.Features.Offers.Create;
 
 public class CreateOfferCommandHandlerTests
 {
     private readonly IReadRepository<User> _userRepository;
     private readonly IReadRepository<Category> _categoryRepository;
     private readonly IRepository<Offer> _offerRepository;
+    private readonly IImageStorageService _imageStorageService;
     private readonly IMapper _mapper;
     private readonly CreateOfferCommandHandler _handler;
 
@@ -19,8 +23,14 @@ public class CreateOfferCommandHandlerTests
         _userRepository = Substitute.For<IReadRepository<User>>();
         _categoryRepository = Substitute.For<IReadRepository<Category>>();
         _offerRepository = Substitute.For<IRepository<Offer>>();
+        _imageStorageService = Substitute.For<IImageStorageService>();
         _mapper = Substitute.For<IMapper>();
-        _handler = new CreateOfferCommandHandler(_userRepository, _categoryRepository, _offerRepository, _mapper);
+        _handler = new CreateOfferCommandHandler(
+            _userRepository,
+            _categoryRepository,
+            _offerRepository,
+            _imageStorageService,
+            _mapper);
     }
 
     private static Category CreateCategoryWithDefinitions()
@@ -45,12 +55,13 @@ public class CreateOfferCommandHandlerTests
         return category;
     }
 
-    private static CreateOfferCommand CreateValidCommand(Dictionary<string, string>? properties = null)
+    private static CreateOfferCommand CreateValidCommand(Dictionary<string, string>? properties = null, List<FileDto>? images = null)
     {
         return new CreateOfferCommand(
             Title: "BMW E46",
             Description: "Dobry stan",
             Price: 25000m,
+            Images: images ?? [],
             SellerId: 1,
             CategoryId: 1,
             Tags: ["samochód", "bmw"],
@@ -112,6 +123,36 @@ public class CreateOfferCommandHandlerTests
         result.Value.Properties.Count.ShouldBe(3);
         await _offerRepository.Received(1).AddAsync(Arg.Any<Offer>(), Arg.Any<CancellationToken>());
         await _offerRepository.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_ValidDataWithImages_CallsImageStorageServiceAndReturnsSuccess()
+    {
+        SetupValidUser();
+        SetupValidCategory();
+        SetupMapper();
+
+        using var dummyStream = new MemoryStream();
+        var images = new List<FileDto>
+        {
+            new FileDto(dummyStream, "auto.jpg", "image/jpeg")
+        };
+
+        var command = CreateValidCommand(images: images);
+
+        _imageStorageService
+            .UploadImageAsync(Arg.Any<Stream>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns("https://azure-blob.com/auto.jpg");
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsSuccess.ShouldBeTrue();
+
+        await _imageStorageService.Received(1).UploadImageAsync(
+            dummyStream,
+            "auto.jpg",
+            "image/jpeg",
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]

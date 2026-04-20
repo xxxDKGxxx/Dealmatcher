@@ -16,6 +16,7 @@ global using Dealmatcher.Backend.Infrastructure.Configs;
 global using Dealmatcher.Backend.Infrastructure.Data;
 global using Dealmatcher.Backend.Infrastructure.Data.Config;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
+global using Dealmatcher.Backend.UseCases.Features.Offers.Create;
 global using Dealmatcher.Backend.UseCases.Features.Offers.Get;
 global using Dealmatcher.Backend.UseCases.Features.Users.Create;
 global using FastEndpoints;
