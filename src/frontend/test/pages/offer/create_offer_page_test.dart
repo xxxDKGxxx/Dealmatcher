@@ -170,7 +170,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
-    expect(find.text('offer form is valid.'), findsOneWidget);
+    expect(find.text('Created new offer'), findsOneWidget);
 
     FlutterError.onError = originalOnError;
   });
