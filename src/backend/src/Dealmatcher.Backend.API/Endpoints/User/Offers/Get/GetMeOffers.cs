@@ -47,7 +47,7 @@ public class GetMeOffers(
             return;
         }
 
-        if (result.Status == ResultStatus.NoContent) 
+        if (result.Status == ResultStatus.NoContent)
         {
             await SendNoContentAsync(ct);
             return;
