@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/category.dart';
 
 Widget nonEmptyTextFormField({
   TextEditingController? controller,
@@ -103,8 +102,8 @@ Widget dropdownFormField<T>({
       return Text(
         val != null
             ? (itemLabelBuilder != null
-            ? itemLabelBuilder(val)
-            : val.toString())
+                  ? itemLabelBuilder(val)
+                  : val.toString())
             : '',
         overflow: TextOverflow.ellipsis,
       );
