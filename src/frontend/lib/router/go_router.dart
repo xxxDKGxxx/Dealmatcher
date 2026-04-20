@@ -41,5 +41,12 @@ final GoRouter globalRouter = GoRouter(
         return OfferDetailsPage(offerId: id);
       },
     ),
+    GoRoute(
+      path: '/update-offer/:id',
+      builder: (context, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return CreateOfferPage(offerId: id);
+      },
+    ),
   ],
 );

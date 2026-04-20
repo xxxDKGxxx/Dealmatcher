@@ -21,7 +21,25 @@ class HomePage extends StatelessWidget {
         ],
       ),
       drawer: MenuDrawer(),
-      body: Center(child: Text('Welcome to Home Page')),
+      //body: Center(child: Text('Welcome to Home Page')),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          TextButton(
+            onPressed: () => context.go('/add-offer'),
+            child: const Text('create'),
+          ),
+          TextButton(
+            onPressed: () => context.go('/update-offer'),
+            child: const Text('no id'),
+          ),
+          TextButton(
+            onPressed: () => context.go('/update-offer/0'),
+            child: const Text('update id 0'),
+          ),
+        ],
+      ),
     );
   }
 }
