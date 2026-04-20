@@ -49,7 +49,7 @@ public sealed class CreateOfferCommandHandler(
         }
 
         var uploadedImageUrls = new List<string>();
-        if (request.Images is not null && request.Images.Any())
+        if (request.Images is not null && request.Images.Count > 0)
         {
             try
             {

@@ -1,4 +1,4 @@
-﻿namespace Dealmatcher.Backend.API.Endpoints.Offers.Create;
+﻿namespace Dealmatcher.Backend.API.Endpoints.Offer.Create;
 
 public sealed class CreateOfferValidator : Validator<CreateOfferRequest>
 {

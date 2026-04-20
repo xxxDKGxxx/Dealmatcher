@@ -133,10 +133,7 @@ public class CreateOfferCommandHandlerTests
         SetupMapper();
 
         using var dummyStream = new MemoryStream();
-        var images = new List<FileDto>
-        {
-            new FileDto(dummyStream, "auto.jpg", "image/jpeg")
-        };
+        List<FileDto> images = [new(dummyStream, "auto.jpg", "image/jpeg")];
 
         var command = CreateValidCommand(images: images);
 
