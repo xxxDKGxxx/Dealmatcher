@@ -10,11 +10,13 @@ global using Dealmatcher.Backend.API.Extensions;
 global using Dealmatcher.Backend.API.Interfaces;
 global using Dealmatcher.Backend.API.Middleware;
 global using Dealmatcher.Backend.API.Services;
+global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Dto;
 global using Dealmatcher.Backend.Infrastructure.Configs;
 global using Dealmatcher.Backend.Infrastructure.Data;
 global using Dealmatcher.Backend.Infrastructure.Data.Config;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
+global using Dealmatcher.Backend.UseCases.Features.Offers.Get;
 global using Dealmatcher.Backend.UseCases.Features.Users.Create;
 global using FastEndpoints;
 global using FastEndpoints.Swagger;
@@ -25,4 +27,3 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.IdentityModel.Tokens;
 global using Serilog;
 global using Serilog.Extensions.Logging;
-
