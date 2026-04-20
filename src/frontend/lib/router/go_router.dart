@@ -1,5 +1,5 @@
 import 'package:frontend/api/api_core.dart';
-import 'package:frontend/pages/create_offer_page.dart';
+import 'package:frontend/pages/create_update_offer_page.dart';
 import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/my_offers_page.dart';
