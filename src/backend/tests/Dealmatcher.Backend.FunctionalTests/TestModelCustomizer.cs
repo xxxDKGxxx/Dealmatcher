@@ -2,11 +2,9 @@
 
 namespace Dealmatcher.Backend.FunctionalTests;
 
-public class TestModelCustomizer : ModelCustomizer
+public class TestModelCustomizer(ModelCustomizerDependencies dependencies)
+    : ModelCustomizer(dependencies)
 {
-    public TestModelCustomizer(ModelCustomizerDependencies dependencies)
-        : base(dependencies) { }
-
     public override void Customize(ModelBuilder modelBuilder, DbContext context)
     {
         // 1. Wywołujemy bazowe budowanie (to odpali ApplyConfigurationsFromAssembly z Twojego kodu produkcji)

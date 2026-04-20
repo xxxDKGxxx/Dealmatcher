@@ -1,9 +1,4 @@
-using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
-using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
-using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Dto;
-using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
-
-namespace Dealmatcher.Backend.FunctionalTests.Endpoints.OfferEndpoints;
+﻿namespace Dealmatcher.Backend.FunctionalTests.Endpoints.Offer;
 
 public class GetByIdTests(CustomWebApplicationFactory factory) : EndpointTestBase(factory)
 {
@@ -12,7 +7,7 @@ public class GetByIdTests(CustomWebApplicationFactory factory) : EndpointTestBas
     {
         // Arrange
         var offerId = await SeedOffer();
-        
+
         // Act
         var response = await _client.GetAsync($"/api/v1/offers/{offerId}");
 
@@ -35,18 +30,23 @@ public class GetByIdTests(CustomWebApplicationFactory factory) : EndpointTestBas
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
-    
+
     private async Task<int> SeedOffer()
     {
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
+
         var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-        var user = new User("seller@example.com", passwordHasher.HashPassword("Password123!"), "Seller", "User");
+        var user = new User(
+            "seller@example.com",
+            passwordHasher.HashPassword("Password123!"),
+            "Seller",
+            "User"
+        );
         db.Set<User>().Add(user);
-        
+
         var category = db.Set<Category>().First(c => c.Name == "Cars");
-        
+
         var offer = new Offer(
             "Test Offer",
             "Test Description",
@@ -58,11 +58,11 @@ public class GetByIdTests(CustomWebApplicationFactory factory) : EndpointTestBas
             category,
             []
         );
-        
+
         db.Set<Offer>().Add(offer);
-        
+
         await db.SaveChangesAsync();
-        
+
         return offer.Id;
     }
 }
