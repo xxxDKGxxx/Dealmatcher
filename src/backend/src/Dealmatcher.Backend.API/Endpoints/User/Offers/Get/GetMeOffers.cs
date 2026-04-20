@@ -41,13 +41,13 @@ public class GetMeOffers(
         var query = new ListOffersByUserIdQuery(userId.Value);
         var result = await mediator.Send(query, ct);
 
-        if (result.Status == ResultStatus.Unauthorized || result.Status == ResultStatus.NotFound)
+        if (result.Status == ResultStatus.NotFound)
         {
             await SendUnauthorizedAsync(ct);
             return;
         }
 
-        if (result.Status == ResultStatus.NoContent)
+        if (result.Status == ResultStatus.NoContent) 
         {
             await SendNoContentAsync(ct);
             return;
