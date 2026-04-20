@@ -11,6 +11,7 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categori
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
+global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Specifications;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Specifications;
@@ -19,6 +20,7 @@ global using Dealmatcher.Backend.Domain.Interfaces.Authentication;
 global using Dealmatcher.Backend.Infrastructure.Services;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Offers.Create;
+global using Dealmatcher.Backend.UseCases.Features.Offers.Get;
 global using Dealmatcher.Backend.UseCases.Features.Offers.List;
 global using Dealmatcher.Backend.UseCases.Features.Users.Create;
 global using Dealmatcher.Backend.UseCases.Features.Users.Get;
