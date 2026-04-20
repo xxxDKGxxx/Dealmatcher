@@ -6,6 +6,7 @@ import 'package:frontend/models/offer.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/form_fields.dart';
 import 'package:frontend/widgets/property_field.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -110,20 +111,21 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
         id: widget.offerId!,
         title: "Polish Cow",
         description: "Tylko jedno w głowie mam",
-        price: 2137,
+        price: 133000,
         images: [
           'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.suwalki24.pl%2F_uploads%2F2020%2FGrudzien%2FDrobne%2Fkrowy_pasace_sie.jpg&f=1&nofb=1&ipt=7ac6e204693a3b2b87cc07b9c800f7de5bf5e627e31f6e646dc28c4b8a9f4f93',
           'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FrfcliTe0qAs%2Fmaxresdefault.jpg&f=1&nofb=1&ipt=e61737e24b54abdd3cdb348ba66d42a572b95bb45202791838496c6c8d393320',
         ],
         seller: Seller(id: 0, name: 'Zenon'),
         category: (await _fetchCategories())[1], //Category(id: 1, name: 'Animal', description: 'living creatures to eat in future'),
-        tags: ['animal', 'cow', 'yummy'],
+        tags: ['animal', 'cow', 'yummy', 'i', 'hate', 'io'],
         properties: {
           0: '12',
           1: '59',
           2: 'true',
+          3: 'Central',
         },
-        availability: 1,
+        availability: (widget.offerId! + 21) * 37,
         status: OfferStatus.active,
         createdAt: DateTime.now().subtract(Duration(days: 5)),
         updatedAt: DateTime.now().subtract(Duration(hours: 21)),
@@ -133,9 +135,12 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     _descriptionController.text = offer!.description;
     _priceController.text = offer!.price.toString();
     _availabilityController.text = offer!.availability.toString();
-    _tagController.text = offer!.tags.join(', ');
+    //_tagController.text = offer!.tags.join(', ');
     _selectedCategory = offer!.category;
     _propertiesFuture = _fetchProperties(_selectedCategory!.id);
+    for(var t in offer!.tags) {
+      _tags.add(t);
+    }
     for(var i in offer!.images){
       var file = await DefaultCacheManager().getSingleFile(i);
       _images.add(XFile(file.path));
@@ -245,6 +250,13 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
       ];
     }
     return [];
+  }
+  
+  void _deleteOffer(int id) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Successfully deleted this offer')),
+    );
+    context.pop();
   }
 
   @override
@@ -376,6 +388,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                                           ),
                                         )
                                         .toList(),
+                                    itemLabelBuilder: (cat) => cat.name,
                                     onChanged: (newValue) {
                                       setState(() {
                                         _selectedCategory = newValue;
@@ -587,6 +600,21 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                                 style: TextStyle(fontSize: 18),
                               ),
                             ),
+                            if (isUpdated) ...[
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: () => _deleteOffer(offer!.id),
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  foregroundColor: Colors.pink.shade900,
+                                  backgroundColor: Colors.red.shade400,
+                                ),
+                                child: Text(
+                                    'Delete Offer',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ),
+                            ],
                             const SizedBox(height: 64),
                           ],
                         ),

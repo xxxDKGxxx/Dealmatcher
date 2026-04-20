@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/category.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
+import 'package:go_router/go_router.dart';
 
 class MyOffersPage extends StatefulWidget {
   const MyOffersPage({super.key, this.offersFuture});
@@ -63,7 +64,7 @@ class _MyOffersPageState extends State<MyOffersPage> {
         updatedAt: DateTime.now().subtract(const Duration(hours: 5)),
       ),
       Offer(
-        id: 0,
+        id: 1,
         title: "hampter",
         description:
             "A hampter for sleepless nights. Slightly used but in good condition.",
@@ -184,7 +185,9 @@ class _MyOffersPageState extends State<MyOffersPage> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 12),
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          context.push('/update-offer/${offer.id}');
+                        },
                         icon: Icon(Icons.arrow_right_alt),
                       ),
                     ),
