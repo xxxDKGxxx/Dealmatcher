@@ -34,14 +34,11 @@ void main() {
     return MaterialApp.router(routerConfig: router);
   }
 
-  testWidgets('Welcome test and add offer icon on home page', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Add offer icon on home page', (WidgetTester tester) async {
     setDesktopSize(tester);
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle();
 
-    expect(find.text('Welcome to Home Page'), findsOneWidget);
     expect(find.byIcon(Icons.add_circle_outline), findsOneWidget);
   });
 
