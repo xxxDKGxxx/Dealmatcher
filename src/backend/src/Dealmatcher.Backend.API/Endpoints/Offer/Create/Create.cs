@@ -1,9 +1,9 @@
 ﻿namespace Dealmatcher.Backend.API.Endpoints.Offer.Create;
 
-public sealed class CreateOffer(
+public sealed class Create(
     IMediator mediator,
     IClaimsPrincipalManager claimsManager)
-    : Endpoint<CreateOfferRequest, OfferDto>
+    : Endpoint<CreateRequest, OfferDto>
 {
     public override void Configure()
     {
@@ -24,17 +24,16 @@ public sealed class CreateOffer(
         });
     }
 
-    public override async Task HandleAsync(CreateOfferRequest request, CancellationToken cancellationToken)
+    public override async Task HandleAsync(CreateRequest request, CancellationToken cancellationToken)
     {
         var userId = claimsManager.GetUserId(User);
+
         if (userId is null)
         {
             await SendUnauthorizedAsync(cancellation: cancellationToken);
             return;
         }
-
         var fileDtos = request.Images?
-            .Take(10)
             .Select(f => new FileDto(f.OpenReadStream(), f.FileName, f.ContentType))
             .ToList() ?? [];
 
@@ -54,10 +53,9 @@ public sealed class CreateOffer(
         if (result.IsSuccess)
         {
             await SendAsync(result.Value, statusCode: 201, cancellation: cancellationToken);
+            return;
         }
-        else
-        {
-            await result.SendResult(this, ct: cancellationToken);
-        }
+
+        await result.SendResult(this, ct: cancellationToken);
     }
 }

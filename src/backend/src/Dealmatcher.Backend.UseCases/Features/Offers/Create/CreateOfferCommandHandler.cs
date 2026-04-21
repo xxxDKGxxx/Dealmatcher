@@ -48,12 +48,13 @@ public sealed class CreateOfferCommandHandler(
             }
         }
 
+        var images = request.Images?.Take(10).ToList() ?? [];
         var uploadedImageUrls = new List<string>();
-        if (request.Images is not null && request.Images.Count > 0)
+        if (images.Count() > 0)
         {
             try
             {
-                foreach (var image in request.Images)
+                foreach (var image in images)
                 {
                     var imageUrl = await imageStorageService.UploadImageAsync(
                         image.Content,
