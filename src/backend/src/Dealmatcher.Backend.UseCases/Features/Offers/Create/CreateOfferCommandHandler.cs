@@ -50,7 +50,7 @@ public sealed class CreateOfferCommandHandler(
 
         var images = request.Images?.Take(10).ToList() ?? [];
         var uploadedImageUrls = new List<string>();
-        if (images.Count() > 0)
+        if (images.Count > 0)
         {
             try
             {
