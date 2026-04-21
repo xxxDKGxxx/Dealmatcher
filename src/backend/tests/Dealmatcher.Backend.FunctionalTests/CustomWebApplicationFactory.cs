@@ -36,6 +36,31 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 // Crucial logic for comparing smart enums - InMemoryDb needs to compare in c# style, SQLServer needs comparison by value (int)
                 options.ReplaceService<IModelCustomizer, TestModelCustomizer>();
             });
+
+            var storageDescriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(IImageStorageService));
+
+            if (storageDescriptor != null)
+            {
+                services.Remove(storageDescriptor);
+            }
+
+            var substituteStorageService = Substitute.For<IImageStorageService>();
+
+            substituteStorageService
+                .UploadImageAsync(
+                    Arg.Any<Stream>(),
+                    Arg.Any<string>(),
+                    Arg.Any<string>(),
+                    Arg.Any<CancellationToken>())
+                .Returns(Task.FromResult("https://fake-storage.com/test-image.jpg"));
+
+            substituteStorageService
+                .DeleteImageAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(Task.CompletedTask);
+
+            services.AddSingleton(substituteStorageService);
+
         });
     }
 
