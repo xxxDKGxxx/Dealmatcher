@@ -6,5 +6,6 @@ class ApiUrls {
   String get categories => '/categories';
 
   String offerDetails(int offerId) => '/offers/$offerId';
-  String properties(String categoryName) => '/categories/$categoryName/properties';
+  String properties(String categoryName) =>
+      '/categories/$categoryName/properties';
 }
