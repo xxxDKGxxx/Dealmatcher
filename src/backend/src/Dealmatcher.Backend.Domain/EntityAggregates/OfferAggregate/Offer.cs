@@ -139,4 +139,8 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
         Category = category;
         SetProperties(properties);
     }
+    public void SetStatusToDraft()
+    {
+        Status = OfferStatus.Draft;
+    }
 }
