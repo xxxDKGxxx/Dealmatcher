@@ -4,7 +4,7 @@ class ApiUrls {
   String get register => '/users/register';
   String get profile => '/users/me';
   String get categories => '/categories';
-  String get offerDetails => '/offers/';
 
-  String properties(int categoryId) => '/categories/$categoryId/properties';
+  String offerDetails(int offerId) => '/offers/$offerId';
+  String properties(String categoryName) => '/categories/$categoryName/properties';
 }

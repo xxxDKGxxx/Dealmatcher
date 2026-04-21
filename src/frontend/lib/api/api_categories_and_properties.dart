@@ -1,6 +1,5 @@
 import 'package:frontend/api/api_core.dart';
 import 'package:frontend/api/api_urls.dart';
-import 'package:frontend/api/models/properties_request.dart';
 import 'package:frontend/api/models/properties_response.dart';
 import 'package:frontend/models/category.dart';
 import 'package:frontend/models/property_definition.dart';
@@ -16,11 +15,7 @@ class ApiCategoriesAndProperties {
   Future<List<PropertyDefinition>> getProperties(Category category) async {
     List<PropertyDefinition> properties = [];
     try {
-      final request = PropertiesRequest(categoryName: category.name);
-      final response = await _apiCore.post(
-        ApiUrls().properties(category.id),
-        request,
-      );
+      final response = await _apiCore.get(ApiUrls().properties(category.name));
 
       switch (response.statusCode) {
         case 200:

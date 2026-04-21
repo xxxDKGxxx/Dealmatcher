@@ -1,18 +1,15 @@
 import 'package:frontend/api/api_core.dart';
 import 'package:frontend/api/api_urls.dart';
-import 'package:frontend/api/models/offer_details_request.dart';
 import 'package:frontend/api/models/offer_details_response.dart';
 import 'package:frontend/models/offer.dart';
 
 class ApiOfferDetails {
   final ApiCore _apiCore = ApiCore();
-  final String _apiLoginUrl = ApiUrls().offerDetails;
 
   Future<Offer?> getOffer(int offerId) async {
     Offer? offer;
     try {
-      final request = OfferDetailsRequest(offerId: offerId);
-      final response = await _apiCore.post(_apiLoginUrl, request);
+      final response = await _apiCore.get(ApiUrls().offerDetails(offerId));
 
       switch (response.statusCode) {
         case 200:
