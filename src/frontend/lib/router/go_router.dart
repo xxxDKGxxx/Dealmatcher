@@ -1,5 +1,5 @@
 import 'package:frontend/api/api_core.dart';
-import 'package:frontend/pages/create_offer_page.dart';
+import 'package:frontend/pages/create_update_offer_page.dart';
 import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/my_offers_page.dart';
@@ -39,6 +39,13 @@ final GoRouter globalRouter = GoRouter(
       builder: (context, state) {
         final id = int.parse(state.pathParameters['id']!);
         return OfferDetailsPage(offerId: id);
+      },
+    ),
+    GoRoute(
+      path: '/update-offer/:id',
+      builder: (context, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return CreateOfferPage(offerId: id);
       },
     ),
   ],
