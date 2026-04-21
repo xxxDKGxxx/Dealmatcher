@@ -18,10 +18,12 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Property
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Dealmatcher.Backend.Domain.Interfaces;
 global using Dealmatcher.Backend.Domain.Interfaces.Authentication;
+global using Dealmatcher.Backend.Domain.Interfaces.OfferSuggestion;
 global using Dealmatcher.Backend.Infrastructure.Data;
 global using Dealmatcher.Backend.Infrastructure.Data.Config;
 global using Dealmatcher.Backend.Infrastructure.Data.Interceptors;
 global using Dealmatcher.Backend.Infrastructure.Services;
+global using Dealmatcher.Backend.Infrastructure.Services.OfferSuggestionServices;
 global using Dealmatcher.Backend.UseCases.Interfaces;
 global using Dealmatcher.Backend.UseCases.Mapping.Profiles;
 global using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -33,5 +35,3 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.IdentityModel.Tokens;
-global using Dealmatcher.Backend.Domain.Interfaces.OfferSearching;
-global using Dealmatcher.Backend.Infrastructure.Services.OfferSearchers;

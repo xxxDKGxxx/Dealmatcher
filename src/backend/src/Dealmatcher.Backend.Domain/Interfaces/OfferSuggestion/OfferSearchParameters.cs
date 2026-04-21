@@ -1,10 +1,10 @@
-﻿namespace Dealmatcher.Backend.UseCases.Features.Offers.Search;
+﻿namespace Dealmatcher.Backend.Domain.Interfaces.OfferSuggestion;
 
 // TODO: dodać listę/słownik filtrów
-public sealed record SearchOffersQuery(
+public sealed record OfferSearchParameters(
     int? CategoryId,
     decimal MinPrice,
     decimal MaxPrice,
     List<string> Tags,
     string SearchPhrase,
-    int limit) : IQuery<Result<List<OfferDto>>>;
+    int Limit);
