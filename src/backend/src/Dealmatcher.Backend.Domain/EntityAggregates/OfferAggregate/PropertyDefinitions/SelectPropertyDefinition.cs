@@ -1,4 +1,6 @@
-﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
+﻿using Dealmatcher.Backend.Domain.Core.Filtering;
+
+namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
 
 public sealed class SelectPropertyDefinition : PropertyDefinition<string>
 {
@@ -23,5 +25,15 @@ public sealed class SelectPropertyDefinition : PropertyDefinition<string>
             throw new ArgumentException($"Invalid {nameof(SelectProperty)} value: '{value}' for {nameof(SelectPropertyDefinition)}: '{Name}'");
         }
         return new SelectProperty(this, value);
+    }
+
+    public override PropertyFilter CreatePropertyFilterTyped(List<string> values)
+    {
+        if (values.Any(v => !_values.Contains(v)))
+        {
+            throw new ArgumentException($"Invalid values for SelectPropertyFilter");
+        }
+
+        return new SelectPropertyFilter(this, values);
     }
 }

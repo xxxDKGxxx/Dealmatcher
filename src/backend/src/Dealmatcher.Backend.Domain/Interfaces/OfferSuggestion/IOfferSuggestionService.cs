@@ -2,5 +2,5 @@
 
 public interface IOfferSuggestionService
 {
-    Task<IEnumerable<Offer>> SuggestOffers(IReadRepository<Offer> offerRepository, OfferSearchParameters parameters, CancellationToken cancellationToken);
+    Task<IEnumerable<Offer>> SuggestOffers(IEnumerable<Offer> offers, int limit, CancellationToken cancellationToken);
 }

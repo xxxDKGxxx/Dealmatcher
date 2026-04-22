@@ -1,13 +1,12 @@
-﻿using Dealmatcher.Backend.Domain.Interfaces.OfferSuggestion;
+﻿using Dealmatcher.Backend.Domain.Interfaces.Filtering;
+using Dealmatcher.Backend.Domain.Interfaces.OfferSuggestion;
 
 namespace Dealmatcher.Backend.Infrastructure.Services.OfferSuggestionServices;
 
 internal class BasicOfferSuggestionService : IOfferSuggestionService
 {
-    public async Task<IEnumerable<Offer>> SuggestOffers(IReadRepository<Offer> offerRepository, OfferSearchParameters parameters, CancellationToken cancellationToken)
+    public Task<IEnumerable<Offer>> SuggestOffers(IEnumerable<Offer> offers, int limit, CancellationToken cancellationToken)
     {
-        var basicOfferSearchSpecification = new OfferSearchSpecificationBase(parameters);
-
-        return await offerRepository.ListAsync(basicOfferSearchSpecification, cancellationToken);
+        return Task.FromResult(offers.OrderBy(_ => new Guid()).Take(limit));
     }
 }

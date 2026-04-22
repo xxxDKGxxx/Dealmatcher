@@ -1,4 +1,6 @@
-﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
+﻿using Dealmatcher.Backend.Domain.Core.Filtering;
+
+namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
 
 public sealed class TextPropertyDefinition : PropertyDefinition<string>
 {
@@ -13,5 +15,10 @@ public sealed class TextPropertyDefinition : PropertyDefinition<string>
     public override Property<string> CreatePropertyTyped(string value)
     {
         return new TextProperty(this, value);
+    }
+
+    public override PropertyFilter CreatePropertyFilterTyped(List<string> values)
+    {
+        return new TextPropertyFilter(this, values);
     }
 }

@@ -1,4 +1,7 @@
-﻿using Dealmatcher.Backend.Domain.Interfaces.OfferSuggestion;
+﻿// tests/Dealmatcher.Backend.UnitTests/UseCases/Features/Offers/Search/SearchOffersQueryHandlerTests.cs
+
+using Dealmatcher.Backend.Domain.Core.Filtering;
+using Dealmatcher.Backend.Domain.Interfaces.OfferSuggestion;
 using Dealmatcher.Backend.UseCases.Features.Offers.Search;
 
 namespace Dealmatcher.Backend.UnitTests.UseCases.Features.Offers.Search;
@@ -20,15 +23,43 @@ public class SearchOffersQueryHandlerTests
         _handler = new SearchOffersQueryHandler(_offerRepository, _categoryRepository, _offerSuggestionService, _mapper);
     }
 
-    private static SearchOffersQuery CreateValidQuery(int? categoryId = null)
+    private static SearchOffersQuery CreateValidQuery(
+        int? categoryId = null,
+        Dictionary<string, List<string>>? propertyFilters = null)
     {
         return new SearchOffersQuery(
             CategoryId: categoryId,
             MinPrice: 0,
             MaxPrice: 100000,
             Tags: [],
+            PropertyFilters: propertyFilters ?? [],
             SearchPhrase: "",
-            limit: 10);
+            Limit: 10);
+    }
+
+    private static OfferDto CreateDummyOfferDto()
+    {
+        return new OfferDto(
+            1, "Test", "Desc", 100m, [],
+            new SellerDto(1, "Test"),
+            new CategoryDto(1, "Cars", "Vehicles"),
+            [], [],
+            1, "ACTIVE", DateTime.UtcNow, DateTime.UtcNow);
+    }
+
+    private void SetupOfferRepository(List<Offer> offers)
+    {
+        _offerRepository.ListAsync(Arg.Any<FilteredOffersSpecification>(), Arg.Any<CancellationToken>())
+            .Returns(offers);
+    }
+
+    private void SetupSuggestionService(IEnumerable<Offer> output)
+    {
+        _offerSuggestionService.SuggestOffers(
+            Arg.Any<IEnumerable<Offer>>(),
+            Arg.Any<int>(),
+            Arg.Any<CancellationToken>())
+            .Returns(output);
     }
 
     [Fact]
@@ -38,12 +69,9 @@ public class SearchOffersQueryHandlerTests
         var offers = new List<Offer> { CreateDummyOffer(), CreateDummyOffer() };
         var dtos = new List<OfferDto> { CreateDummyOfferDto(), CreateDummyOfferDto() };
 
-        _offerSuggestionService.SuggestOffers(
-            Arg.Any<IReadRepository<Offer>>(),
-            Arg.Any<OfferSearchParameters>(),
-            Arg.Any<CancellationToken>())
-            .Returns(offers);
-        _mapper.Map<List<OfferDto>>(offers).Returns(dtos);
+        SetupOfferRepository(offers);
+        SetupSuggestionService(offers);
+        _mapper.Map<List<OfferDto>>(Arg.Any<IEnumerable<Offer>>()).Returns(dtos);
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -56,11 +84,8 @@ public class SearchOffersQueryHandlerTests
     {
         var query = CreateValidQuery();
 
-        _offerSuggestionService.SuggestOffers(
-            Arg.Any<IReadRepository<Offer>>(),
-            Arg.Any<OfferSearchParameters>(),
-            Arg.Any<CancellationToken>())
-            .Returns([]);
+        SetupOfferRepository([]);
+        SetupSuggestionService([]);
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -75,40 +100,16 @@ public class SearchOffersQueryHandlerTests
             MinPrice: 50000,
             MaxPrice: 10000,
             Tags: [],
+            PropertyFilters: [],
             SearchPhrase: "",
-            limit: 10);
+            Limit: 10);
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
         result.Status.ShouldBe(ResultStatus.Invalid);
-        await _offerSuggestionService.DidNotReceive().SuggestOffers(
-            Arg.Any<IReadRepository<Offer>>(),
-            Arg.Any<OfferSearchParameters>(),
+        await _offerRepository.DidNotReceive().ListAsync(
+            Arg.Any<FilteredOffersSpecification>(),
             Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_WithCategoryId_ValidCategory_ReturnsSuccess()
-    {
-        var category = new Category("Cars", "Vehicles");
-        var query = CreateValidQuery(categoryId: 1);
-        var offers = new List<Offer> { CreateDummyOffer() };
-        var dtos = new List<OfferDto> { CreateDummyOfferDto() };
-
-        _categoryRepository.SingleOrDefaultAsync(
-            Arg.Any<CategoryWithDefinitionsByIdSpec>(),
-            Arg.Any<CancellationToken>())
-            .Returns(category);
-        _offerSuggestionService.SuggestOffers(
-            Arg.Any<IReadRepository<Offer>>(),
-            Arg.Any<OfferSearchParameters>(),
-            Arg.Any<CancellationToken>())
-            .Returns(offers);
-        _mapper.Map<List<OfferDto>>(offers).Returns(dtos);
-
-        var result = await _handler.Handle(query, CancellationToken.None);
-
-        result.IsSuccess.ShouldBeTrue();
     }
 
     [Fact]
@@ -124,9 +125,28 @@ public class SearchOffersQueryHandlerTests
         var result = await _handler.Handle(query, CancellationToken.None);
 
         result.Status.ShouldBe(ResultStatus.Invalid);
-        await _offerSuggestionService.DidNotReceive().SuggestOffers(
-            Arg.Any<IReadRepository<Offer>>(),
-            Arg.Any<OfferSearchParameters>(),
+        await _offerRepository.DidNotReceive().ListAsync(
+            Arg.Any<FilteredOffersSpecification>(),
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WithCategoryId_ValidCategory_CallsRepository()
+    {
+        var category = new Category("Cars", "Vehicles");
+        var query = CreateValidQuery(categoryId: 1);
+
+        _categoryRepository.SingleOrDefaultAsync(
+            Arg.Any<CategoryWithDefinitionsByIdSpec>(),
+            Arg.Any<CancellationToken>())
+            .Returns(category);
+        SetupOfferRepository([]);
+        SetupSuggestionService([]);
+
+        await _handler.Handle(query, CancellationToken.None);
+
+        await _offerRepository.Received(1).ListAsync(
+            Arg.Any<FilteredOffersSpecification>(),
             Arg.Any<CancellationToken>());
     }
 
@@ -134,57 +154,82 @@ public class SearchOffersQueryHandlerTests
     public async Task Handle_WithoutCategoryId_SkipsCategoryValidation()
     {
         var query = CreateValidQuery(categoryId: null);
-        var offers = new List<Offer> { CreateDummyOffer() };
-        var dtos = new List<OfferDto> { CreateDummyOfferDto() };
 
-        _offerSuggestionService.SuggestOffers(
-            Arg.Any<IReadRepository<Offer>>(),
-            Arg.Any<OfferSearchParameters>(),
-            Arg.Any<CancellationToken>())
-            .Returns(offers);
-        _mapper.Map<List<OfferDto>>(offers).Returns(dtos);
+        SetupOfferRepository([]);
+        SetupSuggestionService([]);
 
-        var result = await _handler.Handle(query, CancellationToken.None);
+        await _handler.Handle(query, CancellationToken.None);
 
-        result.IsSuccess.ShouldBeTrue();
         await _categoryRepository.DidNotReceive().SingleOrDefaultAsync(
             Arg.Any<CategoryWithDefinitionsByIdSpec>(),
             Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Handle_PassesCorrectParametersToSuggestionService()
+    public async Task Handle_InvalidPropertyId_ReturnsInvalid()
     {
-        var query = new SearchOffersQuery(
-            CategoryId: 5,
-            MinPrice: 100,
-            MaxPrice: 5000,
-            Tags: ["used", "cheap"],
-            SearchPhrase: "bmw",
-            limit: 20);
-
         var category = new Category("Cars", "Vehicles");
+        var query = CreateValidQuery(
+            categoryId: 1,
+            propertyFilters: new Dictionary<string, List<string>>
+            {
+                ["not-a-number"] = ["value"]
+            });
+
         _categoryRepository.SingleOrDefaultAsync(
             Arg.Any<CategoryWithDefinitionsByIdSpec>(),
             Arg.Any<CancellationToken>())
             .Returns(category);
-        _offerSuggestionService.SuggestOffers(
-            Arg.Any<IReadRepository<Offer>>(),
-            Arg.Any<OfferSearchParameters>(),
+
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        result.Status.ShouldBe(ResultStatus.Invalid);
+    }
+
+    [Fact]
+    public async Task Handle_PropertyIdNotInCategory_ReturnsInvalid()
+    {
+        var category = new Category("Cars", "Vehicles");
+        var query = CreateValidQuery(
+            categoryId: 1,
+            propertyFilters: new Dictionary<string, List<string>>
+            {
+                ["999"] = ["value"]
+            });
+
+        _categoryRepository.SingleOrDefaultAsync(
+            Arg.Any<CategoryWithDefinitionsByIdSpec>(),
             Arg.Any<CancellationToken>())
-            .Returns([]);
+            .Returns(category);
+
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        result.Status.ShouldBe(ResultStatus.Invalid);
+    }
+
+    [Fact]
+    public async Task Handle_PassesLimitToSuggestionService()
+    {
+        var query = new SearchOffersQuery(
+            CategoryId: null,
+            MinPrice: 0,
+            MaxPrice: 100000,
+            Tags: [],
+            PropertyFilters: [],
+            SearchPhrase: "",
+            Limit: 25);
+
+        var offers = new List<Offer> { CreateDummyOffer() };
+        SetupOfferRepository(offers);
+        SetupSuggestionService(offers);
+        _mapper.Map<List<OfferDto>>(Arg.Any<IEnumerable<Offer>>())
+            .Returns([CreateDummyOfferDto()]);
 
         await _handler.Handle(query, CancellationToken.None);
 
         await _offerSuggestionService.Received(1).SuggestOffers(
-            Arg.Any<IReadRepository<Offer>>(),
-            Arg.Is<OfferSearchParameters>(p =>
-                p.CategoryId == 5 &&
-                p.MinPrice == 100 &&
-                p.MaxPrice == 5000 &&
-                p.Tags.Count == 2 &&
-                p.SearchPhrase == "bmw" &&
-                p.Limit == 20),
+            Arg.Any<IEnumerable<Offer>>(),
+            25,
             Arg.Any<CancellationToken>());
     }
 
@@ -193,15 +238,5 @@ public class SearchOffersQueryHandlerTests
         var category = new Category("Cars", "Vehicles");
         var user = new User("test@test.com", "hash", "Test", "User");
         return new Offer("Test", "Desc", 100m, [], user, [], 1, category, []);
-    }
-
-    private static OfferDto CreateDummyOfferDto()
-    {
-        return new OfferDto(
-            1, "Test", "Desc", 100m, [],
-            new SellerDto(1, "Test"),
-            new CategoryDto(1, "Cars", "Vehicles"),
-            [], [],
-            1, "ACTIVE", DateTime.UtcNow, DateTime.UtcNow);
     }
 }
