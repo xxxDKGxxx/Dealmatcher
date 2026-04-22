@@ -38,13 +38,6 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
           .HasMaxLength(DataSchemaConstants.StatusMaxLength);
 
         builder
-          .Property(o => o.Images)
-          .HasField("_images")
-          .UsePropertyAccessMode(PropertyAccessMode.Field);
-
-        builder.Property(o => o.Tags).HasField("_tags").UsePropertyAccessMode(PropertyAccessMode.Field);
-
-        builder
           .HasOne(o => o.Seller)
           .WithMany()
           .HasForeignKey("SellerId")
