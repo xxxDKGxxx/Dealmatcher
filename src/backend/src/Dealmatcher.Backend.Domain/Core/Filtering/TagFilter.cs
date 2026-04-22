@@ -7,6 +7,9 @@ public sealed class TagFilter(List<string> tags) : IFilter
 
     public void ApplyFilter(ISpecificationBuilder<Offer> query)
     {
-        query.Where(o => o.Tags.Any(t => _tags.Contains(t)));
+        if (Tags.Count != 0)
+        {
+            query.Where(o => o.Tags.Any(t => _tags.Contains(t)));
+        }
     }
 }
