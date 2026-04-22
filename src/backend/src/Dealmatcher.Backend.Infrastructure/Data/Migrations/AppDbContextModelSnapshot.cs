@@ -75,6 +75,10 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                         .HasMaxLength(400)
                         .HasColumnType("nvarchar(400)");
 
+                    b.PrimitiveCollection<string>("Images")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -88,6 +92,10 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasMaxLength(20)
                         .HasColumnType("int");
+
+                    b.PrimitiveCollection<string>("Tags")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()

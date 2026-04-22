@@ -25,6 +25,7 @@ services:
       - Authentication__Jwt__SecretKey=${Authentication__Jwt__SecretKey}
       - Authentication__Jwt__Issuer=${Authentication__Jwt__Issuer}
       - Authentication__Jwt__Audience=${Authentication__Jwt__Audience}
+      - ConnectionStrings__AzureBlobStorage=${ConnectionStrings__AzureBlobStorage}
     ports:
       - "5000:80"
     networks:

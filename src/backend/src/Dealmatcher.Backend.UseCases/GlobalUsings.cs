@@ -17,5 +17,6 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Specifica
 global using Dealmatcher.Backend.Domain.Interfaces;
 global using Dealmatcher.Backend.Domain.Interfaces.Authentication;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
+global using Dealmatcher.Backend.UseCases.Interfaces;
 global using MediatR;
 global using Microsoft.Extensions.Logging;

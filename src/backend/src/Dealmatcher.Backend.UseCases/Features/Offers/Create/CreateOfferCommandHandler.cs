@@ -4,6 +4,7 @@ public sealed class CreateOfferCommandHandler(
     IReadRepository<User> userRepository,
     IReadRepository<Category> categoryRepository,
     IRepository<Offer> offerRepository,
+    IImageStorageService imageStorageService,
     IMapper mapper) : ICommandHandler<CreateOfferCommand, Result<OfferDto>>
 {
     public async Task<Result<OfferDto>> Handle(CreateOfferCommand request, CancellationToken cancellationToken)
@@ -47,11 +48,34 @@ public sealed class CreateOfferCommandHandler(
             }
         }
 
+        var images = request.Images?.Take(10).ToList() ?? [];
+        var uploadedImageUrls = new List<string>();
+        if (images.Count > 0)
+        {
+            try
+            {
+                foreach (var image in images)
+                {
+                    var imageUrl = await imageStorageService.UploadImageAsync(
+                        image.Content,
+                        image.FileName,
+                        image.ContentType,
+                        cancellationToken);
+
+                    uploadedImageUrls.Add(imageUrl);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Result.Error($"Error during image upload: {ex.Message}");
+            }
+        }
+
         Offer offer = new Offer(
             request.Title,
             request.Description,
             request.Price,
-            [], // TODO: handling zdjec
+            uploadedImageUrls,
             seller,
             request.Tags,
             request.Availability,
