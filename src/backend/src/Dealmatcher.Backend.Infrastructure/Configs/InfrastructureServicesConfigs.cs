@@ -28,7 +28,7 @@ public static class InfrastructureServicesConfigs
             .AddScoped<IPasswordHasher, BCryptPasswordHasher>()
             .AddScoped<ITokenService, JwtTokenService>()
             .AddScoped<IImageStorageService, AzureBlobStorageService>()
-            .AddScoped<IOfferSuggestionService, BasicOfferSuggestionService>();
+            .AddScoped<IOfferSuggestionService, RandomOfferSuggestionService>();
 
         logger.LogInformation("{Project} services registered.", "Infrastructure");
 

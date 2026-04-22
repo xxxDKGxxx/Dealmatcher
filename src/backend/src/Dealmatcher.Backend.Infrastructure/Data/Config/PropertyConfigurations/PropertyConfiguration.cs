@@ -18,5 +18,8 @@ public sealed class PropertyConfiguration : DealmatcherBaseEntityConfiguration<P
             .WithMany()
             .HasForeignKey("PropertyDefinitionId")
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Navigation(p => p.PropertyDefinition)
+            .AutoInclude();
     }
 }

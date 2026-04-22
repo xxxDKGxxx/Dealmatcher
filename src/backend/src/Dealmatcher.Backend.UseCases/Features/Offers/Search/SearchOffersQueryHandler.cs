@@ -31,6 +31,7 @@ public sealed class SearchOffersQueryHandler(
                 }
 
                 var propertyDefinition = category.PropertyDefinitions.Where(pd => pd.Id == propertyIdParsed).FirstOrDefault();
+
                 if (propertyDefinition is null)
                 {
                     return Result.Invalid(new ValidationError($"Invalid property Id: {propertyId}"));

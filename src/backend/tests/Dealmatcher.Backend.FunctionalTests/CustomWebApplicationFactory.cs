@@ -1,12 +1,4 @@
-﻿using Dealmatcher.Backend.Infrastructure.Data;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-
-namespace Dealmatcher.Backend.FunctionalTests;
+﻿namespace Dealmatcher.Backend.FunctionalTests;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
@@ -16,15 +8,20 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
         builder.UseSetting("FrontendOrigin", "http://localhost:8080");
         builder.UseSetting("ConnectionStrings:DefaultConnection", "");
-        builder.UseSetting("Authentication:Jwt:SecretKey", "test-secret-key-that-is-at-least-32-characters-long!");
+        builder.UseSetting(
+            "Authentication:Jwt:SecretKey",
+            "test-secret-key-that-is-at-least-32-characters-long!"
+        );
         builder.UseSetting("Authentication:Jwt:Issuer", "test-issuer");
         builder.UseSetting("Authentication:Jwt:Audience", "test-audience");
 
         builder.ConfigureServices(services =>
         {
-            var descriptors = services.Where(
-                d => d.ServiceType == typeof(AppDbContext) ||
-                     d.ServiceType == typeof(DbContextOptions<AppDbContext>))
+            var descriptors = services
+                .Where(d =>
+                    d.ServiceType == typeof(AppDbContext)
+                    || d.ServiceType == typeof(DbContextOptions<AppDbContext>)
+                )
                 .ToList();
 
             foreach (var descriptor in descriptors)
@@ -35,7 +32,35 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseInMemoryDatabase("TestingDatabase");
+
+                // Crucial logic for comparing smart enums - InMemoryDb needs to compare in c# style, SQLServer needs comparison by value (int)
+                options.ReplaceService<IModelCustomizer, TestModelCustomizer>();
             });
+
+            var storageDescriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(IImageStorageService));
+
+            if (storageDescriptor != null)
+            {
+                services.Remove(storageDescriptor);
+            }
+
+            var substituteStorageService = Substitute.For<IImageStorageService>();
+
+            substituteStorageService
+                .UploadImageAsync(
+                    Arg.Any<Stream>(),
+                    Arg.Any<string>(),
+                    Arg.Any<string>(),
+                    Arg.Any<CancellationToken>())
+                .Returns(Task.FromResult("https://fake-storage.com/test-image.jpg"));
+
+            substituteStorageService
+                .DeleteImageAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(Task.CompletedTask);
+
+            services.AddSingleton(substituteStorageService);
+
         });
     }
 
@@ -47,8 +72,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         using (var scope = host.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var logger = scope.ServiceProvider
-                .GetRequiredService<ILogger<CustomWebApplicationFactory>>();
+            var logger = scope.ServiceProvider.GetRequiredService<
+                ILogger<CustomWebApplicationFactory>
+            >();
 
             try
             {

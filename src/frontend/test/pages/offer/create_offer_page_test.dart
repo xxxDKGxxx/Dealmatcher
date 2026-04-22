@@ -1,13 +1,97 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/pages/create_offer_page.dart';
+import 'package:frontend/pages/create_update_offer_page.dart';
+import 'package:frontend/models/category.dart';
+import 'package:frontend/models/property_definition.dart';
 
 void main() {
   const double width = 1200;
   const double height = 3000;
 
   Widget createWidgetUnderTest() {
-    return const MaterialApp(home: CreateOfferPage());
+    return MaterialApp(
+      home: CreateOfferPage(
+        fetchCategories: () async => [
+          Category(
+            id: 0,
+            name: "Computers",
+            description: "PC, Laptops and Notebooks",
+          ),
+          Category(
+            id: 1,
+            name: "Apartements",
+            description: "Apartements for rent or for sale",
+          ),
+        ],
+        fetchProperties: (categoryName) async {
+          if (categoryName == "Computers") {
+            return [
+              PropertyDefinition(
+                id: 0,
+                name: 'Model',
+                type: PropertyType.text,
+                options: [],
+              ),
+              PropertyDefinition(
+                id: 1,
+                name: "RAM (GB)",
+                type: PropertyType.numeric,
+                options: [],
+              ),
+              PropertyDefinition(
+                id: 2,
+                name: "Storage (GB)",
+                type: PropertyType.numeric,
+                options: [],
+              ),
+              PropertyDefinition(
+                id: 3,
+                name: "OS",
+                type: PropertyType.select,
+                options: ["Windows", "Linux", "MacOS"],
+              ),
+              PropertyDefinition(
+                id: 4,
+                name: "Is New",
+                type: PropertyType.boolean,
+                options: [],
+              ),
+            ];
+          } else if (categoryName == "Apartements") {
+            return [
+              PropertyDefinition(
+                id: 5,
+                name: "Rooms",
+                type: PropertyType.numeric,
+                options: [],
+              ),
+              PropertyDefinition(
+                id: 6,
+                name: "Floor",
+                type: PropertyType.numeric,
+                options: [],
+              ),
+              PropertyDefinition(
+                id: 7,
+                name: "Has Balcony",
+                type: PropertyType.boolean,
+                options: [],
+              ),
+              PropertyDefinition(
+                id: 8,
+                name: "Heating",
+                type: PropertyType.select,
+                options: ["Gas", "Electric", "Central"],
+              ),
+            ];
+          }
+          return [];
+        },
+        createOffer: (request) async {
+          // Dummy successful creation
+        },
+      ),
+    );
   }
 
   setUp(() {
@@ -170,7 +254,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
-    expect(find.text('offer form is valid.'), findsOneWidget);
+    expect(find.text('Created new offer'), findsOneWidget);
 
     FlutterError.onError = originalOnError;
   });

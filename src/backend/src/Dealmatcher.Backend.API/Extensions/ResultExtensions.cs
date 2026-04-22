@@ -8,6 +8,11 @@ public static class ResultExtensions
 
         if (result.IsSuccess)
         {
+            if (result.IsNoContent())
+            {
+                await response.SendNoContentAsync(ct);
+                return;
+            }
             await response.SendOkAsync(cancellation: ct);
             return;
         }
@@ -21,6 +26,11 @@ public static class ResultExtensions
 
         if (result.IsSuccess)
         {
+            if (result.IsNoContent())
+            {
+                await response.SendNoContentAsync(ct);
+                return;
+            }
             await response.SendAsync(result.Value, 200, cancellation: ct);
             return;
         }

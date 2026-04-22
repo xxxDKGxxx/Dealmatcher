@@ -2,10 +2,12 @@
 
 public class BlobStorageIntegrationTests : IAsyncLifetime
 {
-    private readonly IContainer _azuriteContainer = new ContainerBuilder("mcr.microsoft.com/azure-storage/azurite")
-        .WithPortBinding(10000, true)
-        .WithCommand("azurite", "--blobHost", "0.0.0.0", "--blobPort", "10000", "--skipApiVersionCheck")
-        .Build();
+    private readonly IContainer _azuriteContainer = new ContainerBuilder(
+      "mcr.microsoft.com/azure-storage/azurite"
+    )
+      .WithPortBinding(10000, true)
+      .WithCommand("azurite", "--blobHost", "0.0.0.0", "--blobPort", "10000", "--skipApiVersionCheck")
+      .Build();
 
     private AzureBlobStorageService _service = null!;
 
@@ -16,15 +18,18 @@ public class BlobStorageIntegrationTests : IAsyncLifetime
         var host = _azuriteContainer.Hostname;
         var port = _azuriteContainer.GetMappedPublicPort(10000);
 
-        var connectionString = $"DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://{host}:{port}/devstoreaccount1;";
+        var connectionString =
+          $"DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://{host}:{port}/devstoreaccount1;";
 
         var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
+          .AddInMemoryCollection(
+            new Dictionary<string, string?>
             {
                 ["ConnectionStrings:AzureBlobStorage"] = connectionString,
-                ["Azure:BlobContainerName"] = "test-images"
-            })
-            .Build();
+                ["Azure:BlobContainerName"] = "test-images",
+            }
+          )
+          .Build();
 
         _service = new AzureBlobStorageService(configuration);
     }
@@ -42,7 +47,12 @@ public class BlobStorageIntegrationTests : IAsyncLifetime
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
         var contentType = "text/plain";
 
-        var url = await _service.UploadImageAsync(stream, fileName, contentType, CancellationToken.None);
+        var url = await _service.UploadImageAsync(
+          stream,
+          fileName,
+          contentType,
+          CancellationToken.None
+        );
 
         url.ShouldNotBeNullOrEmpty();
         url.ShouldContain("devstoreaccount1");
@@ -54,6 +64,7 @@ public class BlobStorageIntegrationTests : IAsyncLifetime
         var downloadedContent = await response.Content.ReadAsStringAsync();
         downloadedContent.ShouldBe(content);
     }
+
     [Fact]
     public async Task DeleteImageAsync_ExistingFile_ShouldRemoveFileFromStorage()
     {
@@ -62,7 +73,12 @@ public class BlobStorageIntegrationTests : IAsyncLifetime
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
         var contentType = "text/plain";
 
-        var url = await _service.UploadImageAsync(stream, fileName, contentType, CancellationToken.None);
+        var url = await _service.UploadImageAsync(
+          stream,
+          fileName,
+          contentType,
+          CancellationToken.None
+        );
 
         using var httpClient = new HttpClient();
         var beforeDeleteResponse = await httpClient.GetAsync(url);

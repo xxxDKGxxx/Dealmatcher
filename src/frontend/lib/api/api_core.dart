@@ -37,6 +37,14 @@ class ApiCore {
     return headers;
   }
 
+  Map<String, String> get _getHeaders {
+    final headers = {'Accept': 'application/json'};
+    if (_token != null) {
+      headers['Authorization'] = 'Bearer $_token';
+    }
+    return headers;
+  }
+
   Uri _getUri(String endpoint) {
     if (_baseUrl == null) {
       throw Exception("ApiCore has not been initialized.");
@@ -63,7 +71,7 @@ class ApiCore {
   // HTTP methods
   Future<http.Response> get(String endpoint) async {
     return await intercept(
-      () async => http.get(_getUri(endpoint), headers: _headers),
+      () async => http.get(_getUri(endpoint), headers: _getHeaders),
     );
   }
 
@@ -101,5 +109,29 @@ class ApiCore {
     return await intercept(
       () => http.delete(_getUri(endpoint), headers: _headers),
     );
+  }
+
+  Future<http.Response> postMultipart(
+    String endpoint, {
+    Map<String, String>? fields,
+    List<http.MultipartFile>? files,
+  }) async {
+    return await intercept(() async {
+      final uri = _getUri(endpoint);
+      var request = http.MultipartRequest('POST', uri);
+
+      request.headers.addAll(_getHeaders);
+
+      if (fields != null) {
+        request.fields.addAll(fields);
+      }
+
+      if (files != null) {
+        request.files.addAll(files);
+      }
+
+      final streamedResponse = await request.send();
+      return await http.Response.fromStream(streamedResponse);
+    });
   }
 }
