@@ -3,6 +3,7 @@ global using System.Net.Http.Headers;
 global using System.Net.Http.Json;
 global using System.Text.Json;
 global using Dealmatcher.Backend.API;
+global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Dto;

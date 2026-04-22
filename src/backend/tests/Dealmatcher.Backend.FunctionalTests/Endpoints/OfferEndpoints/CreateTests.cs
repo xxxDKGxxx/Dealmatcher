@@ -1,6 +1,6 @@
-﻿namespace Dealmatcher.Backend.FunctionalTests.Endpoints.Offer;
+﻿namespace Dealmatcher.Backend.FunctionalTests.Endpoints.OfferEndpoints;
 
-public class CreateOfferTests(CustomWebApplicationFactory factory) : EndpointTestBase(factory)
+public class CreateTests(CustomWebApplicationFactory factory) : EndpointTestBase(factory)
 {
     private async Task<int> CreateCategory()
     {
