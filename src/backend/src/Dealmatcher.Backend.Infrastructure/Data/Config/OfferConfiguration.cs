@@ -25,6 +25,13 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
         builder.Property(o => o.Availability).IsRequired();
 
         builder
+          .Property(o => o.Images)
+          .HasField("_images")
+          .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.Property(o => o.Tags).HasField("_tags").UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        builder
           .Property(o => o.Status)
           .HasConversion(s => s.Value, v => OfferStatus.FromValue(v))
           .IsRequired()
