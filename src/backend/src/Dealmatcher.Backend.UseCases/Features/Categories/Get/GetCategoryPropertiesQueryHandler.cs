@@ -5,21 +5,21 @@ public class GetCategoryPropertiesQueryHandler(
   IMapper mapper
 ) : IQueryHandler<GetCategoryPropertiesQuery, Result<List<PropertyDefinitionDto>>>
 {
-  public async Task<Result<List<PropertyDefinitionDto>>> Handle(
-    GetCategoryPropertiesQuery request,
-    CancellationToken cancellationToken
-  )
-  {
-    var spec = new CategoryByNameSpec(request.CategoryName);
-    var category = await categoriesRepository.SingleOrDefaultAsync(spec, cancellationToken);
-
-    if (category is null)
+    public async Task<Result<List<PropertyDefinitionDto>>> Handle(
+      GetCategoryPropertiesQuery request,
+      CancellationToken cancellationToken
+    )
     {
-      return Result.NotFound();
-    }
+        var spec = new CategoryByNameSpec(request.CategoryName);
+        var category = await categoriesRepository.SingleOrDefaultAsync(spec, cancellationToken);
 
-    return Result.Success(
-      category.PropertyDefinitions.Select(mapper.Map<PropertyDefinitionDto>).ToList()
-    );
-  }
+        if (category is null)
+        {
+            return Result.NotFound();
+        }
+
+        return Result.Success(
+          category.PropertyDefinitions.Select(mapper.Map<PropertyDefinitionDto>).ToList()
+        );
+    }
 }

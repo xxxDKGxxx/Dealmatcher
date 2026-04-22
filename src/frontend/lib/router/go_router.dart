@@ -33,7 +33,7 @@ final GoRouter globalRouter = GoRouter(
       path: '/profile-edit',
       builder: (context, state) => ProfileEditPage(),
     ),
-    GoRoute(path: '/my_offers', builder: (context, state) => MyOffersPage()),
+    GoRoute(path: '/my-offers', builder: (context, state) => MyOffersPage()),
     GoRoute(
       path: '/offer/:id',
       builder: (context, state) {

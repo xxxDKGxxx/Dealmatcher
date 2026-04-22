@@ -25,15 +25,16 @@ public class CreateOfferTests(CustomWebApplicationFactory factory) : EndpointTes
 
         var categoryId = await CreateCategory();
 
-        using var formData = new MultipartFormDataContent();
-        formData.Add(new StringContent("Super Oferta"), "Title");
-        formData.Add(new StringContent("Bardzo fajny opis produktu"), "Description");
-        formData.Add(new StringContent(99.99m.ToString()), "Price");
-        formData.Add(new StringContent(categoryId.ToString()), "CategoryId");
-        formData.Add(new StringContent("5"), "Availability");
-
-        formData.Add(new StringContent("promocja"), "Tags");
-        formData.Add(new StringContent("nowosc"), "Tags");
+        using var formData = new MultipartFormDataContent
+        {
+            { new StringContent("Super Oferta"), "Title" },
+            { new StringContent("Bardzo fajny opis produktu"), "Description" },
+            { new StringContent(99.99m.ToString()), "Price" },
+            { new StringContent(categoryId.ToString()), "CategoryId" },
+            { new StringContent("5"), "Availability" },
+            { new StringContent("promocja"), "Tags" },
+            { new StringContent("nowosc"), "Tags" }
+        };
 
         var imageBytes = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
         var imageContent = new ByteArrayContent(imageBytes);
@@ -60,11 +61,13 @@ public class CreateOfferTests(CustomWebApplicationFactory factory) : EndpointTes
     [Fact]
     public async Task CreateOffer_UnauthenticatedUser_ReturnsUnauthorized()
     {
-        using var formData = new MultipartFormDataContent();
-        formData.Add(new StringContent("Super Oferta"), "Title");
-        formData.Add(new StringContent("Opis"), "Description");
-        formData.Add(new StringContent("99.99"), "Price");
-        formData.Add(new StringContent("1"), "CategoryId");
+        using var formData = new MultipartFormDataContent
+        {
+            { new StringContent("Super Oferta"), "Title" },
+            { new StringContent("Opis"), "Description" },
+            { new StringContent("99.99"), "Price" },
+            { new StringContent("1"), "CategoryId" }
+        };
 
         var response = await _client.PostAsync("/api/v1/offers", formData);
 
@@ -79,11 +82,13 @@ public class CreateOfferTests(CustomWebApplicationFactory factory) : EndpointTes
 
         var categoryId = await CreateCategory();
 
-        using var formData = new MultipartFormDataContent();
-        formData.Add(new StringContent(""), "Title");
-        formData.Add(new StringContent("Opis"), "Description");
-        formData.Add(new StringContent("-50"), "Price");
-        formData.Add(new StringContent(categoryId.ToString()), "CategoryId");
+        using var formData = new MultipartFormDataContent
+        {
+            { new StringContent(""), "Title" },
+            { new StringContent("Opis"), "Description" },
+            { new StringContent("-50"), "Price" },
+            { new StringContent(categoryId.ToString()), "CategoryId" }
+        };
 
         var response = await _client.PostAsync("/api/v1/offers", formData);
 

@@ -2,8 +2,8 @@
 
 public class CategoryByNameSpec : SingleResultSpecification<Category>
 {
-  public CategoryByNameSpec(string categoryName)
-  {
-    Query.Where(c => c.Name == categoryName).Take(1);
-  }
+    public CategoryByNameSpec(string categoryName)
+    {
+        Query.Where(c => c.Name == categoryName).Take(1);
+    }
 }

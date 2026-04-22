@@ -98,13 +98,13 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
         PropertyDefinition(
           id: 1,
           name: "RAM (GB)",
-          type: PropertyType.number,
+          type: PropertyType.numeric,
           options: [],
         ),
         PropertyDefinition(
           id: 2,
           name: "Storage (GB)",
-          type: PropertyType.number,
+          type: PropertyType.numeric,
           options: [],
         ),
         PropertyDefinition(
@@ -125,13 +125,13 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
         PropertyDefinition(
           id: 5,
           name: "Rooms",
-          type: PropertyType.number,
+          type: PropertyType.numeric,
           options: [],
         ),
         PropertyDefinition(
           id: 6,
           name: "Floor",
-          type: PropertyType.number,
+          type: PropertyType.numeric,
           options: [],
         ),
         PropertyDefinition(
@@ -153,7 +153,7 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
 
   Widget _buildPropertyFilter(PropertyDefinition prop) {
     switch (prop.type) {
-      case PropertyType.number:
+      case PropertyType.numeric:
         _properties.putIfAbsent(prop.id, () => ["", ""]);
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,

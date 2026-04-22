@@ -19,7 +19,7 @@ class PropertyField extends StatelessWidget {
     Widget field;
 
     switch (property.type) {
-      case PropertyType.number:
+      case PropertyType.numeric:
         field = numberFormField(
           text: property.name,
           initialValue: value?.toString(),

@@ -80,13 +80,13 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
         PropertyDefinition(
           id: 1,
           name: "RAM (GB)",
-          type: PropertyType.number,
+          type: PropertyType.numeric,
           options: [],
         ),
         PropertyDefinition(
           id: 2,
           name: "Storage (GB)",
-          type: PropertyType.number,
+          type: PropertyType.numeric,
           options: [],
         ),
         PropertyDefinition(
@@ -108,13 +108,13 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
         PropertyDefinition(
           id: 5,
           name: "Rooms",
-          type: PropertyType.number,
+          type: PropertyType.numeric,
           options: [],
         ),
         PropertyDefinition(
           id: 6,
           name: "Floor",
-          type: PropertyType.number,
+          type: PropertyType.numeric,
           options: [],
         ),
         PropertyDefinition(

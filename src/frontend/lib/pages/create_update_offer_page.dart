@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:frontend/api/api_categories.dart';
+import 'package:frontend/api/api_offers.dart';
+import 'package:frontend/api/models/offer_create_request.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/form_fields.dart';
@@ -38,7 +41,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
   final List<String> _tags = [];
 
   Future<List<PropertyDefinition>>? _propertiesFuture;
-  final Map<String, dynamic> _properties = {};
+  final Map<String, String> _properties = {};
 
   final List<XFile> _images = [];
 
@@ -76,32 +79,61 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     });
   }
 
-  void _submit() {
+  void _submit() async {
     if (_formKey.currentState!.validate()) {
       final isUpdate = widget.offerId != null;
-      final data = {
-        "id": widget.offerId,
-        "title": _titleController.text,
-        "description": _descriptionController.text,
-        "price": double.tryParse(_priceController.text) ?? 0,
-        "images": _images
-            .map((e) => e.path)
-            .toList(), // In future this would be base64 or upload paths
-        "categoryId": _selectedCategory?.id,
-        "tags": _tags,
-        "properties": _properties,
-        "availability": int.tryParse(_availabilityController.text) ?? 1,
-      };
 
-      debugPrint(
-        isUpdate ? "updated data: $data" : "created offer data: $data",
-      );
+      try {
+        if (!isUpdate) {
+          final request = OfferCreateRequest(
+            title: _titleController.text,
+            description: _descriptionController.text,
+            price: double.tryParse(_priceController.text) ?? 0,
+            images: _images,
+            categoryId: _selectedCategory?.id ?? 0,
+            tags: _tags,
+            properties: _properties,
+            availability: int.tryParse(_availabilityController.text) ?? 1,
+          );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(isUpdate ? 'Updated offer' : 'Created new offer'),
-        ),
-      );
+          await ApiOffers().createOffer(request);
+          if (mounted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('Created new offer')));
+            context.go('/my-offers');
+          }
+        } else {
+          // TODO: Implement update
+          final data = {
+            "id": widget.offerId,
+            "title": _titleController.text,
+            "description": _descriptionController.text,
+            "price": double.tryParse(_priceController.text) ?? 0,
+            "images": _images
+                .map((e) => e.path)
+                .toList(), // In future this would be base64 or upload paths
+            "categoryId": _selectedCategory?.id,
+            "tags": _tags,
+            "properties": _properties,
+            "availability": int.tryParse(_availabilityController.text) ?? 1,
+          };
+
+          debugPrint("updated data: $data");
+
+          if (mounted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('Updated offer')));
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+        }
+      }
     }
   }
 
@@ -137,7 +169,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     _availabilityController.text = offer!.availability.toString();
     //_tagController.text = offer!.tags.join(', ');
     _selectedCategory = offer!.category;
-    _propertiesFuture = _fetchProperties(_selectedCategory!.id);
+    _propertiesFuture = _fetchProperties(_selectedCategory!.name);
     for (var t in offer!.tags) {
       _tags.add(t);
     }
@@ -145,11 +177,11 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
       var file = await DefaultCacheManager().getSingleFile(i);
       _images.add(XFile(file.path));
     }
-    final properties = await _fetchProperties(_selectedCategory!.id);
+    final properties = await _fetchProperties(_selectedCategory!.name);
     for (var i = 0; i < properties.length; i++) {
       dynamic value;
       switch (properties[i].type) {
-        case PropertyType.number:
+        case PropertyType.numeric:
           value = int.tryParse(offer!.properties[i] ?? '');
           break;
         case PropertyType.boolean:
@@ -162,94 +194,18 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
           value = offer!.properties[i];
           break;
       }
-      _properties[properties[i].name] = value;
+      _properties[properties[i].id.toString()] = value;
     }
 
     return offer;
   }
 
   Future<List<Category>> _fetchCategories() async {
-    await Future.delayed(const Duration(seconds: 2));
-    return [
-      Category(
-        id: 0,
-        name: "Computers",
-        description: "PC, Laptops and Notebooks",
-      ),
-      Category(
-        id: 1,
-        name: "Apartements",
-        description: "Apartements for rent or for sale",
-      ),
-    ];
+    return ApiCategories().getCategories();
   }
 
-  Future<List<PropertyDefinition>> _fetchProperties(int categoryId) async {
-    await Future.delayed(const Duration(seconds: 1));
-    if (categoryId == 0) {
-      // Computers
-      return [
-        PropertyDefinition(
-          id: 0,
-          name: 'Model',
-          type: PropertyType.text,
-          options: [],
-        ),
-        PropertyDefinition(
-          id: 1,
-          name: "RAM (GB)",
-          type: PropertyType.number,
-          options: [],
-        ),
-        PropertyDefinition(
-          id: 2,
-          name: "Storage (GB)",
-          type: PropertyType.number,
-          options: [],
-        ),
-        PropertyDefinition(
-          id: 3,
-          name: "OS",
-          type: PropertyType.select,
-          options: ["Windows", "Linux", "MacOS"],
-        ),
-        PropertyDefinition(
-          id: 4,
-          name: "Is New",
-          type: PropertyType.boolean,
-          options: [],
-        ),
-      ];
-    } else if (categoryId == 1) {
-      // Apartments
-      return [
-        PropertyDefinition(
-          id: 5,
-          name: "Rooms",
-          type: PropertyType.number,
-          options: [],
-        ),
-        PropertyDefinition(
-          id: 6,
-          name: "Floor",
-          type: PropertyType.number,
-          options: [],
-        ),
-        PropertyDefinition(
-          id: 7,
-          name: "Has Balcony",
-          type: PropertyType.boolean,
-          options: [],
-        ),
-        PropertyDefinition(
-          id: 8,
-          name: "Heating",
-          type: PropertyType.select,
-          options: ["Gas", "Electric", "Central"],
-        ),
-      ];
-    }
-    return [];
+  Future<List<PropertyDefinition>> _fetchProperties(String categoryName) async {
+    return ApiCategories().getPropertyDefinitions(categoryName);
   }
 
   void _deleteOffer(int id) {
@@ -401,7 +357,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                                       _properties.clear();
                                       if (newValue != null) {
                                         _propertiesFuture = _fetchProperties(
-                                          newValue.id,
+                                          newValue.name,
                                         );
                                       } else {
                                         _propertiesFuture = null;
@@ -586,10 +542,11 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                                   ...properties.map(
                                     (prop) => PropertyField(
                                       property: prop,
-                                      value: _properties[prop.name],
+                                      value: _properties[prop.id.toString()],
                                       onChanged: (newValue) {
                                         setState(() {
-                                          _properties[prop.name] = newValue;
+                                          _properties[prop.id.toString()] =
+                                              newValue.toString();
                                         });
                                       },
                                     ),
