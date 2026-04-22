@@ -17,9 +17,20 @@ import '../models/category.dart';
 import '../models/property_definition.dart';
 
 class CreateOfferPage extends StatefulWidget {
-  const CreateOfferPage({super.key, this.offerId});
+  const CreateOfferPage({
+    super.key,
+    this.offerId,
+    this.fetchCategories,
+    this.fetchProperties,
+    this.createOffer,
+    this.updateOffer,
+  });
 
   final int? offerId;
+  final Future<List<Category>> Function()? fetchCategories;
+  final Future<List<PropertyDefinition>> Function(String)? fetchProperties;
+  final Future<void> Function(OfferCreateRequest)? createOffer;
+  final Future<void> Function(Map<String, dynamic>)? updateOffer;
 
   @override
   State<CreateOfferPage> createState() => _CreateOfferPageState();
@@ -96,7 +107,12 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
             availability: int.tryParse(_availabilityController.text) ?? 1,
           );
 
-          await ApiOffers().createOffer(request);
+          if (widget.createOffer != null) {
+            await widget.createOffer!(request);
+          } else {
+            await ApiOffers().createOffer(request);
+          }
+          
           if (mounted) {
             ScaffoldMessenger.of(
               context,
@@ -119,6 +135,9 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
             "availability": int.tryParse(_availabilityController.text) ?? 1,
           };
 
+          if (widget.updateOffer != null) {
+            await widget.updateOffer!(data);
+          }
           debugPrint("updated data: $data");
 
           if (mounted) {
@@ -201,10 +220,16 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
   }
 
   Future<List<Category>> _fetchCategories() async {
+    if (widget.fetchCategories != null) {
+      return widget.fetchCategories!();
+    }
     return ApiCategories().getCategories();
   }
 
   Future<List<PropertyDefinition>> _fetchProperties(String categoryName) async {
+    if (widget.fetchProperties != null) {
+      return widget.fetchProperties!(categoryName);
+    }
     return ApiCategories().getPropertyDefinitions(categoryName);
   }
 

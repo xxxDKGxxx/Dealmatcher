@@ -30,7 +30,7 @@ class PropertyField extends StatelessWidget {
       case PropertyType.boolean:
         field = switchFormField(
           text: property.name,
-          value: value ?? false,
+          value: value is bool ? value : (value?.toString() == 'true'),
           onChanged: (newValue) {
             onChanged(newValue);
           },
