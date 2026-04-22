@@ -112,7 +112,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
           } else {
             await ApiOffers().createOffer(request);
           }
-          
+
           if (mounted) {
             ScaffoldMessenger.of(
               context,
