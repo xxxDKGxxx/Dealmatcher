@@ -69,6 +69,6 @@ public sealed class SearchOffersQueryHandler(
             return Result.NoContent();
         }
 
-        return Result.Success(mapper.Map<List<OfferDto>>(searchResults));
+        return Result.Success(mapper.Map<List<OfferDto>>(searchResults.ToList()));
     }
 }
