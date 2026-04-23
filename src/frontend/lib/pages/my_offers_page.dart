@@ -47,7 +47,7 @@ class _MyOffersPageState extends State<MyOffersPage> {
           }
           return Center(
             child: Text(
-              'Error: ${snapshot.error.toString().replaceAll('Exception: ', '')}',
+              snapshot.error.toString().replaceAll('Exception: ', ''),
             ),
           );
         },
