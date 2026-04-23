@@ -8,5 +8,5 @@ class ApiUrls {
 
   String propertiesByCategoryName(String categoryName) =>
       '/categories/$categoryName/properties';
-  String offerById(int offerId) => 'offers/$offerId';
+  String offerById(int offerId) => '/offers/$offerId';
 }

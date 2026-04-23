@@ -9,15 +9,20 @@ Widget nonEmptyTextFormField({
   int? maxLines = 1,
   void Function(String)? onChanged,
   String? initialValue,
+  bool? enabled,
+  Widget? suffixIcon,
 }) => TextFormField(
   controller: controller,
   initialValue: initialValue,
   obscureText: obscureText,
   maxLines: maxLines,
   onChanged: onChanged,
+  readOnly: !(enabled ?? true),
   decoration: InputDecoration(
     labelText: text,
     border: const OutlineInputBorder(),
+    suffixIcon: suffixIcon,
+    filled: !(enabled ?? true),
   ),
   validator: (value) {
     if (value == null ||
@@ -36,14 +41,19 @@ Widget numberFormField({
   void Function(String)? onChanged,
   String? initialValue,
   String? Function(String?)? validator,
+  bool? enabled,
+  Widget? suffixIcon,
 }) => TextFormField(
   controller: controller,
   initialValue: initialValue,
   keyboardType: keyboardType,
   onChanged: onChanged,
+  readOnly: !(enabled ?? true),
   decoration: InputDecoration(
     labelText: text,
     border: const OutlineInputBorder(),
+    suffixIcon: suffixIcon,
+    filled: !(enabled ?? true),
   ),
   validator:
       validator ??
@@ -80,7 +90,7 @@ Widget dropdownFormField<T>({
   required String text,
   required List<DropdownMenuItem<T>> items,
   required T? value,
-  required void Function(T?) onChanged,
+  void Function(T?)? onChanged,
   String? Function(T?)? validator,
   Widget? icon,
   bool isExpanded = true,
@@ -122,5 +132,5 @@ Widget dropdownFormField<T>({
 Widget switchFormField({
   required String text,
   required bool value,
-  required void Function(bool) onChanged,
+  void Function(bool)? onChanged,
 }) => SwitchListTile(title: Text(text), value: value, onChanged: onChanged);

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:frontend/api/api_categories.dart';
 import 'package:frontend/api/api_offers.dart';
 import 'package:frontend/api/models/offer_create_request.dart';
+import 'package:frontend/api/models/offer_update_request.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/form_fields.dart';
@@ -59,11 +61,32 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
   late Future<Offer?>? _offerFuture;
   late Offer? offer;
 
+  bool _isTitleEditing = false;
+  bool _isDescriptionEditing = false;
+  bool _isPriceEditing = false;
+  bool _isAvailabilityEditing = false;
+  bool _isTagsEditing = false;
+  final Map<String, bool> _isPropertyEditing = {};
+  bool _imagesChanged = false;
+
+  Widget? _buildEditIcon(
+    bool isUpdate,
+    bool isEditing,
+    VoidCallback onPressed,
+  ) {
+    if (!isUpdate) return null;
+    return IconButton(
+      icon: Icon(isEditing ? Icons.close : Icons.edit),
+      onPressed: onPressed,
+    );
+  }
+
   Future<void> _pickImage() async {
     final List<XFile> selectedImages = await _picker.pickMultiImage();
     if (selectedImages.isNotEmpty) {
       setState(() {
         _images.addAll(selectedImages);
+        _imagesChanged = true;
       });
     }
   }
@@ -71,6 +94,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
   void _removeImage(int index) {
     setState(() {
       _images.removeAt(index);
+      _imagesChanged = true;
     });
   }
 
@@ -120,25 +144,35 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
             context.go('/my-offers');
           }
         } else {
-          // TODO: Implement update
-          final data = {
-            "id": widget.offerId,
-            "title": _titleController.text,
-            "description": _descriptionController.text,
-            "price": double.tryParse(_priceController.text) ?? 0,
-            "images": _images
-                .map((e) => e.path)
-                .toList(), // In future this would be base64 or upload paths
-            "categoryId": _selectedCategory?.id,
-            "tags": _tags,
-            "properties": _properties,
-            "availability": int.tryParse(_availabilityController.text) ?? 1,
-          };
+          final propertiesToSend = <String, String>{};
+          for (var entry in _properties.entries) {
+            if (_isPropertyEditing[entry.key] == true) {
+              propertiesToSend[entry.key] = entry.value;
+            }
+          }
+
+          final request = OfferUpdateRequest(
+            title: _isTitleEditing ? _titleController.text : null,
+            description: _isDescriptionEditing
+                ? _descriptionController.text
+                : null,
+            price: _isPriceEditing
+                ? (double.tryParse(_priceController.text) ?? 0)
+                : null,
+            availability: _isAvailabilityEditing
+                ? (int.tryParse(_availabilityController.text) ?? 1)
+                : null,
+            images: _imagesChanged ? _images.map((e) => e.path).toList() : null,
+            tags: _isTagsEditing ? _tags : null,
+            properties: propertiesToSend.isNotEmpty ? propertiesToSend : null,
+          );
 
           if (widget.updateOffer != null) {
-            await widget.updateOffer!(data);
+            await widget.updateOffer!(jsonDecode(request.toJson()));
+          } else {
+            await ApiOffers().updateOffer(widget.offerId!, request);
           }
-          debugPrint("updated data: $data");
+          debugPrint("updated data: ${request.toJson()}");
 
           if (mounted) {
             ScaffoldMessenger.of(
@@ -157,36 +191,16 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
   }
 
   Future<Offer?> _fetchOffer() async {
-    await Future.delayed(const Duration(seconds: 1, milliseconds: 500));
     if (widget.offerId == null) {
       return null;
     }
 
-    offer = Offer(
-      id: widget.offerId!,
-      title: "Polish Cow",
-      description: "Tylko jedno w głowie mam",
-      price: 133000,
-      images: [
-        'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.suwalki24.pl%2F_uploads%2F2020%2FGrudzien%2FDrobne%2Fkrowy_pasace_sie.jpg&f=1&nofb=1&ipt=7ac6e204693a3b2b87cc07b9c800f7de5bf5e627e31f6e646dc28c4b8a9f4f93',
-        'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FrfcliTe0qAs%2Fmaxresdefault.jpg&f=1&nofb=1&ipt=e61737e24b54abdd3cdb348ba66d42a572b95bb45202791838496c6c8d393320',
-      ],
-      seller: Seller(id: 0, name: 'Zenon'),
-      category:
-          (await _fetchCategories())[1], //Category(id: 1, name: 'Animal', description: 'living creatures to eat in future'),
-      tags: ['animal', 'cow', 'yummy', 'i', 'hate', 'io'],
-      properties: {0: '12', 1: '59', 2: 'true', 3: 'Central'},
-      availability: (widget.offerId! + 21) * 37,
-      status: OfferStatus.active,
-      createdAt: DateTime.now().subtract(Duration(days: 5)),
-      updatedAt: DateTime.now().subtract(Duration(hours: 21)),
-    );
+    offer = await ApiOffers().getOffer(widget.offerId!);
 
     _titleController.text = offer!.title;
     _descriptionController.text = offer!.description;
     _priceController.text = offer!.price.toString();
     _availabilityController.text = offer!.availability.toString();
-    //_tagController.text = offer!.tags.join(', ');
     _selectedCategory = offer!.category;
     _propertiesFuture = _fetchProperties(_selectedCategory!.name);
     for (var t in offer!.tags) {
@@ -197,23 +211,10 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
       _images.add(XFile(file.path));
     }
     final properties = await _fetchProperties(_selectedCategory!.name);
-    for (var i = 0; i < properties.length; i++) {
-      dynamic value;
-      switch (properties[i].type) {
-        case PropertyType.numeric:
-          value = int.tryParse(offer!.properties[i] ?? '');
-          break;
-        case PropertyType.boolean:
-          value = bool.tryParse(offer!.properties[i] ?? '');
-          break;
-        case PropertyType.text:
-          value = offer!.properties[i];
-          break;
-        case PropertyType.select:
-          value = offer!.properties[i];
-          break;
+    for (var prop in properties) {
+      if (offer!.properties.containsKey(prop.id)) {
+        _properties[prop.id.toString()] = offer!.properties[prop.id]!;
       }
-      _properties[properties[i].id.toString()] = value;
     }
 
     return offer;
@@ -233,11 +234,13 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     return ApiCategories().getPropertyDefinitions(categoryName);
   }
 
-  void _deleteOffer(int id) {
+  Future _deleteOffer(int id) async {
+    await ApiOffers().deleteOffer(id);
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Successfully deleted this offer')),
     );
-    context.pop();
+    context.go('my-offers');
   }
 
   @override
@@ -288,32 +291,94 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          nonEmptyTextFormField(
-                            controller: _titleController,
-                            text: "Title",
-                          ),
-                          const SizedBox(height: 16),
-                          nonEmptyTextFormField(
-                            controller: _descriptionController,
-                            text: "Description",
-                            maxLines: 4,
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: nonEmptyTextFormField(
+                                  controller: _titleController,
+                                  text: "Title",
+                                  enabled: !isUpdated || _isTitleEditing,
+                                ),
+                              ),
+                              if (isUpdated)
+                                _buildEditIcon(
+                                  isUpdated,
+                                  _isTitleEditing,
+                                  () {
+                                    setState(
+                                      () => _isTitleEditing = !_isTitleEditing,
+                                    );
+                                  },
+                                )!,
+                            ],
                           ),
                           const SizedBox(height: 16),
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: nonEmptyTextFormField(
+                                  controller: _descriptionController,
+                                  text: "Description",
+                                  maxLines: 4,
+                                  enabled: !isUpdated || _isDescriptionEditing,
+                                ),
+                              ),
+                              if (isUpdated)
+                                _buildEditIcon(
+                                  isUpdated,
+                                  _isDescriptionEditing,
+                                  () {
+                                    setState(
+                                      () => _isDescriptionEditing =
+                                          !_isDescriptionEditing,
+                                    );
+                                  },
+                                )!,
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
                                 child: numberFormField(
                                   controller: _priceController,
                                   text: "Price",
+                                  enabled: !isUpdated || _isPriceEditing,
                                 ),
                               ),
+                              if (isUpdated)
+                                _buildEditIcon(
+                                  isUpdated,
+                                  _isPriceEditing,
+                                  () {
+                                    setState(
+                                      () =>
+                                          _isPriceEditing = !_isPriceEditing,
+                                    );
+                                  },
+                                )!,
                               const SizedBox(width: 16),
                               Expanded(
                                 child: numberFormField(
                                   controller: _availabilityController,
                                   text: "Availability",
+                                  enabled: !isUpdated || _isAvailabilityEditing,
                                 ),
                               ),
+                              if (isUpdated)
+                                _buildEditIcon(
+                                  isUpdated,
+                                  _isAvailabilityEditing,
+                                  () {
+                                    setState(
+                                      () => _isAvailabilityEditing =
+                                          !_isAvailabilityEditing,
+                                    );
+                                  },
+                                )!,
                             ],
                           ),
                           const SizedBox(height: 16),
@@ -376,19 +441,22 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                                       )
                                       .toList(),
                                   itemLabelBuilder: (cat) => cat.name,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      _selectedCategory = newValue;
-                                      _properties.clear();
-                                      if (newValue != null) {
-                                        _propertiesFuture = _fetchProperties(
-                                          newValue.name,
-                                        );
-                                      } else {
-                                        _propertiesFuture = null;
-                                      }
-                                    });
-                                  },
+                                  onChanged: isUpdated
+                                      ? null
+                                      : (newValue) {
+                                          setState(() {
+                                            _selectedCategory = newValue;
+                                            _properties.clear();
+                                            if (newValue != null) {
+                                              _propertiesFuture =
+                                                  _fetchProperties(
+                                                    newValue.name,
+                                                  );
+                                            } else {
+                                              _propertiesFuture = null;
+                                            }
+                                          });
+                                        },
                                   validator: (value) {
                                     if (value == null) {
                                       return 'Category is required';
@@ -416,7 +484,9 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                             height: 120,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount: _images.length + 1,
+                              itemCount: isUpdated
+                                  ? _images.length
+                                  : _images.length + 1,
                               itemBuilder: (context, index) {
                                 if (index == _images.length) {
                                   return Padding(
@@ -481,36 +551,49 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                           const SizedBox(height: 32),
 
                           // Tags Section
-                          const Text(
-                            "Tags",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                           Row(
                             children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: _tagController,
-                                  decoration: const InputDecoration(
-                                    labelText: "Add Tag",
-                                  ),
+                              const Text(
+                                "Tags",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.add),
-                                onPressed: _addTag,
-                              ),
+                              if (isUpdated)
+                                _buildEditIcon(isUpdated, _isTagsEditing, () {
+                                  setState(
+                                    () => _isTagsEditing = !_isTagsEditing,
+                                  );
+                                })!,
                             ],
                           ),
+                          if (!isUpdated || _isTagsEditing)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: _tagController,
+                                    decoration: const InputDecoration(
+                                      labelText: "Add Tag",
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: _addTag,
+                                ),
+                              ],
+                            ),
                           Wrap(
                             spacing: 8,
                             children: _tags
                                 .map(
                                   (tag) => Chip(
                                     label: Text(tag),
-                                    onDeleted: () => _removeTag(tag),
+                                    onDeleted: (!isUpdated || _isTagsEditing)
+                                        ? () => _removeTag(tag)
+                                        : null,
                                   ),
                                 )
                                 .toList(),
@@ -547,12 +630,6 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
 
                               final properties = snapshot.data!;
 
-                              // if (offer != null) {
-                              //   for (var i = 0; i < properties.length; i++) {
-                              //     properties[i] = offer!.properties
-                              //   }
-                              // }
-
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -568,6 +645,26 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                                     (prop) => PropertyField(
                                       property: prop,
                                       value: _properties[prop.id.toString()],
+                                      enabled:
+                                          !isUpdated ||
+                                          (_isPropertyEditing[prop.id
+                                                  .toString()] ??
+                                              false),
+                                      suffixIcon: _buildEditIcon(
+                                        isUpdated,
+                                        _isPropertyEditing[prop.id
+                                                .toString()] ??
+                                            false,
+                                        () {
+                                          setState(() {
+                                            _isPropertyEditing[prop.id
+                                                    .toString()] =
+                                                !(_isPropertyEditing[prop.id
+                                                        .toString()] ??
+                                                    false);
+                                          });
+                                        },
+                                      ),
                                       onChanged: (newValue) {
                                         setState(() {
                                           _properties[prop.id.toString()] =
@@ -623,3 +720,4 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     );
   }
 }
+
