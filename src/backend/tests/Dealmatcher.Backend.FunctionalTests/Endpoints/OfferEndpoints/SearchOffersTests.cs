@@ -1,6 +1,4 @@
-﻿using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
-using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
-using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
+﻿using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
 
 namespace Dealmatcher.Backend.FunctionalTests.Endpoints.OfferEndpoints;
 
@@ -203,5 +201,114 @@ public class SearchOffersTests(CustomWebApplicationFactory factory) : EndpointTe
         var response = await SearchOffers();
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task Search_ComplexFiltering_ReturnsCorrectResults()
+    {
+        await RegisterAndLogin("complex@example.com", "Password123!");
+        var (carsCategory, mileageId, damagedId, brandId) = await GetCarsCategory();
+
+        await CreateOfferInDb("complex@example.com", "BMW E46 Cheap", 8000m, carsCategory, new()
+        {
+            [mileageId.ToString()] = "200000",
+            [damagedId.ToString()] = "false",
+            [brandId.ToString()] = "BMW"
+        });
+
+        await CreateOfferInDb("complex@example.com", "BMW M3 Expensive", 60000m, carsCategory, new()
+        {
+            [mileageId.ToString()] = "50000",
+            [damagedId.ToString()] = "false",
+            [brandId.ToString()] = "BMW"
+        });
+
+        await CreateOfferInDb("complex@example.com", "Audi A4 Mid", 25000m, carsCategory, new()
+        {
+            [mileageId.ToString()] = "120000",
+            [damagedId.ToString()] = "false",
+            [brandId.ToString()] = "Audi"
+        });
+
+        await CreateOfferInDb("complex@example.com", "Mercedes Damaged", 5000m, carsCategory, new()
+        {
+            [mileageId.ToString()] = "300000",
+            [damagedId.ToString()] = "true",
+            [brandId.ToString()] = "Mercedes"
+        });
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var phonesCategory = await db.Set<Category>().Include(c => c.PropertyDefinitions).FirstAsync(c => c.Name == "Phones");
+            var storageId = phonesCategory.PropertyDefinitions.First(pd => pd.Name == "Storage GB").Id;
+            var warrantyId = phonesCategory.PropertyDefinitions.First(pd => pd.Name == "Warranty").Id;
+
+            await CreateOfferInDb("complex@example.com", "iPhone 15", 4000m, phonesCategory, new()
+            {
+                [storageId.ToString()] = "256",
+                [warrantyId.ToString()] = "true"
+            });
+        }
+
+        var responseAll = await SearchOffers();
+        responseAll.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var allOffers = JsonDocument.Parse(await responseAll.Content.ReadAsStringAsync());
+        allOffers.RootElement.GetArrayLength().ShouldBe(5);
+
+        var responseCars = await SearchOffers(categoryId: carsCategory.Id);
+        responseCars.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var carsOffers = JsonDocument.Parse(await responseCars.Content.ReadAsStringAsync());
+        carsOffers.RootElement.GetArrayLength().ShouldBe(4);
+
+        var responseCheap = await SearchOffers(minPrice: 0, maxPrice: 10000);
+        responseCheap.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var cheapOffers = JsonDocument.Parse(await responseCheap.Content.ReadAsStringAsync());
+        cheapOffers.RootElement.GetArrayLength().ShouldBe(3);
+
+        var responseCheapCars = await SearchOffers(categoryId: carsCategory.Id, minPrice: 0, maxPrice: 10000);
+        responseCheapCars.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var cheapCarsOffers = JsonDocument.Parse(await responseCheapCars.Content.ReadAsStringAsync());
+        cheapCarsOffers.RootElement.GetArrayLength().ShouldBe(2);
+
+        var responseBmw = await SearchOffers(searchPhrase: "BMW");
+        responseBmw.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var bmwOffers = JsonDocument.Parse(await responseBmw.Content.ReadAsStringAsync());
+        bmwOffers.RootElement.GetArrayLength().ShouldBe(2);
+
+        var responseBmwBrand = await SearchOffers(
+            categoryId: carsCategory.Id,
+            properties: new Dictionary<string, List<string>>
+            {
+                [brandId.ToString()] = ["BMW"]
+            });
+        responseBmwBrand.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var bmwBrandOffers = JsonDocument.Parse(await responseBmwBrand.Content.ReadAsStringAsync());
+        bmwBrandOffers.RootElement.GetArrayLength().ShouldBe(2);
+
+        var responseBmwAudiCheap = await SearchOffers(
+            categoryId: carsCategory.Id,
+            minPrice: 0,
+            maxPrice: 30000,
+            properties: new Dictionary<string, List<string>>
+            {
+                [brandId.ToString()] = ["BMW", "Audi"]
+            });
+        responseBmwAudiCheap.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var bmwAudiCheapOffers = JsonDocument.Parse(await responseBmwAudiCheap.Content.ReadAsStringAsync());
+        bmwAudiCheapOffers.RootElement.GetArrayLength().ShouldBe(2);
+
+        var responseUndamaged = await SearchOffers(
+            categoryId: carsCategory.Id,
+            properties: new Dictionary<string, List<string>>
+            {
+                [damagedId.ToString()] = ["false"]
+            });
+        responseUndamaged.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var undamagedOffers = JsonDocument.Parse(await responseUndamaged.Content.ReadAsStringAsync());
+        undamagedOffers.RootElement.GetArrayLength().ShouldBe(3);
+
+        var responseNoMatch = await SearchOffers(minPrice: 999999, maxPrice: 999999);
+        responseNoMatch.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     }
 }
