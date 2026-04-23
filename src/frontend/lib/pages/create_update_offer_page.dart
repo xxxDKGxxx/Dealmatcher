@@ -137,6 +137,8 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
 
           if (widget.updateOffer != null) {
             await widget.updateOffer!(data);
+          } else {
+            // update offer
           }
           debugPrint("updated data: $data");
 
@@ -162,6 +164,19 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
       return null;
     }
 
+    final categories = await _fetchCategories();
+    late Category category;
+    if (categories.isEmpty) {
+      category = Category(
+        id: 1,
+        name: 'No connection category',
+        description:
+            'Your system appears to have lost connection with database.',
+      );
+    } else {
+      category = categories[1];
+    }
+
     offer = Offer(
       id: widget.offerId!,
       title: "Polish Cow",
@@ -172,10 +187,9 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
         'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FrfcliTe0qAs%2Fmaxresdefault.jpg&f=1&nofb=1&ipt=e61737e24b54abdd3cdb348ba66d42a572b95bb45202791838496c6c8d393320',
       ],
       seller: Seller(id: 0, name: 'Zenon'),
-      category:
-          (await _fetchCategories())[1], //Category(id: 1, name: 'Animal', description: 'living creatures to eat in future'),
+      category: category,
       tags: ['animal', 'cow', 'yummy', 'i', 'hate', 'io'],
-      properties: {0: '12', 1: '59', 2: 'true', 3: 'Central'},
+      properties: {0: 'true', 1: '12', 2: 'Samsung'},
       availability: (widget.offerId! + 21) * 37,
       status: OfferStatus.active,
       createdAt: DateTime.now().subtract(Duration(days: 5)),
@@ -186,7 +200,6 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     _descriptionController.text = offer!.description;
     _priceController.text = offer!.price.toString();
     _availabilityController.text = offer!.availability.toString();
-    //_tagController.text = offer!.tags.join(', ');
     _selectedCategory = offer!.category;
     _propertiesFuture = _fetchProperties(_selectedCategory!.name);
     for (var t in offer!.tags) {
@@ -201,10 +214,14 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
       dynamic value;
       switch (properties[i].type) {
         case PropertyType.numeric:
-          value = int.tryParse(offer!.properties[i] ?? '');
+          // here earlier was int.tryParse(offer!.properties[i] ?? ''); but it
+          // was giving 'int is not a subtype of String' errors
+          value = offer!.properties[i] ?? '';
           break;
         case PropertyType.boolean:
-          value = bool.tryParse(offer!.properties[i] ?? '');
+          // here the same as above but with bool instead of int.
+          // parser used earlier: bool.tryParse(offer!.properties[i] ?? '');
+          value = offer!.properties[i] ?? '';
           break;
         case PropertyType.text:
           value = offer!.properties[i];

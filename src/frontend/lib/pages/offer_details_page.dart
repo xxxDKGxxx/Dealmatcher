@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/api/api_categories_and_properties.dart';
+import 'package:frontend/api/api_categories.dart';
 import 'package:frontend/api/api_offer_details.dart';
 import 'package:frontend/models/category.dart';
 import 'package:frontend/models/offer.dart';
@@ -19,7 +19,7 @@ class OfferDetailsPage extends StatefulWidget {
 class _OfferDetailsPageState extends State<OfferDetailsPage> {
   late Future<(Offer, List<PropertyDefinition>)> _dataFuture;
   ApiOfferDetails apiOfferDetails = ApiOfferDetails();
-  ApiCategoriesAndProperties apiProperties = ApiCategoriesAndProperties();
+  ApiCategories apiProperties = ApiCategories();
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
   }
 
   Future<List<PropertyDefinition>> _fetchProperties(Category category) async {
-    var properties = await apiProperties.getProperties(category);
+    var properties = await apiProperties.getPropertyDefinitions(category.name);
     return properties;
   }
 

@@ -9,7 +9,7 @@ class ApiOfferDetails {
   Future<Offer?> getOffer(int offerId) async {
     Offer? offer;
     try {
-      final response = await _apiCore.get(ApiUrls().offerDetails(offerId));
+      final response = await _apiCore.get(ApiUrls().offerDetailsById(offerId));
 
       switch (response.statusCode) {
         case 200:
