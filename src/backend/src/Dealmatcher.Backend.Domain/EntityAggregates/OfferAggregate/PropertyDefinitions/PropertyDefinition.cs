@@ -1,6 +1,4 @@
-﻿using Dealmatcher.Backend.Domain.Interfaces.Filtering;
-
-namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
+﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
 
 public abstract class PropertyDefinition : DealmatcherEntityBase
 {

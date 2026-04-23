@@ -1,8 +1,4 @@
-﻿using Dealmatcher.Backend.Domain.Core.Filtering;
-using Dealmatcher.Backend.Domain.Interfaces.Filtering;
-using Dealmatcher.Backend.Domain.Interfaces.OfferSuggestion;
-
-namespace Dealmatcher.Backend.UseCases.Features.Offers.Search;
+﻿namespace Dealmatcher.Backend.UseCases.Features.Offers.Search;
 
 public sealed class SearchOffersQueryHandler(
     IReadRepository<Offer> offerRepository,
