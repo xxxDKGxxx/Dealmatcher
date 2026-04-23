@@ -14,6 +14,7 @@ public abstract class PropertyDefinition : DealmatcherEntityBase
     protected PropertyDefinition() { }
 
     public abstract Property CreatePropertyFromString(string value);
+    public abstract PropertyFilter CreatePropertyFilterFromStrings(List<string> values);
 }
 
 public abstract class PropertyDefinition<T> : PropertyDefinition where T : IParsable<T>
@@ -26,5 +27,10 @@ public abstract class PropertyDefinition<T> : PropertyDefinition where T : IPars
     public override Property CreatePropertyFromString(string value)
     {
         return CreatePropertyTyped(T.Parse(value, null));
+    }
+    public abstract PropertyFilter CreatePropertyFilterTyped(List<T> values);
+    public override PropertyFilter CreatePropertyFilterFromStrings(List<string> values)
+    {
+        return CreatePropertyFilterTyped([.. values.Select(v => T.Parse(v, null))]);
     }
 }
