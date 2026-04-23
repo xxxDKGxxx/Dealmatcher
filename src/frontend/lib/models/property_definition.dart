@@ -12,4 +12,15 @@ final class PropertyDefinition {
   });
 }
 
-enum PropertyType { number, boolean, select, text }
+enum PropertyType {
+  numeric,
+  boolean,
+  select,
+  text;
+
+  static PropertyType fromString(String s) {
+    return PropertyType.values.firstWhere(
+      (e) => e.toString() == 'PropertyType.${s.toLowerCase()}',
+    );
+  }
+}

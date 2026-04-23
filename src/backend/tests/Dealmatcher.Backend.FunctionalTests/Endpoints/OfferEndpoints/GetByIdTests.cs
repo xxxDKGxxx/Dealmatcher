@@ -1,4 +1,4 @@
-﻿namespace Dealmatcher.Backend.FunctionalTests.Endpoints.Offer;
+﻿namespace Dealmatcher.Backend.FunctionalTests.Endpoints.OfferEndpoints;
 
 public class GetByIdTests(CustomWebApplicationFactory factory) : EndpointTestBase(factory)
 {
