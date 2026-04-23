@@ -12,9 +12,9 @@ class MyOffersResponse extends ResponseModel {
   @override
   void fromJson() {
     offers.clear();
-    final data = jsonDecode(response.body);
+    final dataList = jsonDecode(response.body);
 
-    for (var i = 0; i < data.length; i++) {
+    for (var data in dataList) {
       final List<String> images = [];
       if (data['images'] != null) {
         for (var image in data['images']) {
