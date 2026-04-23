@@ -49,8 +49,8 @@ public class SearchOffersTests(CustomWebApplicationFactory factory) : EndpointTe
             CategoryId = categoryId,
             MinPrice = minPrice,
             MaxPrice = maxPrice,
-            Tags = tags ?? new List<string>(),
-            Properties = properties ?? new Dictionary<string, List<string>>(),
+            Tags = tags ?? [],
+            Properties = properties ?? [],
             SearchPhrase = searchPhrase,
             Limit = limit
         });
