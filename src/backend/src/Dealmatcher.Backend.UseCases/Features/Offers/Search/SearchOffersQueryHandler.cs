@@ -27,7 +27,7 @@ public sealed class SearchOffersQueryHandler(
                 }
 
                 var propertyDefinition = category.PropertyDefinitions.Where(pd => pd.Id == propertyIdParsed).FirstOrDefault();
-                
+
                 if (propertyDefinition is null)
                 {
                     return Result.Invalid(new ValidationError($"Invalid property Id: {propertyId}"));
@@ -65,6 +65,6 @@ public sealed class SearchOffersQueryHandler(
             return Result.NoContent();
         }
 
-        return Result.Success(mapper.Map<List<OfferDto>>(searchResults));
+        return Result.Success(mapper.Map<List<OfferDto>>(searchResults.ToList()));
     }
 }
