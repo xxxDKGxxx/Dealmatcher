@@ -5,6 +5,7 @@ class ApiUrls {
   String get profile => '/users/me';
   String get offers => '/offers';
   String get categories => '/categories';
+  String get myOffers => '/users/me/offers';
 
   String propertiesByCategoryName(String categoryName) =>
       '/categories/$categoryName/properties';
