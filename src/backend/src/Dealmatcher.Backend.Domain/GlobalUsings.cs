@@ -4,6 +4,7 @@ global using Ardalis.GuardClauses;
 global using Ardalis.SharedKernel;
 global using Ardalis.SmartEnum;
 global using Ardalis.Specification;
+global using Dealmatcher.Backend.Domain.Core.Filtering;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories.Dto;

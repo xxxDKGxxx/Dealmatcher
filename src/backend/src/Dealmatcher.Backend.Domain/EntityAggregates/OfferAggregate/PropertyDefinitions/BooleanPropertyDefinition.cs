@@ -1,6 +1,4 @@
-﻿using Dealmatcher.Backend.Domain.Core.Filtering;
-
-namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
+﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
 
 public sealed class BooleanPropertyDefinition : PropertyDefinition<bool>
 {
