@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_categories.dart';
-import 'package:frontend/api/api_offer_details.dart';
+import 'package:frontend/api/api_offers.dart';
 import 'package:frontend/models/category.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/models/property_definition.dart';
@@ -18,7 +18,7 @@ class OfferDetailsPage extends StatefulWidget {
 
 class _OfferDetailsPageState extends State<OfferDetailsPage> {
   late Future<(Offer, List<PropertyDefinition>)> _dataFuture;
-  ApiOfferDetails apiOfferDetails = ApiOfferDetails();
+  ApiOffers apiOfferDetails = ApiOffers();
   ApiCategories apiProperties = ApiCategories();
 
   @override
