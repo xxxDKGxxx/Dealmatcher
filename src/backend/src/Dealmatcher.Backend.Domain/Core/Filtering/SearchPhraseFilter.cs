@@ -8,8 +8,7 @@ public sealed class SearchPhraseFilter(string searchPhrase) : IFilter
     {
         if (!string.IsNullOrWhiteSpace(SearchPhrase))
         {
-            query.Where(o => o.Title.StartsWith(SearchPhrase) || o.Title.EndsWith(SearchPhrase)
-                                || o.Description.StartsWith(SearchPhrase) || o.Description.EndsWith(SearchPhrase));
+            query.Where(o => o.Title.Contains(SearchPhrase) || o.Description.Contains(SearchPhrase));
         }
     }
 }
