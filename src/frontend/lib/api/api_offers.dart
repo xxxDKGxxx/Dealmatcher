@@ -55,12 +55,13 @@ class ApiOffers {
     try {
       final response = await _apiCore.get(ApiUrls().myOffers);
 
-      switch(response.statusCode) {
-        case 200: {
-          final responseModel = MyOffersResponse(response: response);
-          responseModel.fromJson();
-          return responseModel.offers;
-        }
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = MyOffersResponse(response: response);
+            responseModel.fromJson();
+            return responseModel.offers;
+          }
         case 204:
           throw Exception('No offers found.');
         case 401:

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_offers.dart';
-import 'package:frontend/models/category.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:go_router/go_router.dart';
@@ -46,7 +45,11 @@ class _MyOffersPageState extends State<MyOffersPage> {
           if (snapshot.hasData && snapshot.data != null) {
             return _buildMyOfferList(snapshot.data!);
           }
-          return Center(child: Text('Error: ${snapshot.error.toString().replaceAll('Exception: ', '')}'));
+          return Center(
+            child: Text(
+              'Error: ${snapshot.error.toString().replaceAll('Exception: ', '')}',
+            ),
+          );
         },
       ),
     );
