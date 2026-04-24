@@ -95,15 +95,17 @@ Widget dropdownFormField<T>({
   Widget? icon,
   bool isExpanded = true,
   String Function(T value)? itemLabelBuilder,
+  bool? enabled,
 }) => DropdownButtonFormField<T>(
-  initialValue: value,
+  value: value,
   items: items,
-  onChanged: onChanged,
+  onChanged: (enabled ?? true) ? onChanged : null,
   isExpanded: isExpanded,
   icon: icon,
   decoration: InputDecoration(
     labelText: text,
     border: const OutlineInputBorder(),
+    filled: !(enabled ?? true),
   ),
   selectedItemBuilder: (context) {
     return items.map((item) {
@@ -133,4 +135,25 @@ Widget switchFormField({
   required String text,
   required bool value,
   void Function(bool)? onChanged,
-}) => SwitchListTile(title: Text(text), value: value, onChanged: onChanged);
+  bool? enabled,
+}) =>
+    InputDecorator(
+      decoration: InputDecoration(
+        labelText: text,
+        border: const OutlineInputBorder(),
+        filled: !(enabled ?? true),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(value ? "Yes" : "No"),
+          SizedBox(
+            height: 24,
+            child: Switch(
+              value: value,
+              onChanged: (enabled ?? true) ? onChanged : null,
+            ),
+          ),
+        ],
+      ),
+    );

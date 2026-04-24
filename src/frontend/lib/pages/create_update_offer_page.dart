@@ -66,7 +66,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
   bool _isPriceEditing = false;
   bool _isAvailabilityEditing = false;
   bool _isTagsEditing = false;
-  final Map<String, bool> _isPropertyEditing = {};
+  bool _isPropertiesEditing = false;
   bool _imagesChanged = false;
 
   Widget? _buildEditIcon(
@@ -144,13 +144,6 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
             context.go('/my-offers');
           }
         } else {
-          final propertiesToSend = <String, String>{};
-          for (var entry in _properties.entries) {
-            if (_isPropertyEditing[entry.key] == true) {
-              propertiesToSend[entry.key] = entry.value;
-            }
-          }
-
           final request = OfferUpdateRequest(
             title: _isTitleEditing ? _titleController.text : null,
             description: _isDescriptionEditing
@@ -164,7 +157,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                 : null,
             images: _imagesChanged ? _images.map((e) => e.path).toList() : null,
             tags: _isTagsEditing ? _tags : null,
-            properties: propertiesToSend.isNotEmpty ? propertiesToSend : null,
+            properties: _isPropertiesEditing ? _properties : null,
           );
 
           if (widget.updateOffer != null) {
@@ -448,6 +441,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                                             }
                                           });
                                         },
+                                  enabled: !isUpdated,
                                   validator: (value) {
                                     if (value == null) {
                                       return 'Category is required';
@@ -624,38 +618,34 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    "Category Specific Properties",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        "Category Specific Properties",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      if (isUpdated)
+                                        _buildEditIcon(
+                                          isUpdated,
+                                          _isPropertiesEditing,
+                                          () {
+                                            setState(
+                                              () => _isPropertiesEditing =
+                                                  !_isPropertiesEditing,
+                                            );
+                                          },
+                                        )!,
+                                    ],
                                   ),
                                   const SizedBox(height: 16),
                                   ...properties.map(
                                     (prop) => PropertyField(
                                       property: prop,
                                       value: _properties[prop.id.toString()],
-                                      enabled:
-                                          !isUpdated ||
-                                          (_isPropertyEditing[prop.id
-                                                  .toString()] ??
-                                              false),
-                                      suffixIcon: _buildEditIcon(
-                                        isUpdated,
-                                        _isPropertyEditing[prop.id
-                                                .toString()] ??
-                                            false,
-                                        () {
-                                          setState(() {
-                                            _isPropertyEditing[prop.id
-                                                    .toString()] =
-                                                !(_isPropertyEditing[prop.id
-                                                        .toString()] ??
-                                                    false);
-                                          });
-                                        },
-                                      ),
+                                      enabled: !isUpdated || _isPropertiesEditing,
                                       onChanged: (newValue) {
                                         setState(() {
                                           _properties[prop.id.toString()] =

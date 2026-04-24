@@ -36,9 +36,12 @@ class PropertyField extends StatelessWidget {
         field = switchFormField(
           text: property.name,
           value: value is bool ? value : (value?.toString() == 'true'),
-          onChanged: enabled ? (newValue) {
-            onChanged(newValue);
-          } : null,
+          onChanged: enabled
+              ? (newValue) {
+                  onChanged(newValue);
+                }
+              : null,
+          enabled: enabled,
         );
       case PropertyType.select:
         field = dropdownFormField<String>(
@@ -47,12 +50,15 @@ class PropertyField extends StatelessWidget {
           items: property.options
               .map((opt) => DropdownMenuItem(value: opt, child: Text(opt)))
               .toList(),
-          onChanged: enabled ? (newValue) {
-            if (newValue != null) onChanged(newValue);
-          } : null,
+          onChanged: enabled
+              ? (newValue) {
+                  if (newValue != null) onChanged(newValue);
+                }
+              : null,
           validator: (val) => (val == null || val.isEmpty)
               ? "${property.name} is required"
               : null,
+          enabled: enabled,
         );
       case PropertyType.text:
         field = nonEmptyTextFormField(
