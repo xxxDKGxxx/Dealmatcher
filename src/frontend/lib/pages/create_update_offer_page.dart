@@ -165,13 +165,14 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
           } else {
             await ApiOffers().updateOffer(widget.offerId!, request);
           }
-          debugPrint("updated data: ${request.toJson()}");
 
           if (mounted) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(const SnackBar(content: Text('Updated offer')));
           }
+
+          context.go('/my-offers');
         }
       } catch (e) {
         if (mounted) {
@@ -284,48 +285,36 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: nonEmptyTextFormField(
-                                  controller: _titleController,
-                                  text: "Title",
-                                  enabled: !isUpdated || _isTitleEditing,
-                                ),
-                              ),
-                              if (isUpdated)
-                                _buildEditIcon(isUpdated, _isTitleEditing, () {
-                                  setState(
-                                    () => _isTitleEditing = !_isTitleEditing,
-                                  );
-                                })!,
-                            ],
+                          nonEmptyTextFormField(
+                            controller: _titleController,
+                            text: "Title",
+                            enabled: !isUpdated || _isTitleEditing,
+                            suffixIcon: _buildEditIcon(
+                              isUpdated,
+                              _isTitleEditing,
+                              () {
+                                setState(
+                                  () => _isTitleEditing = !_isTitleEditing,
+                                );
+                              },
+                            ),
                           ),
                           const SizedBox(height: 16),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: nonEmptyTextFormField(
-                                  controller: _descriptionController,
-                                  text: "Description",
-                                  maxLines: 4,
-                                  enabled: !isUpdated || _isDescriptionEditing,
-                                ),
-                              ),
-                              if (isUpdated)
-                                _buildEditIcon(
-                                  isUpdated,
-                                  _isDescriptionEditing,
-                                  () {
-                                    setState(
-                                      () => _isDescriptionEditing =
-                                          !_isDescriptionEditing,
-                                    );
-                                  },
-                                )!,
-                            ],
+                          nonEmptyTextFormField(
+                            controller: _descriptionController,
+                            text: "Description",
+                            maxLines: 4,
+                            enabled: !isUpdated || _isDescriptionEditing,
+                            suffixIcon: _buildEditIcon(
+                              isUpdated,
+                              _isDescriptionEditing,
+                              () {
+                                setState(
+                                  () => _isDescriptionEditing =
+                                      !_isDescriptionEditing,
+                                );
+                              },
+                            ),
                           ),
                           const SizedBox(height: 16),
                           Row(
@@ -336,33 +325,36 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                                   controller: _priceController,
                                   text: "Price",
                                   enabled: !isUpdated || _isPriceEditing,
+                                  suffixIcon: _buildEditIcon(
+                                    isUpdated,
+                                    _isPriceEditing,
+                                    () {
+                                      setState(
+                                        () =>
+                                            _isPriceEditing = !_isPriceEditing,
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
-                              if (isUpdated)
-                                _buildEditIcon(isUpdated, _isPriceEditing, () {
-                                  setState(
-                                    () => _isPriceEditing = !_isPriceEditing,
-                                  );
-                                })!,
                               const SizedBox(width: 16),
                               Expanded(
                                 child: numberFormField(
                                   controller: _availabilityController,
                                   text: "Availability",
                                   enabled: !isUpdated || _isAvailabilityEditing,
+                                  suffixIcon: _buildEditIcon(
+                                    isUpdated,
+                                    _isAvailabilityEditing,
+                                    () {
+                                      setState(
+                                        () => _isAvailabilityEditing =
+                                            !_isAvailabilityEditing,
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
-                              if (isUpdated)
-                                _buildEditIcon(
-                                  isUpdated,
-                                  _isAvailabilityEditing,
-                                  () {
-                                    setState(
-                                      () => _isAvailabilityEditing =
-                                          !_isAvailabilityEditing,
-                                    );
-                                  },
-                                )!,
                             ],
                           ),
                           const SizedBox(height: 16),
@@ -645,7 +637,8 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                                     (prop) => PropertyField(
                                       property: prop,
                                       value: _properties[prop.id.toString()],
-                                      enabled: !isUpdated || _isPropertiesEditing,
+                                      enabled:
+                                          !isUpdated || _isPropertiesEditing,
                                       onChanged: (newValue) {
                                         setState(() {
                                           _properties[prop.id.toString()] =
