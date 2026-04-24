@@ -40,7 +40,7 @@ void main() {
 
     expect(find.text('Apple Mac Pro'), findsOneWidget);
 
-    await tester.drag(find.byType(PageView), const Offset(0, -800));
+    await tester.drag(find.byType(Dismissible), const Offset(-800, 0));
     await tester.pumpAndSettle();
 
     expect(find.text('ThinkPad T500'), findsOneWidget);
@@ -75,7 +75,10 @@ void main() {
     await tester.tapAt(const Offset(10, 10));
     await tester.pumpAndSettle();
 
-    expect(find.text('No offers matching the criteria.'), findsOneWidget);
+    expect(
+      find.text("No offers matching the criteria. You've seen everything!"),
+      findsOneWidget,
+    );
   });
 }
 

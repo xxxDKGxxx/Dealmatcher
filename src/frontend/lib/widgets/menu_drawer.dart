@@ -27,7 +27,7 @@ class MenuDrawer extends StatelessWidget {
             leading: Icon(Icons.local_offer),
             title: Text('My Offers'),
             onTap: () {
-              context.go('/my_offers');
+              context.go('/my-offers');
             },
           ),
           // Profile Page
