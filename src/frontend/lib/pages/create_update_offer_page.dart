@@ -240,7 +240,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Successfully deleted this offer')),
     );
-    context.go('my-offers');
+    context.go('/my-offers');
   }
 
   @override
@@ -302,15 +302,11 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                                 ),
                               ),
                               if (isUpdated)
-                                _buildEditIcon(
-                                  isUpdated,
-                                  _isTitleEditing,
-                                  () {
-                                    setState(
-                                      () => _isTitleEditing = !_isTitleEditing,
-                                    );
-                                  },
-                                )!,
+                                _buildEditIcon(isUpdated, _isTitleEditing, () {
+                                  setState(
+                                    () => _isTitleEditing = !_isTitleEditing,
+                                  );
+                                })!,
                             ],
                           ),
                           const SizedBox(height: 16),
@@ -350,16 +346,11 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                                 ),
                               ),
                               if (isUpdated)
-                                _buildEditIcon(
-                                  isUpdated,
-                                  _isPriceEditing,
-                                  () {
-                                    setState(
-                                      () =>
-                                          _isPriceEditing = !_isPriceEditing,
-                                    );
-                                  },
-                                )!,
+                                _buildEditIcon(isUpdated, _isPriceEditing, () {
+                                  setState(
+                                    () => _isPriceEditing = !_isPriceEditing,
+                                  );
+                                })!,
                               const SizedBox(width: 16),
                               Expanded(
                                 child: numberFormField(
@@ -720,4 +711,3 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     );
   }
 }
-
