@@ -14,4 +14,14 @@ public sealed class BooleanPropertyDefinition : PropertyDefinition<bool>
     {
         return new BooleanProperty(this, value);
     }
+
+    public override PropertyFilter CreatePropertyFilterTyped(List<bool> values)
+    {
+        if (values.Count != 1)
+        {
+            throw new ArgumentException($"Invalid value count for BooleanPropertyFilter: {values.Count}, should be 1");
+        }
+
+        return new BooleanPropertyFilter(this, values[0]);
+    }
 }

@@ -12,7 +12,6 @@ class OffersSwipingPage extends StatefulWidget {
 }
 
 class _OffersSwipingPageState extends State<OffersSwipingPage> {
-  final PageController _pageController = PageController();
   List<Offer> _offers = [];
   bool _isLoading = true;
   Map<String, dynamic> _currentFilters = {};
@@ -21,12 +20,6 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
   void initState() {
     super.initState();
     _fetchOffers();
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
   }
 
   Future<void> _fetchOffers() async {
@@ -40,6 +33,20 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
     } catch (e) {
       setState(() => _isLoading = false);
     }
+  }
+
+  Future<void> _addToCart(Offer offer) async {
+    // this snackbar may be removed later while integrating with api
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Added to cart: ${offer.title}'),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
+    // here will be adding to cart via api
   }
 
   void _openFilters() {
@@ -108,18 +115,48 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _offers.isEmpty
-          ? const Center(child: Text("No offers matching the criteria."))
-          : PageView.builder(
-              controller: _pageController,
-              scrollDirection: Axis.vertical,
-              itemCount: _offers.length,
-              itemBuilder: (context, index) {
-                final offer = _offers[index];
-                return GestureDetector(
-                  onTap: () => context.push('/offer/${offer.id}'),
-                  child: _buildOfferPage(offer),
-                );
+          ? const Center(
+              child: Text(
+                "No offers matching the criteria. You've seen everything!",
+              ),
+            )
+          : Dismissible(
+              key: ValueKey(_offers.first.id),
+              direction: DismissDirection.horizontal,
+
+              background: Container(
+                color: Colors.green.withValues(alpha: 0.8),
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.only(left: 40),
+                child: const Icon(
+                  Icons.shopping_cart,
+                  color: Colors.white,
+                  size: 60,
+                ),
+              ),
+
+              secondaryBackground: Container(
+                color: Colors.red.withValues(alpha: 0.8),
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.only(right: 40),
+                child: const Icon(Icons.close, color: Colors.white, size: 60),
+              ),
+
+              onDismissed: (direction) {
+                final swipedOffer = _offers.first;
+
+                if (direction == DismissDirection.startToEnd) {
+                  _addToCart(swipedOffer);
+                }
+
+                setState(() {
+                  _offers.removeAt(0);
+                });
               },
+              child: GestureDetector(
+                onTap: () => context.push('/offer/${_offers.first.id}'),
+                child: _buildOfferPage(_offers.first),
+              ),
             ),
     );
   }

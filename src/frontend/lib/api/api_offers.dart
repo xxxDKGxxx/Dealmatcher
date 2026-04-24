@@ -9,31 +9,6 @@ import 'package:http/http.dart' as http;
 class ApiOffers {
   final ApiCore _apiCore = ApiCore();
 
-  Future<Offer?> getOffer(int offerId) async {
-    Offer? offer;
-    try {
-      final response = await _apiCore.get(ApiUrls().offerById(offerId));
-
-      switch (response.statusCode) {
-        case 200:
-          {
-            final responseModel = OfferResponse(response: response);
-            responseModel.fromJson();
-            offer = responseModel.offer;
-          }
-        case 404:
-          throw Exception('Offer does not exist.');
-        case 500:
-          throw Exception('Internal server error.');
-        default:
-          throw Exception('Unknown error: ${response.statusCode}');
-      }
-    } catch (e) {
-      rethrow;
-    }
-    return offer;
-  }
-
   Future deleteOffer(int offerId) async {
     try {
       final response = await _apiCore.delete(ApiUrls().offerById(offerId));
@@ -132,5 +107,30 @@ class ApiOffers {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<Offer?> getOffer(int offerId) async {
+    Offer? offer;
+    try {
+      final response = await _apiCore.get(ApiUrls().offerDetailsById(offerId));
+
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = OfferResponse(response: response);
+            responseModel.fromJson();
+            offer = responseModel.offer;
+          }
+        case 404:
+          throw Exception('Offer does not exist.');
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown error: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return offer;
   }
 }
