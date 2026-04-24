@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../models/property.dart';
+import '../models/property_definition.dart';
 import 'form_fields.dart';
 
 class PropertyField extends StatelessWidget {
-  final Property property;
+  final PropertyDefinition property;
   final dynamic value;
   final ValueChanged<dynamic> onChanged;
 
@@ -19,7 +19,7 @@ class PropertyField extends StatelessWidget {
     Widget field;
 
     switch (property.type) {
-      case PropertyType.number:
+      case PropertyType.numeric:
         field = numberFormField(
           text: property.name,
           initialValue: value?.toString(),
@@ -30,7 +30,7 @@ class PropertyField extends StatelessWidget {
       case PropertyType.boolean:
         field = switchFormField(
           text: property.name,
-          value: value ?? false,
+          value: value is bool ? value : (value?.toString() == 'true'),
           onChanged: (newValue) {
             onChanged(newValue);
           },

@@ -1,13 +1,9 @@
-name: Dealmatcher frontend CD - main
+name: Dealmatcher Frontend CD - main
 
 on:
   push:
-    branches: [ main ]
-    tags:
-      - "v*"
-    paths:
-      - "src/frontend/**"
-      - ".github/workflows/frontend_main.yml"
+    branches: 
+      [ main ]
 
 jobs:
   frontend-cd-main:

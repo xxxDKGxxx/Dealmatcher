@@ -84,6 +84,7 @@ Widget dropdownFormField<T>({
   String? Function(T?)? validator,
   Widget? icon,
   bool isExpanded = true,
+  String Function(T value)? itemLabelBuilder,
 }) => DropdownButtonFormField<T>(
   initialValue: value,
   items: items,
@@ -94,6 +95,20 @@ Widget dropdownFormField<T>({
     labelText: text,
     border: const OutlineInputBorder(),
   ),
+  selectedItemBuilder: (context) {
+    return items.map((item) {
+      final val = item.value;
+
+      return Text(
+        val != null
+            ? (itemLabelBuilder != null
+                  ? itemLabelBuilder(val)
+                  : val.toString())
+            : '',
+        overflow: TextOverflow.ellipsis,
+      );
+    }).toList();
+  },
   validator:
       validator ??
       (value) {

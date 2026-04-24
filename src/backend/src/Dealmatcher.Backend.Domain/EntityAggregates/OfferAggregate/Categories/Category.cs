@@ -1,8 +1,9 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
 
-public sealed class Category(string name) : DealmatcherEntityBase
+public sealed class Category(string name, string description) : DealmatcherEntityBase, IAggregateRoot
 {
-    public string Name { get; init; } = name;
+    public string Name { get; private set; } = name;
+    public string Description { get; private set; } = description;
     private readonly List<PropertyDefinition> _propertyDefinitions = [];
     public IReadOnlyCollection<PropertyDefinition> PropertyDefinitions => _propertyDefinitions.AsReadOnly();
 
@@ -16,5 +17,19 @@ public sealed class Category(string name) : DealmatcherEntityBase
         _propertyDefinitions.Remove(propertyDefinition);
     }
 
-    public override void Delete() { }
+    public void UpdateName(string name)
+    {
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            Name = name;
+        }
+    }
+
+    public void UpdateDescription(string description)
+    {
+        if (!string.IsNullOrWhiteSpace(description))
+        {
+            Description = description;
+        }
+    }
 }

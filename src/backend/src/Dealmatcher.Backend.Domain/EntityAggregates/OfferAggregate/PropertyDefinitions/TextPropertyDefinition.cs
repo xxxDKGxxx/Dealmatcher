@@ -14,4 +14,9 @@ public sealed class TextPropertyDefinition : PropertyDefinition<string>
     {
         return new TextProperty(this, value);
     }
+
+    public override PropertyFilter CreatePropertyFilterTyped(List<string> values)
+    {
+        return new TextPropertyFilter(this, values);
+    }
 }

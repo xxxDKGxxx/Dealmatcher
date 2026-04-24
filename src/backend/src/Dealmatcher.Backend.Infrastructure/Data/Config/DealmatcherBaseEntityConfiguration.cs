@@ -6,6 +6,9 @@ public class DealmatcherBaseEntityConfiguration<T> : IEntityTypeConfiguration<T>
     {
         builder.HasKey(e => e.Id);
 
+        builder.Property(e => e.IsDeleted)
+            .IsRequired();
+
         builder.Property(e => e.CreatedAt)
             .IsRequired();
 
