@@ -3,6 +3,7 @@ class ApiUrls {
   String get login => '/users/login';
   String get register => '/users/register';
   String get profile => '/users/me';
+  String get myOffers => '/users/me/offers';
   String get offers => '/offers';
   String get categories => '/categories';
 
