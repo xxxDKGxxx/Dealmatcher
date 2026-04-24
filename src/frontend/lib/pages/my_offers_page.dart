@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_offers.dart';
+import 'package:frontend/api/api_profile.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +17,7 @@ class MyOffersPage extends StatefulWidget {
 class _MyOffersPageState extends State<MyOffersPage> {
   late Future<List<Offer>> _dataFuture;
   final apiOffers = ApiOffers();
+  final apiProfile = ApiProfile();
 
   @override
   void initState() {
@@ -29,7 +31,7 @@ class _MyOffersPageState extends State<MyOffersPage> {
   }
 
   Future<List<Offer>> _fetchOffers() async {
-    return await apiOffers.getMyOffers();
+    return await apiProfile.getProfileOffers();
   }
 
   @override
