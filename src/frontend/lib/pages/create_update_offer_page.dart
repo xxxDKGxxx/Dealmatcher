@@ -8,6 +8,7 @@ import 'package:frontend/api/models/offer_create_request.dart';
 import 'package:frontend/api/models/offer_update_request.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
+import 'package:frontend/widgets/dialogs.dart';
 import 'package:frontend/widgets/form_fields.dart';
 import 'package:frontend/widgets/property_field.dart';
 import 'package:go_router/go_router.dart';
@@ -727,7 +728,20 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                           if (isUpdated) ...[
                             const SizedBox(height: 16),
                             ElevatedButton(
-                              onPressed: () => _deleteOffer(offer!.id),
+                              onPressed: () async {
+                                final confirmed = await showConfirmDialog(
+                                  context,
+                                  title: 'Delete offer',
+                                  content:
+                                      'Are you sure you want to delete this offer?',
+                                  confirmText: 'Delete',
+                                  isDestructive: true,
+                                );
+
+                                if (confirmed) {
+                                  _deleteOffer(offer!.id);
+                                }
+                              },
                               style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 16,
