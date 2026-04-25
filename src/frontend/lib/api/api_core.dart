@@ -37,7 +37,7 @@ class ApiCore {
     return headers;
   }
 
-  Map<String, String> get _getHeaders {
+  Map<String, String> get _noContentHeaders {
     final headers = {'Accept': 'application/json'};
     if (_token != null) {
       headers['Authorization'] = 'Bearer $_token';
@@ -71,7 +71,7 @@ class ApiCore {
   // HTTP methods
   Future<http.Response> get(String endpoint) async {
     return await intercept(
-      () async => http.get(_getUri(endpoint), headers: _getHeaders),
+      () async => http.get(_getUri(endpoint), headers: _noContentHeaders),
     );
   }
 
@@ -107,7 +107,7 @@ class ApiCore {
 
   Future<http.Response> delete(String endpoint) async {
     return await intercept(
-      () => http.delete(_getUri(endpoint), headers: _headers),
+      () => http.delete(_getUri(endpoint), headers: _noContentHeaders),
     );
   }
 
@@ -120,7 +120,7 @@ class ApiCore {
       final uri = _getUri(endpoint);
       var request = http.MultipartRequest('POST', uri);
 
-      request.headers.addAll(_getHeaders);
+      request.headers.addAll(_noContentHeaders);
 
       if (fields != null) {
         request.fields.addAll(fields);
