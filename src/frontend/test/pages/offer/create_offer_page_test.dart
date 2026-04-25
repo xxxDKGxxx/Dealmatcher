@@ -245,7 +245,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Toggle Is New (boolean)
-    await tester.tap(find.byType(SwitchListTile));
+    await tester.tap(find.byType(Switch));
     await tester.pumpAndSettle();
 
     final createButton = find.widgetWithText(ElevatedButton, 'Create Offer');
