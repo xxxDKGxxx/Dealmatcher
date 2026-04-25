@@ -99,14 +99,18 @@ Widget dropdownFormField<T>({
     return items.map((item) {
       final val = item.value;
 
-      return Text(
-        val != null
-            ? (itemLabelBuilder != null
-                  ? itemLabelBuilder(val)
-                  : val.toString())
-            : '',
-        overflow: TextOverflow.ellipsis,
-      );
+      if (val != null && itemLabelBuilder != null) {
+        return Text(itemLabelBuilder(val), overflow: TextOverflow.ellipsis);
+      }
+
+      if (item.child is Text) {
+        return Text(
+          (item.child as Text).data ?? '',
+          overflow: TextOverflow.ellipsis,
+        );
+      }
+
+      return Text(val?.toString() ?? '', overflow: TextOverflow.ellipsis);
     }).toList();
   },
   validator:

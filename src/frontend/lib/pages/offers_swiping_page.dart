@@ -66,6 +66,7 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
   }
 
   void _openFilters() {
+    Map<String, dynamic>? pendingFilters;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -100,9 +101,9 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
                     ),
                   ),
                   OfferFilterWidget(
+                    initialFilters: _currentFilters,
                     onFilterChanged: (filters) {
-                      _currentFilters = filters;
-                      _fetchOffers();
+                      pendingFilters = filters;
                     },
                   ),
                 ],
@@ -111,7 +112,14 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
           },
         );
       },
-    );
+    ).then((_) {
+      if (pendingFilters != null) {
+        setState(() {
+          _currentFilters = pendingFilters!;
+        });
+        _fetchOffers();
+      }
+    });
   }
 
   @override
