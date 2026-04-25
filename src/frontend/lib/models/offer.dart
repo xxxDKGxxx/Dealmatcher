@@ -84,7 +84,9 @@ class Offer {
       'seller': seller.toJson(),
       'category': category.toJson(),
       'tags': tags,
-      'properties': properties.map((key, value) => MapEntry(key.toString(), value)),
+      'properties': properties.map(
+        (key, value) => MapEntry(key.toString(), value),
+      ),
       'availability': availability,
       'status': status.name,
       'createdAt': createdAt.toIso8601String(),
@@ -99,17 +101,11 @@ class Seller {
   final String name;
 
   factory Seller.fromJson(Map<String, dynamic> json) {
-    return Seller(
-      id: json['id'] as int,
-      name: json['name'] as String,
-    );
+    return Seller(id: json['id'] as int, name: json['name'] as String);
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-    };
+    return {'id': id, 'name': name};
   }
 }
 

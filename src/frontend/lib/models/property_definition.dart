@@ -28,12 +28,7 @@ final class PropertyDefinition {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'type': type.name,
-      'options': options,
-    };
+    return {'id': id, 'name': name, 'type': type.name, 'options': options};
   }
 }
 

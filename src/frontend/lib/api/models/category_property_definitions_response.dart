@@ -16,7 +16,9 @@ class CategoryPropertyDefinitionsResponse extends ResponseModel {
 
     for (var item in data) {
       try {
-        propertyDefinitions.add(PropertyDefinition.fromJson(item as Map<String, dynamic>));
+        propertyDefinitions.add(
+          PropertyDefinition.fromJson(item as Map<String, dynamic>),
+        );
       } catch (e) {
         throw Exception(
           'Property definition response does not contain valid data.',
