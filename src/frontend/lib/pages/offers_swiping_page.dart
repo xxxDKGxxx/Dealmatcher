@@ -13,6 +13,7 @@ class OffersSwipingPage extends StatefulWidget {
 }
 
 class _OffersSwipingPageState extends State<OffersSwipingPage> {
+  List<Offer> _offersToSwipe = [];
   List<Offer> _offers = [];
   bool _isLoading = true;
   Map<String, dynamic> _currentFilters = {};
@@ -42,6 +43,7 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
       final results = await ApiOffers().searchOffers(request);
       setState(() {
         _offers = results;
+        _offersToSwipe = results;
         _isLoading = false;
       });
     } catch (e) {
@@ -135,7 +137,7 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
               ),
             )
           : Dismissible(
-              key: ValueKey(_offers.first.id),
+              key: ValueKey(_offersToSwipe.first.id),
               direction: DismissDirection.horizontal,
 
               background: Container(
@@ -156,20 +158,24 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
                 child: const Icon(Icons.close, color: Colors.white, size: 60),
               ),
 
-              onDismissed: (direction) {
-                final swipedOffer = _offers.first;
+              onDismissed: (direction) async {
+                final swipedOffer = _offersToSwipe.first;
 
                 if (direction == DismissDirection.startToEnd) {
                   _addToCart(swipedOffer);
                 }
 
                 setState(() {
-                  _offers.removeAt(0);
+                  _offersToSwipe.removeAt(0);
                 });
+
+                if (_offersToSwipe.isEmpty) {
+                  await _fetchOffers();
+                }
               },
               child: GestureDetector(
-                onTap: () => context.push('/offer/${_offers.first.id}'),
-                child: _buildOfferPage(_offers.first),
+                onTap: () => context.push('/offer/${_offersToSwipe.first.id}'),
+                child: _buildOfferPage(_offersToSwipe.first),
               ),
             ),
     );
@@ -179,14 +185,29 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Image.network(
-          offer.images.isNotEmpty
-              ? offer.images.first
-              : 'https://media1.tenor.com/m/j4MNRU71aeUAAAAC/just-stop-stop-it.gif',
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) =>
-              Container(color: Colors.grey[800]),
-        ),
+        offer.images.isNotEmpty
+            ? Image.network(
+                offer.images.first,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  color: Colors.grey[200],
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.broken_image,
+                    color: Colors.grey,
+                    size: 40,
+                  ),
+                ),
+              )
+            : Container(
+                color: Colors.grey[200],
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.image_not_supported,
+                  color: Colors.grey,
+                  size: 40,
+                ),
+              ),
         Positioned(
           bottom: 0,
           left: 0,

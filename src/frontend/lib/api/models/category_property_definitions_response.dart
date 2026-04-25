@@ -15,27 +15,9 @@ class CategoryPropertyDefinitionsResponse extends ResponseModel {
     propertyDefinitions = [];
 
     for (var item in data) {
-      if (item.containsKey('id') &&
-          item['id'] != null &&
-          item.containsKey('name') &&
-          item['name'] != null &&
-          item.containsKey('type') &&
-          item['type'] != null &&
-          item.containsKey('options')) {
-        var propertyDefinition = PropertyDefinition(
-          id: item['id'],
-          name: item['name'],
-          type: PropertyType.fromString(item['type']),
-          options: [],
-        );
-
-        if (item['options'] != null) {
-          for (var option in item['options']) {
-            propertyDefinition.options.add(option);
-          }
-        }
-        propertyDefinitions.add(propertyDefinition);
-      } else {
+      try {
+        propertyDefinitions.add(PropertyDefinition.fromJson(item as Map<String, dynamic>));
+      } catch (e) {
         throw Exception(
           'Property definition response does not contain valid data.',
         );

@@ -37,9 +37,9 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
   void _updateFilters() {
     if (widget.onFilterChanged != null) {
       widget.onFilterChanged!({
-        'phrase': _phrase,
-        'priceMin': _priceMin,
-        'priceMax': _priceMax,
+        'searchPhrase': _phrase,
+        'minPrice': _priceMin,
+        'maxPrice': _priceMax,
         'tags': _tags,
         'categoryId': _selectedCategory?.id,
         'properties': _properties,
