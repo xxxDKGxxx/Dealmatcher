@@ -17,7 +17,7 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
   List<Offer> _offers = [];
   bool _isLoading = true;
   Map<String, dynamic> _currentFilters = {};
-  static int maxInt = 9007199254740991;
+  static double maxPriceLimit = 9007199254740991.0;
   static int limit = 10;
 
   @override
@@ -32,10 +32,16 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
     try {
       final request = OfferSearchRequest(
         categoryId: _currentFilters['categoryId'],
-        minPrice: _currentFilters['minPrice'] ?? 0,
-        maxPrice: _currentFilters['maxPrice'] ?? maxInt,
-        tags: _currentFilters['tags'] ?? [],
-        properties: _currentFilters['properties'] ?? {},
+        minPrice: (_currentFilters['minPrice'] as num?)?.toDouble() ?? 0.0,
+        maxPrice:
+            (_currentFilters['maxPrice'] as num?)?.toDouble() ?? maxPriceLimit,
+        tags:
+            (_currentFilters['tags'] as List<dynamic>?)?.cast<String>() ??
+            <String>[],
+        properties:
+            (_currentFilters['properties'] as Map<dynamic, dynamic>?)
+                ?.cast<String, List<String>>() ??
+            <String, List<String>>{},
         searchPhrase: _currentFilters['searchPhrase'] ?? '',
         limit: limit,
       );
