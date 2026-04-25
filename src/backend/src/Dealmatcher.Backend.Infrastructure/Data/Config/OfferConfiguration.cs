@@ -2,67 +2,67 @@
 
 public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offer>
 {
-  public override void Configure(EntityTypeBuilder<Offer> builder)
-  {
-    base.Configure(builder);
+    public override void Configure(EntityTypeBuilder<Offer> builder)
+    {
+        base.Configure(builder);
 
-    builder.ToTable($"{nameof(Offer)}s");
+        builder.ToTable($"{nameof(Offer)}s");
 
-    builder.HasQueryFilter(o => !o.IsDeleted && o.Seller.Status == UserStatus.Active.Value);
+        builder.HasQueryFilter(o => !o.IsDeleted && o.Seller.Status == UserStatus.Active.Value);
 
-    builder
-      .Property(o => o.Title)
-      .IsRequired()
-      .HasMaxLength(DataSchemaConstants.OfferTitleMaxLength);
+        builder
+          .Property(o => o.Title)
+          .IsRequired()
+          .HasMaxLength(DataSchemaConstants.OfferTitleMaxLength);
 
-    builder
-      .Property(o => o.Description)
-      .IsRequired()
-      .HasMaxLength(DataSchemaConstants.OfferDescriptionMaxLength);
+        builder
+          .Property(o => o.Description)
+          .IsRequired()
+          .HasMaxLength(DataSchemaConstants.OfferDescriptionMaxLength);
 
-    builder.Property(o => o.Price).HasPrecision(18, 2).IsRequired();
+        builder.Property(o => o.Price).HasPrecision(18, 2).IsRequired();
 
-    builder.Property(o => o.Availability).IsRequired();
+        builder.Property(o => o.Availability).IsRequired();
 
-    builder
-      .Property(o => o.Images)
-      .HasField("_images")
-      .UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder
+          .Property(o => o.Images)
+          .HasField("_images")
+          .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-    builder.Property(o => o.Tags).HasField("_tags").UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.Property(o => o.Tags).HasField("_tags").UsePropertyAccessMode(PropertyAccessMode.Field);
 
-    builder
-      .Property(o => o.Status)
-      .HasConversion(s => s.Value, v => OfferStatus.FromValue(v))
-      .IsRequired()
-      .HasMaxLength(DataSchemaConstants.StatusMaxLength);
+        builder
+          .Property(o => o.Status)
+          .HasConversion(s => s.Value, v => OfferStatus.FromValue(v))
+          .IsRequired()
+          .HasMaxLength(DataSchemaConstants.StatusMaxLength);
 
-    builder
-      .HasOne(o => o.Seller)
-      .WithMany()
-      .HasForeignKey("SellerId")
-      .OnDelete(DeleteBehavior.NoAction);
+        builder
+          .HasOne(o => o.Seller)
+          .WithMany()
+          .HasForeignKey("SellerId")
+          .OnDelete(DeleteBehavior.NoAction);
 
-    builder.Navigation(o => o.Seller).AutoInclude();
+        builder.Navigation(o => o.Seller).AutoInclude();
 
-    builder
-      .HasOne(o => o.Category)
-      .WithMany()
-      .HasForeignKey("CategoryId")
-      .OnDelete(DeleteBehavior.NoAction);
+        builder
+          .HasOne(o => o.Category)
+          .WithMany()
+          .HasForeignKey("CategoryId")
+          .OnDelete(DeleteBehavior.NoAction);
 
-    builder.Navigation(o => o.Category).AutoInclude();
+        builder.Navigation(o => o.Category).AutoInclude();
 
-    builder
-      .HasMany(o => o.Properties)
-      .WithOne()
-      .HasForeignKey("OfferId")
-      .IsRequired()
-      .OnDelete(DeleteBehavior.ClientCascade);
+        builder
+          .HasMany(o => o.Properties)
+          .WithOne()
+          .HasForeignKey("OfferId")
+          .IsRequired()
+          .OnDelete(DeleteBehavior.ClientCascade);
 
-    builder
-      .Navigation(o => o.Properties)
-      .UsePropertyAccessMode(PropertyAccessMode.Field)
-      .AutoInclude();
-  }
+        builder
+          .Navigation(o => o.Properties)
+          .UsePropertyAccessMode(PropertyAccessMode.Field)
+          .AutoInclude();
+    }
 }

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:frontend/api/api_categories.dart';
 import 'package:frontend/api/api_offers.dart';
 import 'package:frontend/api/models/offer_create_request.dart';
@@ -57,6 +56,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
   final Map<String, String> _properties = {};
 
   final List<XFile> _images = [];
+  final List<String> _existingImageUrls = [];
 
   late Future<Offer?>? _offerFuture;
   late Offer? offer;
@@ -91,10 +91,17 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     }
   }
 
-  void _removeImage(int index) {
+  void _removeNewImage(int index) {
     setState(() {
       _images.removeAt(index);
       _imagesChanged = true;
+    });
+  }
+
+  void _removeExistingImage(int index) {
+    setState(() {
+      _existingImageUrls.removeAt(index);
+      _imagesChanged = true; // Flaga, żeby wiedzieć, że coś usunięto
     });
   }
 
@@ -155,7 +162,7 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
             availability: _isAvailabilityEditing
                 ? (int.tryParse(_availabilityController.text) ?? 1)
                 : null,
-            images: _imagesChanged ? _images.map((e) => e.path).toList() : null,
+            images: _imagesChanged ? _existingImageUrls : null,
             tags: _isTagsEditing ? _tags : null,
             properties: _isPropertiesEditing ? _properties : null,
           );
@@ -170,9 +177,8 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(const SnackBar(content: Text('Updated offer')));
+            context.go('/my-offers');
           }
-
-          context.go('/my-offers');
         }
       } catch (e) {
         if (mounted) {
@@ -197,14 +203,17 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     _availabilityController.text = offer!.availability.toString();
     _selectedCategory = offer!.category;
     _propertiesFuture = _fetchProperties(_selectedCategory!.name);
+
     for (var t in offer!.tags) {
       _tags.add(t);
     }
+
     for (var i in offer!.images) {
-      var file = await DefaultCacheManager().getSingleFile(i);
-      _images.add(XFile(file.path));
+      _existingImageUrls.add(i);
     }
+
     final properties = await _fetchProperties(_selectedCategory!.name);
+
     for (var prop in properties) {
       if (offer!.properties.containsKey(prop.id)) {
         _properties[prop.id.toString()] = offer!.properties[prop.id]!;
@@ -231,10 +240,12 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
   Future _deleteOffer(int id) async {
     await ApiOffers().deleteOffer(id);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Successfully deleted this offer')),
-    );
-    context.go('/my-offers');
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Successfully deleted this offer')),
+      );
+      context.go('/my-offers');
+    }
   }
 
   @override
@@ -461,70 +472,120 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                             height: 120,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
+                              // Liczba kafelków zależna od trybu:
                               itemCount: isUpdated
-                                  ? _images.length
+                                  ? _existingImageUrls.length
                                   : _images.length + 1,
                               itemBuilder: (context, index) {
-                                if (index == _images.length) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: InkWell(
-                                      onTap: _pickImage,
-                                      child: Container(
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                          ),
+                                // ==========================================
+                                // TRYB EDYCJI: Pokazujemy tylko URL z serwera
+                                // ==========================================
+                                if (isUpdated) {
+                                  return Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipRRect(
                                           borderRadius: BorderRadius.circular(
                                             8,
                                           ),
-                                        ),
-                                        child: const Icon(
-                                          Icons.add_a_photo,
-                                          size: 40,
+                                          child: Image.network(
+                                            _existingImageUrls[index],
+                                            width: 100,
+                                            height: 100,
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                      Positioned(
+                                        right: 0,
+                                        top: 0,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.remove_circle,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () => _removeExistingImage(
+                                            index,
+                                          ), // Zmiana wywołania!
+                                        ),
+                                      ),
+                                    ],
                                   );
                                 }
-                                return Stack(
-                                  children: [
-                                    Padding(
+                                // ==========================================
+                                // TRYB TWORZENIA: Nowe zdjęcia + przycisk
+                                // ==========================================
+                                else {
+                                  // Przycisk "Dodaj" na samym końcu listy
+                                  if (index == _images.length) {
+                                    return Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: kIsWeb
-                                            ? Image.network(
-                                                _images[index].path,
-                                                width: 100,
-                                                height: 100,
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Image.file(
-                                                File(_images[index].path),
-                                                width: 100,
-                                                height: 100,
-                                                fit: BoxFit.cover,
-                                              ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      right: 0,
-                                      top: 0,
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.remove_circle,
-                                          color: Colors.red,
+                                      child: InkWell(
+                                        onTap: _pickImage,
+                                        child: Container(
+                                          width: 100,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.grey,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: const Icon(
+                                            Icons.add_a_photo,
+                                            size: 40,
+                                          ),
                                         ),
-                                        onPressed: () => _removeImage(index),
                                       ),
-                                    ),
-                                  ],
-                                );
+                                    );
+                                  }
+
+                                  // Zwykłe lokalne zdjęcie (wybrane z galerii)
+                                  return Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          child: kIsWeb
+                                              ? Image.network(
+                                                  _images[index].path,
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Image.file(
+                                                  File(_images[index].path),
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        right: 0,
+                                        top: 0,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.remove_circle,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () => _removeNewImage(
+                                            index,
+                                          ), // Zmiana wywołania!
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
                               },
                             ),
                           ),
+
                           const SizedBox(height: 32),
 
                           // Tags Section

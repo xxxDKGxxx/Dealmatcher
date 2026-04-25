@@ -97,7 +97,7 @@ Widget dropdownFormField<T>({
   String Function(T value)? itemLabelBuilder,
   bool? enabled,
 }) => DropdownButtonFormField<T>(
-  value: value,
+  initialValue: value,
   items: items,
   onChanged: (enabled ?? true) ? onChanged : null,
   isExpanded: isExpanded,
@@ -136,24 +136,23 @@ Widget switchFormField({
   required bool value,
   void Function(bool)? onChanged,
   bool? enabled,
-}) =>
-    InputDecorator(
-      decoration: InputDecoration(
-        labelText: text,
-        border: const OutlineInputBorder(),
-        filled: !(enabled ?? true),
+}) => InputDecorator(
+  decoration: InputDecoration(
+    labelText: text,
+    border: const OutlineInputBorder(),
+    filled: !(enabled ?? true),
+  ),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(value ? "Yes" : "No"),
+      SizedBox(
+        height: 24,
+        child: Switch(
+          value: value,
+          onChanged: (enabled ?? true) ? onChanged : null,
+        ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(value ? "Yes" : "No"),
-          SizedBox(
-            height: 24,
-            child: Switch(
-              value: value,
-              onChanged: (enabled ?? true) ? onChanged : null,
-            ),
-          ),
-        ],
-      ),
-    );
+    ],
+  ),
+);
