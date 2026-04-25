@@ -10,4 +10,5 @@ class ApiUrls {
   String offerDetailsById(int id) => '/offers/$id';
   String propertiesByCategoryName(String categoryName) =>
       '/categories/$categoryName/properties';
+  String offerById(int offerId) => '/offers/$offerId';
 }

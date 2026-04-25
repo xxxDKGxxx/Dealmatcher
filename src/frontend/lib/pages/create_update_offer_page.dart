@@ -1,12 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:frontend/api/api_categories.dart';
 import 'package:frontend/api/api_offers.dart';
 import 'package:frontend/api/models/offer_create_request.dart';
+import 'package:frontend/api/models/offer_update_request.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
+import 'package:frontend/widgets/dialogs.dart';
 import 'package:frontend/widgets/form_fields.dart';
 import 'package:frontend/widgets/property_field.dart';
 import 'package:go_router/go_router.dart';
@@ -55,22 +57,52 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
   final Map<String, String> _properties = {};
 
   final List<XFile> _images = [];
+  final List<String> _existingImageUrls = [];
 
   late Future<Offer?>? _offerFuture;
   late Offer? offer;
+
+  bool _isTitleEditing = false;
+  bool _isDescriptionEditing = false;
+  bool _isPriceEditing = false;
+  bool _isAvailabilityEditing = false;
+  bool _isTagsEditing = false;
+  bool _isPropertiesEditing = false;
+  bool _imagesChanged = false;
+
+  Widget? _buildEditIcon(
+    bool isUpdate,
+    bool isEditing,
+    VoidCallback onPressed,
+  ) {
+    if (!isUpdate) return null;
+    return IconButton(
+      icon: Icon(isEditing ? Icons.close : Icons.edit),
+      onPressed: onPressed,
+    );
+  }
 
   Future<void> _pickImage() async {
     final List<XFile> selectedImages = await _picker.pickMultiImage();
     if (selectedImages.isNotEmpty) {
       setState(() {
         _images.addAll(selectedImages);
+        _imagesChanged = true;
       });
     }
   }
 
-  void _removeImage(int index) {
+  void _removeNewImage(int index) {
     setState(() {
       _images.removeAt(index);
+      _imagesChanged = true;
+    });
+  }
+
+  void _removeExistingImage(int index) {
+    setState(() {
+      _existingImageUrls.removeAt(index);
+      _imagesChanged = true; // Flaga, żeby wiedzieć, że coś usunięto
     });
   }
 
@@ -120,32 +152,33 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
             context.go('/my-offers');
           }
         } else {
-          // TODO: Implement update
-          final data = {
-            "id": widget.offerId,
-            "title": _titleController.text,
-            "description": _descriptionController.text,
-            "price": double.tryParse(_priceController.text) ?? 0,
-            "images": _images
-                .map((e) => e.path)
-                .toList(), // In future this would be base64 or upload paths
-            "categoryId": _selectedCategory?.id,
-            "tags": _tags,
-            "properties": _properties,
-            "availability": int.tryParse(_availabilityController.text) ?? 1,
-          };
+          final request = OfferUpdateRequest(
+            title: _isTitleEditing ? _titleController.text : null,
+            description: _isDescriptionEditing
+                ? _descriptionController.text
+                : null,
+            price: _isPriceEditing
+                ? (double.tryParse(_priceController.text) ?? 0)
+                : null,
+            availability: _isAvailabilityEditing
+                ? (int.tryParse(_availabilityController.text) ?? 1)
+                : null,
+            images: _imagesChanged ? _existingImageUrls : null,
+            tags: _isTagsEditing ? _tags : null,
+            properties: _isPropertiesEditing ? _properties : null,
+          );
 
           if (widget.updateOffer != null) {
-            await widget.updateOffer!(data);
+            await widget.updateOffer!(jsonDecode(request.toJson()));
           } else {
-            // update offer
+            await ApiOffers().updateOffer(widget.offerId!, request);
           }
-          debugPrint("updated data: $data");
 
           if (mounted) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(const SnackBar(content: Text('Updated offer')));
+            context.go('/my-offers');
           }
         }
       } catch (e) {
@@ -159,42 +192,11 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
   }
 
   Future<Offer?> _fetchOffer() async {
-    await Future.delayed(const Duration(seconds: 1, milliseconds: 500));
     if (widget.offerId == null) {
       return null;
     }
 
-    final categories = await _fetchCategories();
-    late Category category;
-    if (categories.isEmpty) {
-      category = Category(
-        id: 1,
-        name: 'No connection category',
-        description:
-            'Your system appears to have lost connection with database.',
-      );
-    } else {
-      category = categories[1];
-    }
-
-    offer = Offer(
-      id: widget.offerId!,
-      title: "Polish Cow",
-      description: "Tylko jedno w głowie mam",
-      price: 133000,
-      images: [
-        'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.suwalki24.pl%2F_uploads%2F2020%2FGrudzien%2FDrobne%2Fkrowy_pasace_sie.jpg&f=1&nofb=1&ipt=7ac6e204693a3b2b87cc07b9c800f7de5bf5e627e31f6e646dc28c4b8a9f4f93',
-        'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FrfcliTe0qAs%2Fmaxresdefault.jpg&f=1&nofb=1&ipt=e61737e24b54abdd3cdb348ba66d42a572b95bb45202791838496c6c8d393320',
-      ],
-      seller: Seller(id: 0, name: 'Zenon'),
-      category: category,
-      tags: ['animal', 'cow', 'yummy', 'i', 'hate', 'io'],
-      properties: {0: 'true', 1: '12', 2: 'Samsung'},
-      availability: (widget.offerId! + 21) * 37,
-      status: OfferStatus.active,
-      createdAt: DateTime.now().subtract(Duration(days: 5)),
-      updatedAt: DateTime.now().subtract(Duration(hours: 21)),
-    );
+    offer = await ApiOffers().getOffer(widget.offerId!);
 
     _titleController.text = offer!.title;
     _descriptionController.text = offer!.description;
@@ -202,35 +204,21 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     _availabilityController.text = offer!.availability.toString();
     _selectedCategory = offer!.category;
     _propertiesFuture = _fetchProperties(_selectedCategory!.name);
+
     for (var t in offer!.tags) {
       _tags.add(t);
     }
+
     for (var i in offer!.images) {
-      var file = await DefaultCacheManager().getSingleFile(i);
-      _images.add(XFile(file.path));
+      _existingImageUrls.add(i);
     }
+
     final properties = await _fetchProperties(_selectedCategory!.name);
-    for (var i = 0; i < properties.length; i++) {
-      dynamic value;
-      switch (properties[i].type) {
-        case PropertyType.numeric:
-          // here earlier was int.tryParse(offer!.properties[i] ?? ''); but it
-          // was giving 'int is not a subtype of String' errors
-          value = offer!.properties[i] ?? '';
-          break;
-        case PropertyType.boolean:
-          // here the same as above but with bool instead of int.
-          // parser used earlier: bool.tryParse(offer!.properties[i] ?? '');
-          value = offer!.properties[i] ?? '';
-          break;
-        case PropertyType.text:
-          value = offer!.properties[i];
-          break;
-        case PropertyType.select:
-          value = offer!.properties[i];
-          break;
+
+    for (var prop in properties) {
+      if (offer!.properties.containsKey(prop.id)) {
+        _properties[prop.id.toString()] = offer!.properties[prop.id]!;
       }
-      _properties[properties[i].id.toString()] = value;
     }
 
     return offer;
@@ -250,11 +238,15 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
     return ApiCategories().getPropertyDefinitions(categoryName);
   }
 
-  void _deleteOffer(int id) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Successfully deleted this offer')),
-    );
-    context.pop();
+  Future _deleteOffer(int id) async {
+    await ApiOffers().deleteOffer(id);
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Successfully deleted this offer')),
+      );
+      context.go('/my-offers');
+    }
   }
 
   @override
@@ -308,20 +300,53 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                           nonEmptyTextFormField(
                             controller: _titleController,
                             text: "Title",
+                            enabled: !isUpdated || _isTitleEditing,
+                            suffixIcon: _buildEditIcon(
+                              isUpdated,
+                              _isTitleEditing,
+                              () {
+                                setState(
+                                  () => _isTitleEditing = !_isTitleEditing,
+                                );
+                              },
+                            ),
                           ),
                           const SizedBox(height: 16),
                           nonEmptyTextFormField(
                             controller: _descriptionController,
                             text: "Description",
                             maxLines: 4,
+                            enabled: !isUpdated || _isDescriptionEditing,
+                            suffixIcon: _buildEditIcon(
+                              isUpdated,
+                              _isDescriptionEditing,
+                              () {
+                                setState(
+                                  () => _isDescriptionEditing =
+                                      !_isDescriptionEditing,
+                                );
+                              },
+                            ),
                           ),
                           const SizedBox(height: 16),
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
                                 child: numberFormField(
                                   controller: _priceController,
                                   text: "Price",
+                                  enabled: !isUpdated || _isPriceEditing,
+                                  suffixIcon: _buildEditIcon(
+                                    isUpdated,
+                                    _isPriceEditing,
+                                    () {
+                                      setState(
+                                        () =>
+                                            _isPriceEditing = !_isPriceEditing,
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 16),
@@ -329,6 +354,17 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                                 child: numberFormField(
                                   controller: _availabilityController,
                                   text: "Availability",
+                                  enabled: !isUpdated || _isAvailabilityEditing,
+                                  suffixIcon: _buildEditIcon(
+                                    isUpdated,
+                                    _isAvailabilityEditing,
+                                    () {
+                                      setState(
+                                        () => _isAvailabilityEditing =
+                                            !_isAvailabilityEditing,
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             ],
@@ -393,19 +429,23 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                                       )
                                       .toList(),
                                   itemLabelBuilder: (cat) => cat.name,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      _selectedCategory = newValue;
-                                      _properties.clear();
-                                      if (newValue != null) {
-                                        _propertiesFuture = _fetchProperties(
-                                          newValue.name,
-                                        );
-                                      } else {
-                                        _propertiesFuture = null;
-                                      }
-                                    });
-                                  },
+                                  onChanged: isUpdated
+                                      ? null
+                                      : (newValue) {
+                                          setState(() {
+                                            _selectedCategory = newValue;
+                                            _properties.clear();
+                                            if (newValue != null) {
+                                              _propertiesFuture =
+                                                  _fetchProperties(
+                                                    newValue.name,
+                                                  );
+                                            } else {
+                                              _propertiesFuture = null;
+                                            }
+                                          });
+                                        },
+                                  enabled: !isUpdated,
                                   validator: (value) {
                                     if (value == null) {
                                       return 'Category is required';
@@ -433,101 +473,166 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                             height: 120,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount: _images.length + 1,
+                              // Liczba kafelków zależna od trybu:
+                              itemCount: isUpdated
+                                  ? _existingImageUrls.length
+                                  : _images.length + 1,
                               itemBuilder: (context, index) {
-                                if (index == _images.length) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: InkWell(
-                                      onTap: _pickImage,
-                                      child: Container(
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                          ),
+                                // ==========================================
+                                // TRYB EDYCJI: Pokazujemy tylko URL z serwera
+                                // ==========================================
+                                if (isUpdated) {
+                                  return Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipRRect(
                                           borderRadius: BorderRadius.circular(
                                             8,
                                           ),
-                                        ),
-                                        child: const Icon(
-                                          Icons.add_a_photo,
-                                          size: 40,
+                                          child: Image.network(
+                                            _existingImageUrls[index],
+                                            width: 100,
+                                            height: 100,
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                      Positioned(
+                                        right: 0,
+                                        top: 0,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.remove_circle,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () => _removeExistingImage(
+                                            index,
+                                          ), // Zmiana wywołania!
+                                        ),
+                                      ),
+                                    ],
                                   );
                                 }
-                                return Stack(
-                                  children: [
-                                    Padding(
+                                // ==========================================
+                                // TRYB TWORZENIA: Nowe zdjęcia + przycisk
+                                // ==========================================
+                                else {
+                                  // Przycisk "Dodaj" na samym końcu listy
+                                  if (index == _images.length) {
+                                    return Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: kIsWeb
-                                            ? Image.network(
-                                                _images[index].path,
-                                                width: 100,
-                                                height: 100,
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Image.file(
-                                                File(_images[index].path),
-                                                width: 100,
-                                                height: 100,
-                                                fit: BoxFit.cover,
-                                              ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      right: 0,
-                                      top: 0,
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.remove_circle,
-                                          color: Colors.red,
+                                      child: InkWell(
+                                        onTap: _pickImage,
+                                        child: Container(
+                                          width: 100,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.grey,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: const Icon(
+                                            Icons.add_a_photo,
+                                            size: 40,
+                                          ),
                                         ),
-                                        onPressed: () => _removeImage(index),
                                       ),
-                                    ),
-                                  ],
-                                );
+                                    );
+                                  }
+
+                                  // Zwykłe lokalne zdjęcie (wybrane z galerii)
+                                  return Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          child: kIsWeb
+                                              ? Image.network(
+                                                  _images[index].path,
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Image.file(
+                                                  File(_images[index].path),
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        right: 0,
+                                        top: 0,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.remove_circle,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () => _removeNewImage(
+                                            index,
+                                          ), // Zmiana wywołania!
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
                               },
                             ),
                           ),
+
                           const SizedBox(height: 32),
 
                           // Tags Section
-                          const Text(
-                            "Tags",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                           Row(
                             children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: _tagController,
-                                  decoration: const InputDecoration(
-                                    labelText: "Add Tag",
-                                  ),
+                              const Text(
+                                "Tags",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.add),
-                                onPressed: _addTag,
-                              ),
+                              if (isUpdated)
+                                _buildEditIcon(isUpdated, _isTagsEditing, () {
+                                  setState(
+                                    () => _isTagsEditing = !_isTagsEditing,
+                                  );
+                                })!,
                             ],
                           ),
+                          if (!isUpdated || _isTagsEditing)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: _tagController,
+                                    decoration: const InputDecoration(
+                                      labelText: "Add Tag",
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: _addTag,
+                                ),
+                              ],
+                            ),
                           Wrap(
                             spacing: 8,
                             children: _tags
                                 .map(
                                   (tag) => Chip(
                                     label: Text(tag),
-                                    onDeleted: () => _removeTag(tag),
+                                    onDeleted: (!isUpdated || _isTagsEditing)
+                                        ? () => _removeTag(tag)
+                                        : null,
                                   ),
                                 )
                                 .toList(),
@@ -564,27 +669,38 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
 
                               final properties = snapshot.data!;
 
-                              // if (offer != null) {
-                              //   for (var i = 0; i < properties.length; i++) {
-                              //     properties[i] = offer!.properties
-                              //   }
-                              // }
-
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    "Category Specific Properties",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        "Category Specific Properties",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      if (isUpdated)
+                                        _buildEditIcon(
+                                          isUpdated,
+                                          _isPropertiesEditing,
+                                          () {
+                                            setState(
+                                              () => _isPropertiesEditing =
+                                                  !_isPropertiesEditing,
+                                            );
+                                          },
+                                        )!,
+                                    ],
                                   ),
                                   const SizedBox(height: 16),
                                   ...properties.map(
                                     (prop) => PropertyField(
                                       property: prop,
                                       value: _properties[prop.id.toString()],
+                                      enabled:
+                                          !isUpdated || _isPropertiesEditing,
                                       onChanged: (newValue) {
                                         setState(() {
                                           _properties[prop.id.toString()] =
@@ -612,7 +728,20 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                           if (isUpdated) ...[
                             const SizedBox(height: 16),
                             ElevatedButton(
-                              onPressed: () => _deleteOffer(offer!.id),
+                              onPressed: () async {
+                                final confirmed = await showConfirmDialog(
+                                  context,
+                                  title: 'Delete offer',
+                                  content:
+                                      'Are you sure you want to delete this offer?',
+                                  confirmText: 'Delete',
+                                  isDestructive: true,
+                                );
+
+                                if (confirmed) {
+                                  _deleteOffer(offer!.id);
+                                }
+                              },
                               style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 16,
