@@ -2,6 +2,8 @@ import 'package:frontend/api/api_core.dart';
 import 'package:frontend/api/api_urls.dart';
 import 'package:frontend/api/models/offer_create_request.dart';
 import 'package:frontend/api/models/offer_response.dart';
+import 'package:frontend/api/models/offer_search_request.dart';
+import 'package:frontend/api/models/offer_search_response.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:http/http.dart' as http;
 
@@ -73,5 +75,35 @@ class ApiOffers {
       rethrow;
     }
     return offer;
+  }
+
+  Future<List<Offer>> searchOffers(OfferSearchRequest request) async {
+    late List<Offer> offers = [];
+
+    try {
+      final response = await _apiCore.post(ApiUrls().searchOffers, request);
+
+      switch (response.statusCode) {
+        case 200:
+          {
+            final OfferSearchResponse responseModel = OfferSearchResponse(
+              response: response,
+            );
+
+            responseModel.fromJson();
+            offers = responseModel.offers;
+          }
+        case 204:
+          offers = [];
+        case 400:
+          throw Exception('Invalid search parameters');
+        case 500:
+          throw Exception('Internal server error.');
+      }
+    } catch (e) {
+      rethrow;
+    }
+
+    return offers;
   }
 }
