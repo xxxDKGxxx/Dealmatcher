@@ -13,7 +13,21 @@ public class ConversationProfile : Profile
             nameof(ConversationDto.LastMessageAt),
             opt => opt.MapFrom(c => c.LastMessage.CreatedAt)
           )
-          .ForCtorParam(nameof(ConversationDto.Status), opt => opt.MapFrom(c => c.Status.Name));
+          .ForCtorParam(nameof(ConversationDto.Status), opt => opt.MapFrom(c => c.Status.Name))
+          .ForCtorParam(
+            nameof(ConversationDto.UnreadCount),
+            opt =>
+              opt.MapFrom(
+                (src, context) =>
+                {
+                    if (context.Items.TryGetValue("readerId", out var readerId))
+                    {
+                        return src.UnreadCount((int)readerId);
+                    }
+                    return -1;
+                }
+              )
+          );
         CreateMap<Conversation, ConversationDetailDto>()
           .ForCtorParam(
             nameof(ConversationDetailDto.LastMessage),
@@ -23,6 +37,20 @@ public class ConversationProfile : Profile
             nameof(ConversationDetailDto.LastMessageAt),
             opt => opt.MapFrom(c => c.LastMessage.CreatedAt)
           )
-          .ForCtorParam(nameof(ConversationDetailDto.Status), opt => opt.MapFrom(c => c.Status.Name));
+          .ForCtorParam(nameof(ConversationDetailDto.Status), opt => opt.MapFrom(c => c.Status.Name))
+          .ForCtorParam(
+            nameof(ConversationDetailDto.UnreadCount),
+            opt =>
+              opt.MapFrom(
+                (src, context) =>
+                {
+                    if (context.Items.TryGetValue("readerId", out var readerId))
+                    {
+                        return src.UnreadCount((int)readerId);
+                    }
+                    return -1;
+                }
+              )
+          );
     }
 }

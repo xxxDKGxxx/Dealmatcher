@@ -13,7 +13,8 @@ public class Conversation(Offer offer, User buyer) : DealmatcherEntityBase, IAgg
     public User Seller => Offer.Seller;
     public Message LastMessage => _messages.OrderByDescending(m => m.CreatedAt).First();
 
-    public int UnreadCount => _messages.Where(m => m.Status != MessageStatus.Read).Count();
+    public int UnreadCount(int readerId) =>
+      _messages.Where(m => m.Sender.Id != readerId && m.Status != MessageStatus.Read).Count();
 
     public IReadOnlyCollection<Message> Messages => _messages.AsReadOnly();
 }
