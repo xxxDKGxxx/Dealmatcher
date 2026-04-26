@@ -1,6 +1,4 @@
-﻿using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages;
-
-namespace Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate;
+﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate;
 
 public class Conversation(Offer offer, User buyer) : DealmatcherEntityBase, IAggregateRoot
 {

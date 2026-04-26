@@ -1,6 +1,4 @@
-﻿using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages.Dto;
-
-namespace Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Dto;
+﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Dto;
 
 public sealed record ConversationDetailDto(
   OfferDto Offer,
