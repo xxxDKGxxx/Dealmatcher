@@ -1,6 +1,6 @@
 ﻿namespace Dealmatcher.Backend.UseCases.Features.Conversations.Create;
 
 public sealed record CreateConversationCommand(
-    int buyerId,
-    int offerId,
+    int BuyerId,
+    int OfferId,
     string InitialMessage) : ICommand<Result<ConversationDto>>;
