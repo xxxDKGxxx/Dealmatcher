@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:frontend/api/api_core.dart';
 import 'package:frontend/pages/home_page.dart';
 
 void main() {
+  setUpAll(() {
+    ApiCore().init('http://localhost');
+  });
+
   void setDesktopSize(WidgetTester tester) {
     tester.view.physicalSize = const Size(1200, 1200);
     tester.view.devicePixelRatio = 1.0;
