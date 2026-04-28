@@ -1,12 +1,22 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate;
 
-public class Conversation(Offer offer, User buyer) : DealmatcherEntityBase, IAggregateRoot
+public class Conversation : DealmatcherEntityBase, IAggregateRoot
 {
-    public Offer Offer { get; private set; } = offer;
-    public User Buyer { get; private set; } = buyer;
+    public Offer Offer { get; private set; } = null!;
+    public User Buyer { get; private set; } = null!;
     public ConversationStatus Status { get; private set; } = ConversationStatus.Active;
 
     private readonly List<Message> _messages = [];
+
+    public Conversation(Offer offer, User buyer)
+    {
+        Offer = offer;
+        Buyer = buyer;
+    }
+
+    private Conversation()
+    { /* EF */
+    }
 
     public User Seller => Offer.Seller;
     public Message LastMessage => _messages.OrderByDescending(m => m.CreatedAt).First();

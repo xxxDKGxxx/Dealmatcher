@@ -1,5 +1,4 @@
-﻿global using System.Threading.Tasks;
-global using Ardalis.SharedKernel;
+﻿global using Ardalis.SharedKernel;
 global using Ardalis.SmartEnum;
 global using Ardalis.Specification;
 global using Dealmatcher.Backend.Domain.Core.Filtering;
