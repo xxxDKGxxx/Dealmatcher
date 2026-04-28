@@ -1,6 +1,4 @@
-﻿using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Dto;
-
-namespace Dealmatcher.Backend.API.Endpoints.Conversations.Create;
+﻿namespace Dealmatcher.Backend.API.Endpoints.Conversations.Create;
 
 public sealed class Create(
     IMediator mediator,
