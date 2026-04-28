@@ -2,22 +2,22 @@
 
 public sealed class Message : DealmatcherEntityBase
 {
-  public User Sender { get; private set; } = null!;
-  public String Content { get; private set; } = null!;
-  public MessageStatus Status { get; private set; } = MessageStatus.Delivered;
+    public User Sender { get; private set; } = null!;
+    public String Content { get; private set; } = null!;
+    public MessageStatus Status { get; private set; } = MessageStatus.Delivered;
 
-  public Message(User sender, string content)
-  {
-    Sender = sender;
-    Content = content;
-  }
+    public Message(User sender, string content)
+    {
+        Sender = sender;
+        Content = content;
+    }
 
-  private Message()
-  { /* EF */
-  }
+    private Message()
+    { /* EF */
+    }
 
-  public void Read()
-  {
-    Status = MessageStatus.Read;
-  }
+    public void Read()
+    {
+        Status = MessageStatus.Read;
+    }
 }
