@@ -8,7 +8,7 @@ public sealed class RedisCartRepository(IConnectionMultiplexer redis) : ICartRep
 {
     private readonly IDatabase _db = redis.GetDatabase();
     private static readonly TimeSpan _expiry = TimeSpan.FromDays(7);
-    private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions()
+    private static readonly JsonSerializerOptions _jsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
@@ -33,7 +33,7 @@ public sealed class RedisCartRepository(IConnectionMultiplexer redis) : ICartRep
 
     public async Task SaveCartAsync(Cart cart, CancellationToken ct)
     {
-        var data = new CartData(cart.Items.Select(i => new CartItemData(i.OfferId, i.Quantity)).ToList());
+        var data = new CartData([.. cart.Items.Select(i => new CartItemData(i.OfferId, i.Quantity))]);
         var json = JsonSerializer.Serialize(data, _jsonOptions);
         await _db.StringSetAsync(Key(cart.UserId), json, _expiry);
     }

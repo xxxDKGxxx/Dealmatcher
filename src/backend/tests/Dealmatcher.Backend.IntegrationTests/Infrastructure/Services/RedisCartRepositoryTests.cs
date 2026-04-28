@@ -10,7 +10,7 @@ public class RedisCartRepositoryTests : IAsyncLifetime
     private readonly RedisContainer _redisContainer = new RedisBuilder("redis:7-alpine").Build();
 
     private RedisCartRepository _repository = null!;
-    private IConnectionMultiplexer _redis = null!;
+    private ConnectionMultiplexer? _redis = null!;
 
     public async Task InitializeAsync()
     {
@@ -21,7 +21,7 @@ public class RedisCartRepositoryTests : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        _redis.Dispose();
+        _redis!.Dispose();
         await _redisContainer.DisposeAsync();
     }
 

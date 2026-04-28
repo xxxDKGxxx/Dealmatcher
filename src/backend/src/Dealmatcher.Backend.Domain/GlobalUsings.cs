@@ -4,6 +4,7 @@ global using Ardalis.GuardClauses;
 global using Ardalis.SharedKernel;
 global using Ardalis.SmartEnum;
 global using Ardalis.Specification;
+global using Dealmatcher.Backend.Domain.Core.Cart;
 global using Dealmatcher.Backend.Domain.Core.Filtering;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
@@ -15,4 +16,3 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Property
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Dealmatcher.Backend.Domain.Interfaces.Filtering;
 global using Microsoft.Extensions.Logging;
-global using Dealmatcher.Backend.Domain.Core.Cart;
