@@ -184,14 +184,19 @@ public class CreateOfferCommandHandlerTests
     {
         SetupValidUser();
         SetupValidCategory();
+
         var command = CreateValidCommand(new Dictionary<string, string>
         {
+            [_przebiegId.ToString()] = "180000",
+            [_uszkodzonyId.ToString()] = "false",
+            [_markaId.ToString()] = "BMW",
             ["NieistniejącaProperty"] = "123"
         });
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.Status.ShouldBe(ResultStatus.Invalid);
+        result.ValidationErrors.ShouldContain(e => e.ErrorMessage.Contains("Invalid property Id"));
         await _offerRepository.DidNotReceive().AddAsync(Arg.Any<Offer>(), Arg.Any<CancellationToken>());
     }
 
@@ -202,12 +207,15 @@ public class CreateOfferCommandHandlerTests
         SetupValidCategory();
         var command = CreateValidCommand(new Dictionary<string, string>
         {
-            [_przebiegId.ToString()] = "nie-liczba"
+            [_przebiegId.ToString()] = "nie-liczba",
+            [_uszkodzonyId.ToString()] = "false",
+            [_markaId.ToString()] = "BMW"
         });
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.Status.ShouldBe(ResultStatus.Invalid);
+        result.ValidationErrors.ShouldContain(e => e.ErrorMessage.Contains("Invalid property value"));
         await _offerRepository.DidNotReceive().AddAsync(Arg.Any<Offer>(), Arg.Any<CancellationToken>());
     }
 
@@ -218,12 +226,15 @@ public class CreateOfferCommandHandlerTests
         SetupValidCategory();
         var command = CreateValidCommand(new Dictionary<string, string>
         {
-            [_uszkodzonyId.ToString()] = "nie-bool"
+            [_przebiegId.ToString()] = "180000",
+            [_uszkodzonyId.ToString()] = "nie-bool",
+            [_markaId.ToString()] = "BMW"
         });
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.Status.ShouldBe(ResultStatus.Invalid);
+        result.ValidationErrors.ShouldContain(e => e.ErrorMessage.Contains("Invalid property value"));
         await _offerRepository.DidNotReceive().AddAsync(Arg.Any<Offer>(), Arg.Any<CancellationToken>());
     }
 
@@ -234,27 +245,47 @@ public class CreateOfferCommandHandlerTests
         SetupValidCategory();
         var command = CreateValidCommand(new Dictionary<string, string>
         {
+            [_przebiegId.ToString()] = "180000",
+            [_uszkodzonyId.ToString()] = "false",
             [_markaId.ToString()] = "Toyota"
         });
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.Status.ShouldBe(ResultStatus.Invalid);
+        result.ValidationErrors.ShouldContain(e => e.ErrorMessage.Contains("Invalid property value"));
         await _offerRepository.DidNotReceive().AddAsync(Arg.Any<Offer>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Handle_EmptyProperties_ReturnsSuccess()
+    public async Task Handle_EmptyProperties_ReturnsInvalid()
     {
         SetupValidUser();
         SetupValidCategory();
-        SetupMapper();
         var command = CreateValidCommand([]);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        result.IsSuccess.ShouldBeTrue();
-        await _offerRepository.Received(1).AddAsync(Arg.Any<Offer>(), Arg.Any<CancellationToken>());
+        result.Status.ShouldBe(ResultStatus.Invalid);
+        result.ValidationErrors.ShouldContain(e => e.ErrorMessage.Contains("Missing required properties"));
+        await _offerRepository.DidNotReceive().AddAsync(Arg.Any<Offer>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_MissingSomeProperties_ReturnsInvalid()
+    {
+        SetupValidUser();
+        SetupValidCategory();
+        var command = CreateValidCommand(new Dictionary<string, string>
+        {
+            [_przebiegId.ToString()] = "180000"
+        });
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.Status.ShouldBe(ResultStatus.Invalid);
+        result.ValidationErrors.ShouldContain(e => e.ErrorMessage.Contains("Missing required properties"));
+        await _offerRepository.DidNotReceive().AddAsync(Arg.Any<Offer>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]

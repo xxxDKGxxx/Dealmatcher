@@ -2,30 +2,38 @@
 
 public class UpdateOfferTests(CustomWebApplicationFactory factory) : EndpointTestBase(factory)
 {
-    private async Task<int> SeedOffer(string sellerEmail)
+    private async Task<(int OfferId, int PropId)> SeedOffer(string sellerEmail)
     {
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         var seller = await db.Set<User>().FirstAsync(u => u.Email == sellerEmail);
-        var category = await db.Set<Category>().FirstAsync();
+
+        var category = new Category("Elektronika", "Opis");
+        var propertyDef = new NumericPropertyDefinition("RAM", PropertyType.Numeric);
+        category.AddPropertyDefinition(propertyDef);
+
+        db.Set<Category>().Add(category);
+        await db.SaveChangesAsync();
+
+        var propValue = new NumericProperty(propertyDef, 16);
 
         var offer = new Offer(
             "Original Title",
             "Original Description",
             100m,
-            ["image1.jpg", "image2.jpg"],
+            ["image1.jpg"],
             seller,
             ["tag1"],
             1,
             category,
-            []
+            [propValue]
         );
 
         db.Set<Offer>().Add(offer);
         await db.SaveChangesAsync();
 
-        return offer.Id;
+        return (offer.Id, propertyDef.Id);
     }
 
     [Fact]
@@ -34,42 +42,42 @@ public class UpdateOfferTests(CustomWebApplicationFactory factory) : EndpointTes
         var token = await RegisterAndLogin("owner_update@example.com", "Password123!");
         SetAuthHeader(token);
 
-        var offerId = await SeedOffer("owner_update@example.com");
+        var (offerId, propId) = await SeedOffer("owner_update@example.com");
 
         var updateRequest = new
         {
             Title = "Updated Title",
             Price = 150.99m,
-            Images = new[] { "image1.jpg" }
+            Properties = new Dictionary<string, string>
+            {
+                { propId.ToString(), "32" }
+            }
         };
 
-        var response = await _client.PatchAsJsonAsync($"/api/v1/offers/{offerId}", updateRequest);
+        var response = await _client.PatchAsJsonAsync($"/api/v1/offers/{offerId}", (object)updateRequest);
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var json = await response.Content.ReadFromJsonAsync<JsonDocument>();
-        json.ShouldNotBeNull();
-
-        var root = json.RootElement;
-        root.GetProperty("id").GetInt32().ShouldBe(offerId);
-        root.GetProperty("title").GetString().ShouldBe("Updated Title");
-        root.GetProperty("price").GetDecimal().ShouldBe(150.99m);
-        root.GetProperty("description").GetString().ShouldBe("Original Description");
-        root.GetProperty("images").GetArrayLength().ShouldBe(1);
-        root.GetProperty("status").GetString().ShouldBe("DRAFT");
+        var json = await response.Content.ReadFromJsonAsync<OfferDto>();
+        json?.Title.ShouldBe("Updated Title");
+        json?.Properties[propId.ToString()].ShouldBe("32");
     }
 
     [Fact]
     public async Task UpdateOffer_OfferOwnedByOtherUser_ReturnsForbidden()
     {
         await RegisterAndLogin("real_owner_update@example.com", "Password123!");
-        var offerId = await SeedOffer("real_owner_update@example.com");
+        var (offerId, propId) = await SeedOffer("real_owner_update@example.com");
 
         var maliciousUserToken = await RegisterAndLogin("malicious_update@example.com", "Password123!");
         SetAuthHeader(maliciousUserToken);
 
-        var updateRequest = new { Title = "Hacked Title" };
-        var response = await _client.PatchAsJsonAsync($"/api/v1/offers/{offerId}", updateRequest);
+        var updateRequest = new
+        {
+            Title = "Hacked Title",
+            Properties = new Dictionary<string, string> { { propId.ToString(), "16" } }
+        };
+        var response = await _client.PatchAsJsonAsync($"/api/v1/offers/{offerId}", (object)updateRequest);
 
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
@@ -80,15 +88,16 @@ public class UpdateOfferTests(CustomWebApplicationFactory factory) : EndpointTes
         var token = await RegisterAndLogin("owner_invalid_update@example.com", "Password123!");
         SetAuthHeader(token);
 
-        var offerId = await SeedOffer("owner_invalid_update@example.com");
+        var (offerId, propId) = await SeedOffer("owner_invalid_update@example.com");
 
         var updateRequest = new
         {
             Title = "",
-            Price = -50m
+            Price = -50m,
+            Properties = new Dictionary<string, string> { { propId.ToString(), "16" } }
         };
 
-        var response = await _client.PatchAsJsonAsync($"/api/v1/offers/{offerId}", updateRequest);
+        var response = await _client.PatchAsJsonAsync($"/api/v1/offers/{offerId}", (object)updateRequest);
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }

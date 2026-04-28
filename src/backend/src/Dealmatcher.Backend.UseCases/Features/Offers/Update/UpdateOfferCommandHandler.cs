@@ -56,7 +56,12 @@ public sealed class UpdateOfferCommandHandler(
 
         if (request.Properties is not null)
         {
-            await UpdatePropertiesAsync(offer, request.Properties, cancellationToken);
+            var propertiesResult = await UpdatePropertiesAsync(offer, request.Properties, cancellationToken);
+
+            if (!propertiesResult.IsSuccess)
+            {
+                return Result.Invalid(propertiesResult.ValidationErrors);
+            }
         }
 
         await offerRepository.SaveChangesAsync(cancellationToken);
@@ -65,26 +70,53 @@ public sealed class UpdateOfferCommandHandler(
         return Result.Success(offerDto);
     }
 
-    private async Task UpdatePropertiesAsync(Offer offer, Dictionary<string, string> newProperties, CancellationToken ct)
+    private async Task<Result> UpdatePropertiesAsync(Offer offer, Dictionary<string, string> newProperties, CancellationToken ct)
     {
         var categoryWithDefs = new CategoryWithDefinitionsByIdSpec(offer.Category.Id);
         var category = await categoryRepository.FirstOrDefaultAsync(categoryWithDefs, ct);
 
-        if (category is null) return;
+        if (category is null)
+        {
+            return Result.Invalid(new ValidationError($"Category with Id {offer.Category.Id} not found."));
+        }
+
+        var missingProperties = category.PropertyDefinitions
+            .Where(pd => !newProperties.ContainsKey(pd.Id.ToString()))
+            .Select(pd => pd.Name)
+            .ToList();
+
+        if (missingProperties.Count > 0)
+        {
+            return Result.Invalid(new ValidationError($"Missing required properties for category '{category.Name}': {string.Join(", ", missingProperties)}"));
+        }
 
         List<Property> updatedProperties = [];
-        foreach (var prop in newProperties)
+        foreach (var propertyId in newProperties.Keys)
         {
-            if (int.TryParse(prop.Key, out int propId))
+            if (!int.TryParse(propertyId, out int propertyIdParsed))
             {
-                var def = category.PropertyDefinitions.FirstOrDefault(pd => pd.Id == propId);
-                if (def is not null)
-                {
-                    updatedProperties.Add(def.CreatePropertyFromString(prop.Value));
-                }
+                return Result.Invalid(new ValidationError($"Invalid property Id: {propertyId}"));
+            }
+
+            var propertyDefinition = category.PropertyDefinitions.FirstOrDefault(pd => pd.Id == propertyIdParsed);
+
+            if (propertyDefinition is null)
+            {
+                return Result.Invalid(new ValidationError($"Invalid property Id: {propertyId} for category {category.Name}"));
+            }
+
+            try
+            {
+                var property = propertyDefinition.CreatePropertyFromString(newProperties[propertyId]);
+                updatedProperties.Add(property);
+            }
+            catch
+            {
+                return Result.Invalid(new ValidationError($"Invalid property value: {newProperties[propertyId]} for {propertyDefinition.Name}"));
             }
         }
 
         offer.SetProperties(updatedProperties);
+        return Result.Success();
     }
 }
