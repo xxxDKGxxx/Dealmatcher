@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api/api_categories.dart';
 
 import '../models/category.dart';
 import '../models/property_definition.dart';
 import 'form_fields.dart';
 
 class OfferFilterWidget extends StatefulWidget {
+  final Map<String, dynamic>? initialFilters;
   final void Function(Map<String, dynamic> filters)? onFilterChanged;
 
-  const OfferFilterWidget({super.key, this.onFilterChanged});
+  const OfferFilterWidget({
+    super.key,
+    this.initialFilters,
+    this.onFilterChanged,
+  });
 
   @override
   State<OfferFilterWidget> createState() => _OfferFilterWidgetState();
@@ -19,27 +25,47 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
   Future<List<PropertyDefinition>>? _propertiesFuture;
 
   // Global filters
-  String _phrase = "";
-  double? _priceMin;
-  double? _priceMax;
-  final List<String> _tags = [];
-  final TextEditingController _tagController = TextEditingController();
+  late String _phrase;
+  late double? _priceMin;
+  late double? _priceMax;
+  late final List<String> _tags;
+  late final TextEditingController _tagController;
 
   // Category specific property filters
-  final Map<int, List<String>> _properties = {};
+  late final Map<String, List<String>> _properties;
 
   @override
   void initState() {
     super.initState();
-    _categoriesFuture = _fetchCategories();
+    final filters = widget.initialFilters ?? {};
+    _phrase = filters['searchPhrase'] ?? "";
+    _priceMin = filters['minPrice'];
+    _priceMax = filters['maxPrice'];
+    _tags = List<String>.from(filters['tags'] ?? []);
+    _tagController = TextEditingController();
+    _properties = Map<String, List<String>>.from(filters['properties'] ?? {});
+
+    _categoriesFuture = _fetchCategories().then((categories) {
+      if (filters['categoryId'] != null) {
+        try {
+          final catId = filters['categoryId'];
+          final selected = categories.firstWhere((c) => c.id == catId);
+          setState(() {
+            _selectedCategory = selected;
+            _propertiesFuture = _fetchProperties(selected.name);
+          });
+        } catch (_) {}
+      }
+      return categories;
+    });
   }
 
   void _updateFilters() {
     if (widget.onFilterChanged != null) {
       widget.onFilterChanged!({
-        'phrase': _phrase,
-        'priceMin': _priceMin,
-        'priceMax': _priceMax,
+        'searchPhrase': _phrase,
+        'minPrice': _priceMin,
+        'maxPrice': _priceMax,
         'tags': _tags,
         'categoryId': _selectedCategory?.id,
         'properties': _properties,
@@ -70,91 +96,23 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
   }
 
   Future<List<Category>> _fetchCategories() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return [
-      Category(
-        id: 0,
-        name: "Computers",
-        description: "PC, Laptops and Notebooks",
-      ),
-      Category(
-        id: 1,
-        name: "Apartements",
-        description: "Apartements for rent or for sale",
-      ),
-    ];
+    return ApiCategories().getCategories();
   }
 
-  Future<List<PropertyDefinition>> _fetchProperties(int categoryId) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (categoryId == 0) {
-      return [
-        PropertyDefinition(
-          id: 0,
-          name: 'Model',
-          type: PropertyType.text,
-          options: [],
-        ),
-        PropertyDefinition(
-          id: 1,
-          name: "RAM (GB)",
-          type: PropertyType.numeric,
-          options: [],
-        ),
-        PropertyDefinition(
-          id: 2,
-          name: "Storage (GB)",
-          type: PropertyType.numeric,
-          options: [],
-        ),
-        PropertyDefinition(
-          id: 3,
-          name: "OS",
-          type: PropertyType.select,
-          options: ["Windows", "Linux", "MacOS"],
-        ),
-        PropertyDefinition(
-          id: 4,
-          name: "Is New",
-          type: PropertyType.boolean,
-          options: [],
-        ),
-      ];
-    } else if (categoryId == 1) {
-      return [
-        PropertyDefinition(
-          id: 5,
-          name: "Rooms",
-          type: PropertyType.numeric,
-          options: [],
-        ),
-        PropertyDefinition(
-          id: 6,
-          name: "Floor",
-          type: PropertyType.numeric,
-          options: [],
-        ),
-        PropertyDefinition(
-          id: 7,
-          name: "Has Balcony",
-          type: PropertyType.boolean,
-          options: [],
-        ),
-        PropertyDefinition(
-          id: 8,
-          name: "Heating",
-          type: PropertyType.select,
-          options: ["Gas", "Electric", "Central"],
-        ),
-      ];
-    }
-    return [];
+  Future<List<PropertyDefinition>> _fetchProperties(String categoryName) async {
+    return ApiCategories().getPropertyDefinitions(categoryName);
   }
 
   Widget _buildPropertyFilter(PropertyDefinition prop) {
     switch (prop.type) {
       case PropertyType.numeric:
-        _properties.putIfAbsent(prop.id, () => ["", ""]);
+        final propValues = _properties[prop.id.toString()];
+        final minVal = (propValues != null && propValues.isNotEmpty)
+            ? propValues[0]
+            : "";
+        final maxVal = (propValues != null && propValues.length > 1)
+            ? propValues[1]
+            : "";
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -162,8 +120,15 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
               child: _buildFieldContainer(
                 numberFormField(
                   text: "${prop.name} (Min)",
+                  initialValue: minVal,
                   onChanged: (val) {
-                    _properties[prop.id]![0] = val;
+                    _properties.putIfAbsent(prop.id.toString(), () => ["", ""]);
+                    _properties[prop.id.toString()]![0] = val;
+
+                    if (_properties[prop.id.toString()]![0].isEmpty &&
+                        _properties[prop.id.toString()]![1].isEmpty) {
+                      _properties.remove(prop.id.toString());
+                    }
                     _updateFilters();
                   },
                   validator: (val) {
@@ -171,6 +136,12 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
                         val.trim().isNotEmpty &&
                         double.tryParse(val) == null) {
                       return "Invalid number";
+                    }
+                    if (_properties[prop.id.toString()] != null &&
+                        _properties[prop.id.toString()]!.length > 1 &&
+                        _properties[prop.id.toString()]![1].isNotEmpty &&
+                        (val == null || val.isEmpty)) {
+                      return "Required when providing range";
                     }
                     return null;
                   },
@@ -182,8 +153,15 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
               child: _buildFieldContainer(
                 numberFormField(
                   text: "${prop.name} (Max)",
+                  initialValue: maxVal,
                   onChanged: (val) {
-                    _properties[prop.id]![1] = val;
+                    _properties.putIfAbsent(prop.id.toString(), () => ["", ""]);
+                    _properties[prop.id.toString()]![1] = val;
+
+                    if (_properties[prop.id.toString()]![0].isEmpty &&
+                        _properties[prop.id.toString()]![1].isEmpty) {
+                      _properties.remove(prop.id.toString());
+                    }
                     _updateFilters();
                   },
                   validator: (val) {
@@ -191,6 +169,12 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
                         val.trim().isNotEmpty &&
                         double.tryParse(val) == null) {
                       return "Invalid number";
+                    }
+                    if (_properties[prop.id.toString()] != null &&
+                        _properties[prop.id.toString()]!.isNotEmpty &&
+                        _properties[prop.id.toString()]![0].isNotEmpty &&
+                        (val == null || val.isEmpty)) {
+                      return "Required when providing range";
                     }
                     return null;
                   },
@@ -203,11 +187,11 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
         return CheckboxListTile(
           title: Text(prop.name),
           value:
-              _properties[prop.id]?.isNotEmpty == true &&
-              _properties[prop.id]![0] == "true",
+              _properties[prop.id.toString()]?.isNotEmpty == true &&
+              _properties[prop.id.toString()]![0] == "true",
           onChanged: (val) {
             setState(() {
-              _properties[prop.id] = [(val ?? false).toString()];
+              _properties[prop.id.toString()] = [(val ?? false).toString()];
               _updateFilters();
             });
           },
@@ -215,10 +199,14 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
           contentPadding: EdgeInsets.zero,
         );
       case PropertyType.text:
+        final initVal = _properties[prop.id.toString()]?.isNotEmpty == true
+            ? _properties[prop.id.toString()]![0]
+            : "";
         return _buildFieldContainer(
           TextFormField(
+            initialValue: initVal,
             onChanged: (val) {
-              _properties[prop.id] = [val];
+              _properties[prop.id.toString()] = [val];
               _updateFilters();
             },
             decoration: InputDecoration(
@@ -228,7 +216,7 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
           ),
         );
       case PropertyType.select:
-        final selectedOptions = _properties[prop.id] ?? [];
+        final selectedOptions = _properties[prop.id.toString()] ?? [];
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -247,9 +235,11 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
                   onSelected: (selected) {
                     setState(() {
                       if (selected) {
-                        _properties.putIfAbsent(prop.id, () => []).add(opt);
+                        _properties
+                            .putIfAbsent(prop.id.toString(), () => [])
+                            .add(opt);
                       } else {
-                        _properties[prop.id]?.remove(opt);
+                        _properties[prop.id.toString()]?.remove(opt);
                       }
                       _updateFilters();
                     });
@@ -286,6 +276,7 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
             const SizedBox(height: 16),
             _buildFieldContainer(
               TextFormField(
+                initialValue: _phrase,
                 onChanged: (val) {
                   _phrase = val;
                   _updateFilters();
@@ -304,6 +295,7 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
                   child: _buildFieldContainer(
                     numberFormField(
                       text: "Price (Min)",
+                      initialValue: _priceMin?.toString(),
                       onChanged: (val) {
                         _priceMin = double.tryParse(val);
                         _updateFilters();
@@ -324,6 +316,7 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
                   child: _buildFieldContainer(
                     numberFormField(
                       text: "Price (Max)",
+                      initialValue: _priceMax?.toString(),
                       onChanged: (val) {
                         _priceMax = double.tryParse(val);
                         _updateFilters();
@@ -392,12 +385,13 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
                         ),
                       ),
                     ],
+                    itemLabelBuilder: (cat) => cat.name,
                     onChanged: (newValue) {
                       setState(() {
                         _selectedCategory = newValue;
                         _properties.clear();
                         if (newValue != null) {
-                          _propertiesFuture = _fetchProperties(newValue.id);
+                          _propertiesFuture = _fetchProperties(newValue.name);
                         } else {
                           _propertiesFuture = null;
                         }

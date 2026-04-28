@@ -43,7 +43,11 @@ public sealed class CreateConversationCommandHandler(
         }
 
         var conversation = new Conversation(offer, buyer);
-        await conversationsRepository.AddAsync(conversation);
+        var message = new Message(buyer, request.InitialMessage);
+        conversation.AddMessage(message);
+
+        await conversationsRepository.AddAsync(conversation, cancellationToken);
+        await conversationsRepository.SaveChangesAsync(cancellationToken);
 
         return Result.Success(mapper.Map<ConversationDto>(conversation));
     }
