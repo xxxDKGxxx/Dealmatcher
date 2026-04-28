@@ -25,4 +25,9 @@ public class Conversation : DealmatcherEntityBase, IAggregateRoot
       _messages.Where(m => m.Sender.Id != readerId && m.Status != MessageStatus.Read).Count();
 
     public IReadOnlyCollection<Message> Messages => _messages.AsReadOnly();
+
+    public void AddMessage(Message message)
+    {
+        _messages.Add(message);
+    }
 }

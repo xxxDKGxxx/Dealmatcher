@@ -6,6 +6,7 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages.Dto;
+global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Specifications;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories.Dto;
