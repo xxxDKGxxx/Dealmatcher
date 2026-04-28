@@ -12,8 +12,13 @@ public sealed class Cart(int userId)
         _items.Add(new CartItem(offerId, quantity));
     }
 
-    public void DeleteItem(int offerId)
+    public void RemoveItem(int offerId)
     {
         _items.RemoveAll(i => i.OfferId == offerId);
+    }
+
+    public void Clear()
+    {
+        _items.Clear();
     }
 }
