@@ -12,6 +12,15 @@ services:
     networks:
       - dealmatcher-local
 
+  redis:
+    image: redis:7-alpine
+    container_name: dealmatcher-redis
+    command: redis-server --requirepass ${Redis__Password}
+    ports:
+      - "6379:6379"
+    networks:
+      - dealmatcher-local
+
   backend:
     build:
       context: ./src/backend/
@@ -26,6 +35,7 @@ services:
       - Authentication__Jwt__Issuer=${Authentication__Jwt__Issuer}
       - Authentication__Jwt__Audience=${Authentication__Jwt__Audience}
       - ConnectionStrings__AzureBlobStorage=${ConnectionStrings__AzureBlobStorage}
+      - ConnectionStrings__Redis=${ConnectionStrings__Redis}
     ports:
       - "5000:80"
     networks:
