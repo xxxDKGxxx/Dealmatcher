@@ -49,7 +49,11 @@ public sealed class CreateConversationCommandHandler(
         await conversationsRepository.AddAsync(conversation, cancellationToken);
         await conversationsRepository.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(mapper.Map<ConversationDto>(conversation));
+        var offerDto = mapper.Map<ConversationDto>(conversation, opts =>
+        {
+            opts.Items["readerId"] = request.BuyerId;
+        });
+        return Result.Success(offerDto);
     }
 }
 
