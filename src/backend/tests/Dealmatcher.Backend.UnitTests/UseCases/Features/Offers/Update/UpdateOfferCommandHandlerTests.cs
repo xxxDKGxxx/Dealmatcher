@@ -154,6 +154,37 @@ public class UpdateOfferCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_ExistingProperties_UpdatesExistingInstances()
+    {
+        // Arrange
+        var category = _offer.Category;
+        var przebiegDef = category.PropertyDefinitions.First(pd => pd.Id == _przebiegId);
+        var initialProperty = przebiegDef.CreatePropertyFromString("10");
+
+        _offer.SetProperties([initialProperty]);
+
+        var command = new UpdateOfferCommand(1, 1, null, null, null, null, null, new Dictionary<string, string>
+        {
+            [_przebiegId.ToString()] = "20",
+            [_uszkodzonyId.ToString()] = "true",
+            [_markaId.ToString()] = "Apple"
+        }, null);
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        _offer.Properties.Count.ShouldBe(3);
+        var updatedProperty = _offer.Properties.First(p => p.PropertyDefinition.Id == _przebiegId);
+
+        updatedProperty.ShouldBeSameAs(initialProperty);
+        updatedProperty.StringValue.ShouldBe("20");
+
+        await _offerRepository.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
     public async Task Handle_MissingProperties_ReturnsInvalid()
     {
         // Arrange

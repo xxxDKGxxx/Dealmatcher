@@ -64,6 +64,42 @@ public class UpdateOfferTests(CustomWebApplicationFactory factory) : EndpointTes
     }
 
     [Fact]
+    public async Task UpdateOffer_Twice_DoesNotCreateDuplicatePropertiesInDatabase()
+    {
+        // Arrange
+        var token = await RegisterAndLogin("repro_bug@example.com", "Password123!");
+        SetAuthHeader(token);
+
+        var (offerId, propId) = await SeedOffer("repro_bug@example.com");
+
+        // First update
+        var update1 = new
+        {
+            Properties = new Dictionary<string, string> { { propId.ToString(), "32" } }
+        };
+        var resp1 = await _client.PatchAsJsonAsync($"/api/v1/offers/{offerId}", (object)update1);
+        resp1.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        // Second update
+        var update2 = new
+        {
+            Properties = new Dictionary<string, string> { { propId.ToString(), "64" } }
+        };
+        var resp2 = await _client.PatchAsJsonAsync($"/api/v1/offers/{offerId}", (object)update2);
+        resp2.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        // Act
+        var response = await _client.GetAsync($"/api/v1/offers/{offerId}");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var json = await response.Content.ReadFromJsonAsync<OfferDto>();
+        json.ShouldNotBeNull();
+        json.Properties.Count.ShouldBe(1);
+        json.Properties[propId.ToString()].ShouldBe("64");
+    }
+
+    [Fact]
     public async Task UpdateOffer_OfferOwnedByOtherUser_ReturnsForbidden()
     {
         await RegisterAndLogin("real_owner_update@example.com", "Password123!");
