@@ -23,6 +23,16 @@ public sealed class CreateOfferCommandHandler(
             return Result.Invalid(new ValidationError($"Invalid category Id: {request.CategoryId}"));
         }
 
+        var missingProperties = category.PropertyDefinitions
+            .Where(pd => !request.Properties.ContainsKey(pd.Id.ToString()))
+            .Select(pd => pd.Name)
+            .ToList();
+
+        if (missingProperties.Count > 0)
+        {
+            return Result.Invalid(new ValidationError($"Missing required properties for category '{category.Name}': {string.Join(", ", missingProperties)}"));
+        }
+
         List<Property> properties = [];
         foreach (var propertyId in request.Properties.Keys)
         {
