@@ -27,7 +27,8 @@ public sealed class RedisCartRepository(IConnectionMultiplexer redis) : ICartRep
         var data = JsonSerializer.Deserialize<CartData>(json!, _jsonOptions)!;
         var cart = new Cart(userId);
         foreach (var item in data.Items)
-            cart.IncludeItemInQuantity(item.OfferId, item.Quantity);
+            cart.UpdateItemQuantity(item.OfferId, item.Quantity);
+
         return cart;
     }
 

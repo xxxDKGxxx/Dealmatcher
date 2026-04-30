@@ -38,7 +38,7 @@ public class RedisCartRepositoryTests : IAsyncLifetime
     public async Task SaveAndGetCart_SingleItem_RoundTrips()
     {
         var cart = new Cart(1);
-        cart.IncludeItemInQuantity(10, 2);
+        cart.UpdateItemQuantity(10, 2);
 
         await _repository.SaveCartAsync(cart, CancellationToken.None);
         var loaded = await _repository.GetCartAsync(1, CancellationToken.None);
@@ -53,9 +53,9 @@ public class RedisCartRepositoryTests : IAsyncLifetime
     public async Task SaveAndGetCart_MultipleItems_RoundTrips()
     {
         var cart = new Cart(2);
-        cart.IncludeItemInQuantity(10, 1);
-        cart.IncludeItemInQuantity(20, 3);
-        cart.IncludeItemInQuantity(30, 5);
+        cart.UpdateItemQuantity(10, 1);
+        cart.UpdateItemQuantity(20, 3);
+        cart.UpdateItemQuantity(30, 5);
 
         await _repository.SaveCartAsync(cart, CancellationToken.None);
         var loaded = await _repository.GetCartAsync(2, CancellationToken.None);
@@ -67,11 +67,11 @@ public class RedisCartRepositoryTests : IAsyncLifetime
     public async Task SaveCart_OverwritesExisting()
     {
         var cart = new Cart(3);
-        cart.IncludeItemInQuantity(10, 1);
+        cart.UpdateItemQuantity(10, 1);
         await _repository.SaveCartAsync(cart, CancellationToken.None);
 
         var cart2 = new Cart(3);
-        cart2.IncludeItemInQuantity(20, 5);
+        cart2.UpdateItemQuantity(20, 5);
         await _repository.SaveCartAsync(cart2, CancellationToken.None);
 
         var loaded = await _repository.GetCartAsync(3, CancellationToken.None);
@@ -84,11 +84,11 @@ public class RedisCartRepositoryTests : IAsyncLifetime
     public async Task GetCart_DifferentUsers_Isolated()
     {
         var cart1 = new Cart(1);
-        cart1.IncludeItemInQuantity(10, 1);
+        cart1.UpdateItemQuantity(10, 1);
         await _repository.SaveCartAsync(cart1, CancellationToken.None);
 
         var cart2 = new Cart(2);
-        cart2.IncludeItemInQuantity(20, 3);
+        cart2.UpdateItemQuantity(20, 3);
         await _repository.SaveCartAsync(cart2, CancellationToken.None);
 
         var loaded1 = await _repository.GetCartAsync(1, CancellationToken.None);
@@ -104,11 +104,11 @@ public class RedisCartRepositoryTests : IAsyncLifetime
     public async Task SaveCart_UpdateQuantity_Persists()
     {
         var cart = new Cart(4);
-        cart.IncludeItemInQuantity(10, 1);
+        cart.UpdateItemQuantity(10, 1);
         await _repository.SaveCartAsync(cart, CancellationToken.None);
 
         var loaded = await _repository.GetCartAsync(4, CancellationToken.None);
-        loaded.IncludeItemInQuantity(10, 5);
+        loaded.UpdateItemQuantity(10, 5);
         await _repository.SaveCartAsync(loaded, CancellationToken.None);
 
         var reloaded = await _repository.GetCartAsync(4, CancellationToken.None);
@@ -120,8 +120,8 @@ public class RedisCartRepositoryTests : IAsyncLifetime
     public async Task SaveCart_RemoveItem_Persists()
     {
         var cart = new Cart(5);
-        cart.IncludeItemInQuantity(10, 1);
-        cart.IncludeItemInQuantity(20, 2);
+        cart.UpdateItemQuantity(10, 1);
+        cart.UpdateItemQuantity(20, 2);
         await _repository.SaveCartAsync(cart, CancellationToken.None);
 
         var loaded = await _repository.GetCartAsync(5, CancellationToken.None);
@@ -137,8 +137,8 @@ public class RedisCartRepositoryTests : IAsyncLifetime
     public async Task SaveCart_ClearCart_Persists()
     {
         var cart = new Cart(6);
-        cart.IncludeItemInQuantity(10, 1);
-        cart.IncludeItemInQuantity(20, 2);
+        cart.UpdateItemQuantity(10, 1);
+        cart.UpdateItemQuantity(20, 2);
         await _repository.SaveCartAsync(cart, CancellationToken.None);
 
         var loaded = await _repository.GetCartAsync(6, CancellationToken.None);

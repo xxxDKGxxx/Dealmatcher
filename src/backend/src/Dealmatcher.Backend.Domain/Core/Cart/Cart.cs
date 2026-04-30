@@ -6,8 +6,19 @@ public sealed class Cart(int userId)
     private readonly List<CartItem> _items = [];
     public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
 
-    public void IncludeItemInQuantity(int offerId, int quantity)
+    public void UpdateItemQuantity(int offerId, int quantity)
     {
+        if (quantity < 0)
+        {
+            throw new ArgumentException("Quantity of an item must be non negative");
+        }
+
+        if (quantity == 0)
+        {
+            RemoveItem(offerId);
+            return;
+        }
+
         _items.RemoveAll(i => i.OfferId == offerId);
         _items.Add(new CartItem(offerId, quantity));
     }
