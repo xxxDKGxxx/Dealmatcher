@@ -107,8 +107,17 @@ public sealed class UpdateOfferCommandHandler(
 
             try
             {
-                var property = propertyDefinition.CreatePropertyFromString(newProperties[propertyId]);
-                updatedProperties.Add(property);
+                var existingProperty = offer.Properties.FirstOrDefault(p => p.PropertyDefinition.Id == propertyIdParsed);
+                if (existingProperty is not null)
+                {
+                    propertyDefinition.UpdateProperty(existingProperty, newProperties[propertyId]);
+                    updatedProperties.Add(existingProperty);
+                }
+                else
+                {
+                    var property = propertyDefinition.CreatePropertyFromString(newProperties[propertyId]);
+                    updatedProperties.Add(property);
+                }
             }
             catch
             {
