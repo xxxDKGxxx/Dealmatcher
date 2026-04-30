@@ -35,3 +35,8 @@ global using Microsoft.Extensions.Logging;
 global using NSubstitute;
 global using Shouldly;
 global using Xunit;
+global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Dto;
+global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Specifications;
+global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate;
+global using Dealmatcher.Backend.UseCases.Features.Conversations.GetDetails;
+global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages;
