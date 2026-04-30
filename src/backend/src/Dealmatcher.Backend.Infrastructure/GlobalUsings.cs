@@ -18,6 +18,7 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Property
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Dealmatcher.Backend.Domain.Interfaces;
 global using Dealmatcher.Backend.Domain.Interfaces.Authentication;
+global using Dealmatcher.Backend.Domain.Interfaces.CartRepository;
 global using Dealmatcher.Backend.Domain.Interfaces.OfferSuggestion;
 global using Dealmatcher.Backend.Infrastructure.Data;
 global using Dealmatcher.Backend.Infrastructure.Data.Config;
