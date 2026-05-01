@@ -6,10 +6,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/pages/offers_swiping_page.dart';
 import 'package:frontend/widgets/offer_filter_widget.dart';
 import 'package:frontend/api/api_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   setUpAll(() {
     HttpOverrides.global = _MockHttpOverrides();
+    SharedPreferences.setMockInitialValues({});
     ApiCore().init('http://localhost:8080');
   });
 

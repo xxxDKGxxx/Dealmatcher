@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_auth.dart';
-import 'package:frontend/api/api_core.dart';
 import 'package:go_router/go_router.dart';
 
 class MenuDrawer extends StatelessWidget {
