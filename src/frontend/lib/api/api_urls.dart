@@ -7,8 +7,10 @@ class ApiUrls {
   String get offers => '/offers';
   String get searchOffers => '/offers/search';
   String get categories => '/categories';
+  String get conversations => '/conversations';
 
   String offerDetailsById(int id) => '/offers/$id';
+  String conversationById(int id) => '/conversations/$id';
   String propertiesByCategoryName(String categoryName) =>
       '/categories/$categoryName/properties';
   String offerById(int offerId) => '/offers/$offerId';
