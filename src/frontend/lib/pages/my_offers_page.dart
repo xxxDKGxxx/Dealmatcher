@@ -76,6 +76,9 @@ class _MyOffersPageState extends State<MyOffersPage> {
           itemCount: offers.length,
           itemBuilder: (context, index) {
             final offer = offers[index];
+            final offerImage = offer.images.isNotEmpty
+                ? offer.images.first
+                : 'https://static.vecteezy.com/system/resources/previews/005/720/408/large_2x/crossed-image-icon-picture-not-available-delete-picture-symbol-free-vector.jpg';
             return Card(
               child: SizedBox(
                 height: 120,
@@ -87,10 +90,7 @@ class _MyOffersPageState extends State<MyOffersPage> {
                         padding: const EdgeInsets.all(8),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            offer.images.first,
-                            fit: BoxFit.cover,
-                          ),
+                          child: Image.network(offerImage, fit: BoxFit.cover),
                         ),
                       ),
                     ),
