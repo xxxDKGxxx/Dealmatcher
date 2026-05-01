@@ -95,6 +95,14 @@ class ApiConversations {
     );
   }
 
+  Future<ConversationDetail?> getConversationByOfferId(int offerId) async {
+    final conversations = await getConversations();
+    final offerConversations = conversations.where(
+      (c) => c.offer.id == offerId,
+    );
+    return offerConversations.isEmpty ? null : offerConversations.first;
+  }
+
   Future<List<ConversationDetail>> getConversations() async {
     // Mocking the response for now
     await Future.delayed(const Duration(milliseconds: 500));

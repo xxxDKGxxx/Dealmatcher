@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_conversations.dart';
-import 'package:frontend/api/api_offers.dart';
 import 'package:frontend/api/api_profile.dart';
 import 'package:frontend/models/conversation.dart';
 import 'package:frontend/models/message.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/models/user.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
+import 'package:frontend/widgets/message_input_widget.dart';
 import 'package:go_router/go_router.dart';
 
 class ConversationPage extends StatefulWidget {
-  final int offerId;
+  final int conversationId;
 
-  const ConversationPage({super.key, required this.offerId});
+  const ConversationPage({super.key, required this.conversationId});
 
   @override
   State<ConversationPage> createState() => _ConversationPageState();
@@ -24,9 +24,8 @@ class _ConversationPageState extends State<ConversationPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  late Future<(ConversationDetail?, User)> _dataFuture;
+  late Future<(ConversationDetail, User)> _dataFuture;
 
-  int? conversationId;
   late Offer? conversationOffer;
 
   @override
@@ -35,21 +34,10 @@ class _ConversationPageState extends State<ConversationPage> {
     _dataFuture = _fetchData();
   }
 
-  Future<(ConversationDetail?, User)> _fetchData() async {
-    final conversations = await ApiConversations().getConversations();
-    final offerConversations = conversations.where(
-      (c) => c.offer.id == widget.offerId,
+  Future<(ConversationDetail, User)> _fetchData() async {
+    final conversation = await ApiConversations().getConversation(
+      widget.conversationId,
     );
-    ConversationDetail? conversation = offerConversations.isNotEmpty
-        ? offerConversations.first
-        : null;
-    if (conversation == null) {
-      conversation = null;
-      conversationOffer = await ApiOffers().getOffer(widget.offerId);
-    } else {
-      conversationId = conversation.id;
-    }
-
     final currentUser = await _apiProfile.getProfile();
     return (conversation, currentUser);
   }
@@ -61,14 +49,7 @@ class _ConversationPageState extends State<ConversationPage> {
     _messageController.clear();
 
     try {
-      if (conversationId == null) {
-        conversationId = await _apiConversations.createConversation(
-          widget.offerId,
-          content,
-        );
-      } else {
-        await _apiConversations.sendMessage(conversationId!, content);
-      }
+      await _apiConversations.sendMessage(widget.conversationId, content);
       setState(() {
         _dataFuture = _fetchData();
       });
@@ -103,7 +84,7 @@ class _ConversationPageState extends State<ConversationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const DealmatcherAppBar(),
-      body: FutureBuilder<(ConversationDetail?, User)>(
+      body: FutureBuilder<(ConversationDetail, User)>(
         future: _dataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -123,22 +104,24 @@ class _ConversationPageState extends State<ConversationPage> {
             children: [
               _buildOfferHeader(conversation),
               Expanded(
-                child: conversation == null
-                    ? SizedBox()
-                    : ListView.builder(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.all(16.0),
-                        itemCount: conversation.messages.length,
-                        itemBuilder: (context, index) {
-                          final message = conversation.messages[index];
-                          return _buildMessageBubble(
-                            message,
-                            message.senderId == currentUser.id,
-                          );
-                        },
-                      ),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(16.0),
+                  itemCount: conversation.messages.length,
+                  itemBuilder: (context, index) {
+                    final message = conversation.messages[index];
+                    return _buildMessageBubble(
+                      message,
+                      message.senderId == currentUser.id,
+                    );
+                  },
+                ),
               ),
-              _buildMessageInput(),
+              buildMessageInput(
+                context,
+                messageController: _messageController,
+                onSubmit: _sendMessage,
+              ),
             ],
           );
         },
@@ -146,11 +129,9 @@ class _ConversationPageState extends State<ConversationPage> {
     );
   }
 
-  Widget _buildOfferHeader(ConversationDetail? conversation) {
+  Widget _buildOfferHeader(ConversationDetail conversation) {
     final theme = Theme.of(context);
-    final offer = conversation != null
-        ? conversation.offer
-        : conversationOffer!;
+    final offer = conversation.offer;
 
     return Container(
       padding: const EdgeInsets.all(12.0),
@@ -269,54 +250,6 @@ class _ConversationPageState extends State<ConversationPage> {
                     ? theme.colorScheme.onPrimary.withValues(alpha: 0.7)
                     : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMessageInput() {
-    final theme = Theme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 5,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _messageController,
-                decoration: InputDecoration(
-                  hintText: "Type a message...",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                ),
-                textInputAction: TextInputAction.send,
-                onSubmitted: (_) => _sendMessage(),
-              ),
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              onPressed: _sendMessage,
-              icon: Icon(Icons.send, color: theme.colorScheme.primary),
             ),
           ],
         ),

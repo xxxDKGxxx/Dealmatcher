@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_categories.dart';
+import 'package:frontend/api/api_conversations.dart';
 import 'package:frontend/api/api_offers.dart';
 import 'package:frontend/models/category.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/models/property_definition.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/display_field.dart';
+import 'package:frontend/widgets/message_input_widget.dart';
 import 'package:go_router/go_router.dart';
 
 class OfferDetailsPage extends StatefulWidget {
@@ -21,6 +23,9 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
   late Future<(Offer, List<PropertyDefinition>)> _dataFuture;
   ApiOffers apiOfferDetails = ApiOffers();
   ApiCategories apiProperties = ApiCategories();
+
+  final TextEditingController _messageController = TextEditingController();
+  bool createConversation = false;
 
   @override
   void initState() {
@@ -49,6 +54,29 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
     return properties;
   }
 
+  Future<void> _createConversation(BuildContext context) async {
+    try {
+      final message = _messageController.text;
+      final conversationId = await ApiConversations().createConversation(
+        widget.offerId,
+        message,
+      );
+      if (context.mounted) {
+        context.push('/conversation/$conversationId');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Error while creating conversation: ${e.toString().trim().replaceFirst('Exception: ', '')}',
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +102,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
           }
 
           final data = snapshot.data!;
-          return _buildOfferDetails(data.$1, data.$2);
+          return _buildOfferDetails(data.$1, data.$2, context);
         },
       ),
     );
@@ -83,6 +111,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
   Widget _buildOfferDetails(
     Offer offer,
     List<PropertyDefinition> propertyDefinitions,
+    BuildContext context,
   ) {
     final theme = Theme.of(context);
 
@@ -239,19 +268,37 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    onPressed: () => context.push('/conversation/${offer.id}'),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: const Text(
-                      "CONTACT SELLER",
-                      style: TextStyle(fontSize: 18),
+                if (!createConversation) ...[
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () async {
+                        final conversation = await ApiConversations()
+                            .getConversationByOfferId(offer.id);
+                        if (conversation != null && context.mounted) {
+                          context.push('/conversation/${conversation.id}');
+                        } else {
+                          setState(() {
+                            createConversation = true;
+                          });
+                        }
+                      },
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text(
+                        "CONTACT SELLER",
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ),
                   ),
-                ),
+                ] else ...[
+                  buildMessageInput(
+                    context,
+                    messageController: _messageController,
+                    onSubmit: () => _createConversation(context),
+                  ),
+                ],
                 const SizedBox(height: 64),
               ],
             ),
