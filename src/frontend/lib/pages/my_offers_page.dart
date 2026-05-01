@@ -76,6 +76,7 @@ class _MyOffersPageState extends State<MyOffersPage> {
           itemCount: offers.length,
           itemBuilder: (context, index) {
             final offer = offers[index];
+
             return Card(
               child: SizedBox(
                 height: 120,
@@ -87,10 +88,20 @@ class _MyOffersPageState extends State<MyOffersPage> {
                         padding: const EdgeInsets.all(8),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            offer.images.first,
-                            fit: BoxFit.cover,
-                          ),
+                          child: offer.images.isNotEmpty
+                              ? Image.network(
+                                  offer.images.first,
+                                  fit: BoxFit.cover,
+                                )
+                              : Container(
+                                  color: Colors.grey[200],
+                                  alignment: Alignment.center,
+                                  child: const Icon(
+                                    Icons.image_not_supported,
+                                    color: Colors.grey,
+                                    size: 40,
+                                  ),
+                                ),
                         ),
                       ),
                     ),

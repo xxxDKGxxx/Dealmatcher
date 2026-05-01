@@ -6,7 +6,10 @@ global using Ardalis.Specification;
 global using AutoMapper;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Dto;
+<<<<<<< feature/#136-szczegoly-konwersacji-backend
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages;
+=======
+>>>>>>> develop
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Specifications;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
@@ -25,7 +28,11 @@ global using Dealmatcher.Backend.Domain.Interfaces.Authentication;
 global using Dealmatcher.Backend.Infrastructure.Services;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Categories.Get;
+<<<<<<< feature/#136-szczegoly-konwersacji-backend
 global using Dealmatcher.Backend.UseCases.Features.Conversations.GetDetails;
+=======
+global using Dealmatcher.Backend.UseCases.Features.Conversations.Get;
+>>>>>>> develop
 global using Dealmatcher.Backend.UseCases.Features.Offers.Create;
 global using Dealmatcher.Backend.UseCases.Features.Offers.Delete;
 global using Dealmatcher.Backend.UseCases.Features.Offers.Get;

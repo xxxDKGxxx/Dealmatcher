@@ -3,11 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend/api/api_core.dart';
 import 'package:frontend/pages/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  setUpAll(() {
+Future<void> main() async {
+  setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
     ApiCore().init('http://localhost');
   });
+
+  await Future.delayed(Duration(milliseconds: 500));
 
   void setDesktopSize(WidgetTester tester) {
     tester.view.physicalSize = const Size(1200, 1200);
