@@ -1,6 +1,7 @@
 import 'package:frontend/api/api_urls.dart';
 import 'package:frontend/api/models/request_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiCore {
   static final ApiCore _instance = ApiCore._internal();
@@ -8,20 +9,31 @@ class ApiCore {
   ApiCore._internal();
 
   final String _apiUrl = ApiUrls().apiUrl;
+  static const String _tokenKey = 'auth_token';
 
   String? _baseUrl;
   String? _token;
 
-  void init(String baseUrl) {
+  Future<void> init(String baseUrl) async {
     _baseUrl = baseUrl;
+    final prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString(_tokenKey);
   }
 
-  void setToken(String? token) {
+  Future<void> setToken(String? token) async {
     _token = token;
+    final prefs = await SharedPreferences.getInstance();
+    if (token != null) {
+      await prefs.setString(_tokenKey, token);
+    } else {
+      await prefs.remove(_tokenKey);
+    }
   }
 
-  void nullToken() {
+  Future<void> nullToken() async {
     _token = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_tokenKey);
   }
 
   bool get isAuthenticated => _token != null;
@@ -62,7 +74,7 @@ class ApiCore {
         {
           // TODO: add running check and logout if 401 received
           // now it logs out only when page is changed but should every time a 401 is received
-          nullToken();
+          await nullToken();
         }
     }
     return response;
