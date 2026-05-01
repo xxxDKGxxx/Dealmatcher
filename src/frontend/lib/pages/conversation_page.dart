@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_conversations.dart';
+import 'package:frontend/api/api_offers.dart';
 import 'package:frontend/api/api_profile.dart';
 import 'package:frontend/models/conversation.dart';
 import 'package:frontend/models/message.dart';
+import 'package:frontend/models/offer.dart';
 import 'package:frontend/models/user.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:go_router/go_router.dart';
 
 class ConversationPage extends StatefulWidget {
-  final int conversationId;
+  final int offerId;
 
-  const ConversationPage({super.key, required this.conversationId});
+  const ConversationPage({super.key, required this.offerId});
 
   @override
   State<ConversationPage> createState() => _ConversationPageState();
@@ -22,7 +24,10 @@ class _ConversationPageState extends State<ConversationPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  late Future<(ConversationDetail, User)> _dataFuture;
+  late Future<(ConversationDetail?, User)> _dataFuture;
+
+  int? conversationId;
+  late Offer? conversationOffer;
 
   @override
   void initState() {
@@ -30,10 +35,17 @@ class _ConversationPageState extends State<ConversationPage> {
     _dataFuture = _fetchData();
   }
 
-  Future<(ConversationDetail, User)> _fetchData() async {
-    final conversation = await _apiConversations.getConversation(
-      widget.conversationId,
-    );
+  Future<(ConversationDetail?, User)> _fetchData() async {
+    final conversations = await ApiConversations().getConversations();
+    final offerConversations = conversations.where((c) => c.offer.id == widget.offerId);
+    ConversationDetail? conversation = offerConversations.isNotEmpty ? offerConversations.first : null;
+    if (conversation == null) {
+      conversation = null;
+      conversationOffer = await ApiOffers().getOffer(widget.offerId);
+    } else {
+      conversationId = conversation.id;
+    }
+
     final currentUser = await _apiProfile.getProfile();
     return (conversation, currentUser);
   }
@@ -45,16 +57,28 @@ class _ConversationPageState extends State<ConversationPage> {
     _messageController.clear();
 
     try {
-      await _apiConversations.sendMessage(widget.conversationId, content);
+      if (conversationId == null) {
+        conversationId = await _apiConversations.createConversation(
+          widget.offerId,
+          content,
+        );
+      } else {
+        await _apiConversations.sendMessage(conversationId!, content);
+      }
       setState(() {
         _dataFuture = _fetchData();
       });
       _scrollToBottom();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Failed to send message: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Failed to send message: ${e.toString().trim().replaceFirst('Exception: ', '')}",
+            ),
+          ),
+        );
+        context.pop();
       }
     }
   }
@@ -75,7 +99,7 @@ class _ConversationPageState extends State<ConversationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const DealmatcherAppBar(),
-      body: FutureBuilder<(ConversationDetail, User)>(
+      body: FutureBuilder<(ConversationDetail?, User)>(
         future: _dataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -95,18 +119,20 @@ class _ConversationPageState extends State<ConversationPage> {
             children: [
               _buildOfferHeader(conversation),
               Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(16.0),
-                  itemCount: conversation.messages.length,
-                  itemBuilder: (context, index) {
-                    final message = conversation.messages[index];
-                    return _buildMessageBubble(
-                      message,
-                      message.senderId == currentUser.id,
-                    );
-                  },
-                ),
+                child: conversation == null
+                    ? SizedBox()
+                    : ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.all(16.0),
+                        itemCount: conversation.messages.length,
+                        itemBuilder: (context, index) {
+                          final message = conversation.messages[index];
+                          return _buildMessageBubble(
+                            message,
+                            message.senderId == currentUser.id,
+                          );
+                        },
+                      ),
               ),
               _buildMessageInput(),
             ],
@@ -116,9 +142,11 @@ class _ConversationPageState extends State<ConversationPage> {
     );
   }
 
-  Widget _buildOfferHeader(ConversationDetail conversation) {
+  Widget _buildOfferHeader(ConversationDetail? conversation) {
     final theme = Theme.of(context);
-    final offer = conversation.offer;
+    final offer = conversation != null
+        ? conversation.offer
+        : conversationOffer!;
 
     return Container(
       padding: const EdgeInsets.all(12.0),
@@ -162,7 +190,7 @@ class _ConversationPageState extends State<ConversationPage> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  "${offer.price.toStringAsFixed(2)} PLN",
+                  "${offer.price.toStringAsFixed(2)} zł",
                   style: TextStyle(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.w500,

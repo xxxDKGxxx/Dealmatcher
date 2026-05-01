@@ -59,7 +59,7 @@ class ConversationDetail {
       unreadCount: json['unreadCount'] as int,
       status: json['status'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
-      messages: (json['messages'] as List<dynamic>)
+      messages: json['messages'] == null ? [] : (json['messages'] as List<dynamic>)
           .map((e) => Message.fromJson(e as Map<String, dynamic>))
           .toList(),
     );

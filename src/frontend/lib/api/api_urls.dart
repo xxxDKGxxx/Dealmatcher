@@ -6,6 +6,7 @@ class ApiUrls {
   String get myOffers => '/users/me/offers';
   String get offers => '/offers';
   String get searchOffers => '/offers/search';
+  String get createConversation => '/conversations';
   String get categories => '/categories';
   String get conversations => '/conversations';
 

@@ -6,6 +6,7 @@ import 'package:frontend/models/offer.dart';
 import 'package:frontend/models/property_definition.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/display_field.dart';
+import 'package:go_router/go_router.dart';
 
 class OfferDetailsPage extends StatefulWidget {
   final int offerId;
@@ -110,7 +111,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                       ),
                     ),
                     Text(
-                      "${offer.price.toStringAsFixed(2)} PLN",
+                      "${offer.price.toStringAsFixed(2)} zł",
                       style: theme.textTheme.headlineSmall?.copyWith(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.bold,
@@ -241,7 +242,8 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () =>
+                        context.push('/conversation/${offer.id}'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),

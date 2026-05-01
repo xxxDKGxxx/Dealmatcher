@@ -43,10 +43,10 @@ final GoRouter globalRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/conversation/:id',
+      path: '/conversation/:offerId',
       builder: (context, state) {
-        final id = int.parse(state.pathParameters['id']!);
-        return ConversationPage(conversationId: id);
+        final offerId = int.tryParse(state.pathParameters['offerId'] ?? '');
+        return ConversationPage(offerId: offerId!);
       },
     ),
     GoRoute(
