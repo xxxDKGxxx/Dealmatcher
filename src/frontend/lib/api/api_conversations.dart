@@ -111,9 +111,15 @@ class ApiConversations {
           title: "iPhone 13 Pro 128GB",
           description: "Stan idealny, bateria 90%.",
           price: 2500.0,
-          images: ["https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fp3EqJ1qdys4%2Fmaxresdefault.jpg&f=1&nofb=1&ipt=db28530fc7b7411f2fc387c393b3096da6a492db4a5f95a9d191c6f2ddce9b16"],
+          images: [
+            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2Fp3EqJ1qdys4%2Fmaxresdefault.jpg&f=1&nofb=1&ipt=db28530fc7b7411f2fc387c393b3096da6a492db4a5f95a9d191c6f2ddce9b16",
+          ],
           seller: const Seller(id: 20, name: "Marek Tech"),
-          category: Category(id: 2, name: "Elektronika", description: "Smartfony"),
+          category: Category(
+            id: 2,
+            name: "Elektronika",
+            description: "Smartfony",
+          ),
           tags: ["apple", "iphone"],
           properties: {0: "Graphite"},
           availability: 1,

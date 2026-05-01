@@ -242,8 +242,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
-                    onPressed: () =>
-                        context.push('/conversation/${offer.id}'),
+                    onPressed: () => context.push('/conversation/${offer.id}'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),

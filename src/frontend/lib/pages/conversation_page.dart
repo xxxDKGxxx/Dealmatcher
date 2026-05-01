@@ -37,8 +37,12 @@ class _ConversationPageState extends State<ConversationPage> {
 
   Future<(ConversationDetail?, User)> _fetchData() async {
     final conversations = await ApiConversations().getConversations();
-    final offerConversations = conversations.where((c) => c.offer.id == widget.offerId);
-    ConversationDetail? conversation = offerConversations.isNotEmpty ? offerConversations.first : null;
+    final offerConversations = conversations.where(
+      (c) => c.offer.id == widget.offerId,
+    );
+    ConversationDetail? conversation = offerConversations.isNotEmpty
+        ? offerConversations.first
+        : null;
     if (conversation == null) {
       conversation = null;
       conversationOffer = await ApiOffers().getOffer(widget.offerId);

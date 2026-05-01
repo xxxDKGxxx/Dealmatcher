@@ -147,7 +147,7 @@ void main() {
           path: '/conversation/:id',
           builder: (context, state) {
             final id = int.parse(state.pathParameters['id']!);
-            return ConversationPage(conversationId: id);
+            return ConversationPage(offerId: id);
           },
         ),
       ],
