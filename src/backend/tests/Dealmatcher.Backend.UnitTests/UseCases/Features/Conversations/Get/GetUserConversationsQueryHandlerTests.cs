@@ -62,7 +62,7 @@ public class GetUserConversationsQueryHandlerTests
             Status: "ACTIVE",
             CreatedAt: DateTime.UtcNow);
 
-        _mapper.Map<IEnumerable<ConversationDto>>(
+        _mapper.Map<List<ConversationDto>>(
             conversationsList,
             Arg.Any<Action<IMappingOperationOptions>>())
             .Returns([expectedDto]);
@@ -75,7 +75,7 @@ public class GetUserConversationsQueryHandlerTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value.Count().ShouldBe(1);
+        result.Value.Count.ShouldBe(1);
         result.Value.First().Id.ShouldBe(100);
         result.Value.First().LastMessage.ShouldBe("Hello");
     }
@@ -87,6 +87,11 @@ public class GetUserConversationsQueryHandlerTests
         var userId = 1;
 
         _conversationRepository.ListAsync(Arg.Any<ConversationsByUserIdSpec>(), Arg.Any<CancellationToken>())
+            .Returns([]);
+
+        _mapper.Map<List<ConversationDto>>(
+            Arg.Is<IEnumerable<Conversation>>(x => !x.Any()),
+            Arg.Any<Action<IMappingOperationOptions>>())
             .Returns([]);
 
         var query = new GetUserConversationsQuery(userId);
