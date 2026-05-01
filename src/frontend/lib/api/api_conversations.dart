@@ -9,7 +9,7 @@ import 'package:frontend/models/category.dart';
 
 class ApiConversations {
   final _apiCore = ApiCore();
-  final _apiCreateConversationUrl = ApiUrls().createConversation;
+  final _apiCreateConversationUrl = ApiUrls().conversations;
 
   Future<int> createConversation(int offerId, String initialMessage) async {
     try {
