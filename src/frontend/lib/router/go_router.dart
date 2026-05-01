@@ -45,8 +45,8 @@ final GoRouter globalRouter = GoRouter(
     GoRoute(
       path: '/conversation/:id',
       builder: (context, state) {
-        final id = int.parse(state.pathParameters['id']!);
-        return ConversationPage(conversationId: id);
+        final id = int.tryParse(state.pathParameters['id'] ?? '');
+        return ConversationPage(conversationId: id!);
       },
     ),
     GoRoute(

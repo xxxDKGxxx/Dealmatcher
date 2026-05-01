@@ -3,8 +3,10 @@ import 'package:frontend/api/api_conversations.dart';
 import 'package:frontend/api/api_profile.dart';
 import 'package:frontend/models/conversation.dart';
 import 'package:frontend/models/message.dart';
+import 'package:frontend/models/offer.dart';
 import 'package:frontend/models/user.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
+import 'package:frontend/widgets/message_input_widget.dart';
 import 'package:go_router/go_router.dart';
 
 class ConversationPage extends StatefulWidget {
@@ -24,6 +26,8 @@ class _ConversationPageState extends State<ConversationPage> {
 
   late Future<(ConversationDetail, User)> _dataFuture;
 
+  late Offer? conversationOffer;
+
   @override
   void initState() {
     super.initState();
@@ -31,7 +35,7 @@ class _ConversationPageState extends State<ConversationPage> {
   }
 
   Future<(ConversationDetail, User)> _fetchData() async {
-    final conversation = await _apiConversations.getConversation(
+    final conversation = await ApiConversations().getConversation(
       widget.conversationId,
     );
     final currentUser = await _apiProfile.getProfile();
@@ -52,9 +56,14 @@ class _ConversationPageState extends State<ConversationPage> {
       _scrollToBottom();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Failed to send message: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Failed to send message: ${e.toString().trim().replaceFirst('Exception: ', '')}",
+            ),
+          ),
+        );
+        context.pop();
       }
     }
   }
@@ -108,7 +117,11 @@ class _ConversationPageState extends State<ConversationPage> {
                   },
                 ),
               ),
-              _buildMessageInput(),
+              buildMessageInput(
+                context,
+                messageController: _messageController,
+                onSubmit: _sendMessage,
+              ),
             ],
           );
         },
@@ -162,7 +175,7 @@ class _ConversationPageState extends State<ConversationPage> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  "${offer.price.toStringAsFixed(2)} PLN",
+                  "${offer.price.toStringAsFixed(2)} zł",
                   style: TextStyle(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.w500,
@@ -237,54 +250,6 @@ class _ConversationPageState extends State<ConversationPage> {
                     ? theme.colorScheme.onPrimary.withValues(alpha: 0.7)
                     : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMessageInput() {
-    final theme = Theme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 5,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _messageController,
-                decoration: InputDecoration(
-                  hintText: "Type a message...",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                ),
-                textInputAction: TextInputAction.send,
-                onSubmitted: (_) => _sendMessage(),
-              ),
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              onPressed: _sendMessage,
-              icon: Icon(Icons.send, color: theme.colorScheme.primary),
             ),
           ],
         ),
