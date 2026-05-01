@@ -17,8 +17,10 @@ public class GetConversationDetailsQueryHandlerTests
 
     private static User CreateUser(int id, string email = "user@example.com")
     {
-        var user = new User(email, "hash", "Test", "User");
-        user.Id = id;
+        var user = new User(email, "hash", "Test", "User")
+        {
+            Id = id
+        };
         return user;
     }
 
@@ -26,8 +28,10 @@ public class GetConversationDetailsQueryHandlerTests
     {
         var category = new Category("Cars", "Vehicles");
         var offer = new Offer("Test", "Desc", 1000m, [], seller, [], 1, category, []);
-        var conversation = new Conversation(offer, buyer);
-        conversation.Id = id;
+        var conversation = new Conversation(offer, buyer)
+        {
+            Id = id
+        };
         conversation.AddMessage(new Message(buyer, "Hello"));
         return conversation;
     }
