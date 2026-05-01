@@ -10,11 +10,6 @@ public sealed class GetUserConversationsQueryHandler(
 
         var conversations = await conversationRepository.ListAsync(spec, cancellationToken);
 
-        if (conversations.Count == 0)
-        {
-            return Result.Success(Enumerable.Empty<ConversationDto>());
-        }
-
         var conversationDtos = mapper.Map<IEnumerable<ConversationDto>>(conversations, opts =>
         {
             opts.Items["readerId"] = request.UserId;

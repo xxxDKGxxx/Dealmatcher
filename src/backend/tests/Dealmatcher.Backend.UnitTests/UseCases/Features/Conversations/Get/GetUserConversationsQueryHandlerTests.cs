@@ -81,7 +81,7 @@ public class GetUserConversationsQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_UserHasNoConversations_ReturnsSuccessWithEmptyListAndDoesNotCallMapper()
+    public async Task Handle_UserHasNoConversations_ReturnsSuccessWithEmptyList()
     {
         // Arrange
         var userId = 1;
@@ -98,7 +98,5 @@ public class GetUserConversationsQueryHandlerTests
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
         result.Value.ShouldBeEmpty();
-
-        _mapper.DidNotReceiveWithAnyArgs().Map<IEnumerable<ConversationDto>>(default, default(Action<IMappingOperationOptions>));
     }
 }
