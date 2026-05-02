@@ -15,7 +15,7 @@ public sealed class GetConversationDetailsQueryHandler(
             return Result.NotFound($"User with id: {request.RequestingUserId} not found");
         }
 
-        var conversation = await conversationsRepository.GetByIdAsync(request.ConversationId);
+        var conversation = await conversationsRepository.GetByIdAsync(request.ConversationId, cancellationToken);
         if (conversation is null)
         {
             return Result.NotFound($"Conversation with id: {request.ConversationId} not found");
