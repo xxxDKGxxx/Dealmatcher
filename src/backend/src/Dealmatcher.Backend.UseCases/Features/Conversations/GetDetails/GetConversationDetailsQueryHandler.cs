@@ -7,29 +7,28 @@ public sealed class GetConversationDetailsQueryHandler(
 {
     public async Task<Result<ConversationDetailDto>> Handle(GetConversationDetailsQuery request, CancellationToken cancellationToken)
     {
-        var userByIdSpec = new ActiveUserByIdSpec(request.UserId);
+        var userByIdSpec = new ActiveUserByIdSpec(request.RequestingUserId);
         var user = await usersRepository.FirstOrDefaultAsync(userByIdSpec, cancellationToken);
 
         if (user is null)
         {
-            return Result.NotFound($"User with id: {request.UserId} not found");
+            return Result.NotFound($"User with id: {request.RequestingUserId} not found");
         }
 
-        var conversationByIdSpec = new ConversationByIdSpec(request.ConversationId);
-        var conversation = await conversationsRepository.FirstOrDefaultAsync(conversationByIdSpec, cancellationToken);
+        var conversation = await conversationsRepository.GetByIdAsync(request.ConversationId);
         if (conversation is null)
         {
             return Result.NotFound($"Conversation with id: {request.ConversationId} not found");
         }
 
-        if (conversation.Buyer.Id != user.Id && conversation.Seller.Id != user.Id)
+        if (!conversation.HasParticipant(user))
         {
-            return Result.Forbidden($"User with id: {request.UserId} doesn't participate in the conversation");
+            return Result.Forbidden($"User with id: {request.RequestingUserId} doesn't participate in the conversation");
         }
 
         return Result.Success(mapper.Map<ConversationDetailDto>(conversation, opts =>
         {
-            opts.Items["readerId"] = request.UserId;
+            opts.Items["readerId"] = request.RequestingUserId;
         }));
     }
 }

@@ -30,4 +30,9 @@ public class Conversation : DealmatcherEntityBase, IAggregateRoot
     {
         _messages.Add(message);
     }
+
+    public bool HasParticipant(User user)
+    {
+        return Seller.Id == user.Id || Buyer.Id == user.Id;
+    }
 }

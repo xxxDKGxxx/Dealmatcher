@@ -45,7 +45,7 @@ public class GetConversationDetailsQueryHandlerTests
 
         _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>())
             .Returns(buyer);
-        _conversationRepository.FirstOrDefaultAsync(Arg.Any<ConversationByIdSpec>(), Arg.Any<CancellationToken>())
+        _conversationRepository.GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(conversation);
         _mapper.Map<ConversationDetailDto>(Arg.Any<Conversation>(), Arg.Any<Action<IMappingOperationOptions>>())
             .Returns(new ConversationDetailDto(1, null!, null!, null!, "Hello", DateTime.UtcNow, 0, "ACTIVE", DateTime.UtcNow, []));
@@ -65,7 +65,7 @@ public class GetConversationDetailsQueryHandlerTests
 
         _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>())
             .Returns(seller);
-        _conversationRepository.FirstOrDefaultAsync(Arg.Any<ConversationByIdSpec>(), Arg.Any<CancellationToken>())
+        _conversationRepository.GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(conversation);
         _mapper.Map<ConversationDetailDto>(Arg.Any<Conversation>(), Arg.Any<Action<IMappingOperationOptions>>())
             .Returns(new ConversationDetailDto(1, null!, null!, null!, "Hello", DateTime.UtcNow, 0, "ACTIVE", DateTime.UtcNow, []));
@@ -87,7 +87,7 @@ public class GetConversationDetailsQueryHandlerTests
 
         result.Status.ShouldBe(ResultStatus.NotFound);
         await _conversationRepository.DidNotReceive()
-            .FirstOrDefaultAsync(Arg.Any<ConversationByIdSpec>(), Arg.Any<CancellationToken>());
+            .GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class GetConversationDetailsQueryHandlerTests
         var user = CreateUser(1);
         _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>())
             .Returns(user);
-        _conversationRepository.FirstOrDefaultAsync(Arg.Any<ConversationByIdSpec>(), Arg.Any<CancellationToken>())
+        _conversationRepository.GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns((Conversation?)null);
 
         var query = new GetConversationDetailsQuery(99, 1);
@@ -115,7 +115,7 @@ public class GetConversationDetailsQueryHandlerTests
 
         _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>())
             .Returns(outsider);
-        _conversationRepository.FirstOrDefaultAsync(Arg.Any<ConversationByIdSpec>(), Arg.Any<CancellationToken>())
+        _conversationRepository.GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns(conversation);
 
         var query = new GetConversationDetailsQuery(1, 3);
@@ -134,7 +134,7 @@ public class GetConversationDetailsQueryHandlerTests
         await _handler.Handle(query, CancellationToken.None);
 
         await _conversationRepository.DidNotReceive()
-            .FirstOrDefaultAsync(Arg.Any<ConversationByIdSpec>(), Arg.Any<CancellationToken>());
+            .GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public class GetConversationDetailsQueryHandlerTests
         var user = CreateUser(1);
         _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>())
             .Returns(user);
-        _conversationRepository.FirstOrDefaultAsync(Arg.Any<ConversationByIdSpec>(), Arg.Any<CancellationToken>())
+        _conversationRepository.GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
             .Returns((Conversation?)null);
 
         var query = new GetConversationDetailsQuery(99, 1);

@@ -2,5 +2,5 @@
 
 public sealed record GetConversationDetailsQuery(
     int ConversationId,
-    int UserId
+    int RequestingUserId
 ) : IQuery<Result<ConversationDetailDto>>;
