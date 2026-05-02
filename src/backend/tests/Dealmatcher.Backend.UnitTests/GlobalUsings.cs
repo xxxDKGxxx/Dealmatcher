@@ -5,7 +5,6 @@ global using Ardalis.SharedKernel;
 global using Ardalis.Specification;
 global using AutoMapper;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate;
-global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages.Dto;
