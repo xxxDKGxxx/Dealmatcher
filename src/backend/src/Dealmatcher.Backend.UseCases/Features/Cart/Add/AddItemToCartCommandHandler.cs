@@ -29,9 +29,9 @@ public sealed class AddItemToCartCommandHandler(
 
         await cartRepository.SaveCartAsync(cart, cancellationToken);
 
-        var updatedCart = await cartRepository.GetCartAsync(request.UserId, cancellationToken);
-        var addedItem = updatedCart.Items.Single(i => i.OfferId == request.OfferId);
+        var addedItem = cart.Items.Single(i => i.OfferId == request.OfferId);
+        var addedOfferDto = mapper.Map<OfferDto>(addedOffer);
 
-        return mapper.Map<CartItemDto>((addedItem, addedOffer));
+        return mapper.Map<CartItemDto>((addedItem, addedOfferDto));
     }
 }
