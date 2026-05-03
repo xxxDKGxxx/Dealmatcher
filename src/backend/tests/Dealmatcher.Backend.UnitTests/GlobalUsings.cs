@@ -31,6 +31,7 @@ global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Update;
 global using Dealmatcher.Backend.UseCases.Features.Categories.Get;
 global using Dealmatcher.Backend.UseCases.Features.Conversations.Get;
+global using Dealmatcher.Backend.UseCases.Features.Conversations.GetDetails;
 global using Dealmatcher.Backend.UseCases.Features.Conversations.SendMessage;
 global using Dealmatcher.Backend.UseCases.Features.Offers.Create;
 global using Dealmatcher.Backend.UseCases.Features.Offers.Delete;
