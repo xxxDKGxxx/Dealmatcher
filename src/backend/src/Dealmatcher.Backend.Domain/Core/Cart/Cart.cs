@@ -2,34 +2,34 @@
 
 public sealed class Cart(int userId)
 {
-    public int UserId { get; init; } = userId;
-    private readonly List<CartItem> _items = [];
-    public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
+  public int UserId { get; init; } = userId;
+  private readonly List<CartItem> _items = [];
+  public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
 
-    public void UpdateItemQuantity(int offerId, int quantity)
+  public void UpdateItemQuantity(int offerId, int quantity)
+  {
+    if (quantity < 0)
     {
-        if (quantity < 0)
-        {
-            throw new ArgumentException("Quantity of an item must be non negative");
-        }
-
-        if (quantity == 0)
-        {
-            RemoveItem(offerId);
-            return;
-        }
-
-        _items.RemoveAll(i => i.OfferId == offerId);
-        _items.Add(new CartItem(offerId, quantity));
+      throw new ArgumentException("Quantity of an item must be non negative");
     }
 
-    public void RemoveItem(int offerId)
+    if (quantity == 0)
     {
-        _items.RemoveAll(i => i.OfferId == offerId);
+      RemoveItem(offerId);
+      return;
     }
 
-    public void Clear()
-    {
-        _items.Clear();
-    }
+    _items.RemoveAll(i => i.OfferId == offerId);
+    _items.Add(new CartItem(offerId, quantity));
+  }
+
+  public void RemoveItem(int offerId)
+  {
+    _items.RemoveAll(i => i.OfferId == offerId);
+  }
+
+  public void Clear()
+  {
+    _items.Clear();
+  }
 }
