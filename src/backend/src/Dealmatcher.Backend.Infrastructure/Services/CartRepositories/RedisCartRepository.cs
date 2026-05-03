@@ -1,8 +1,4 @@
-﻿using System.Text.Json;
-using Dealmatcher.Backend.Domain.Core.Cart;
-using StackExchange.Redis;
-
-namespace Dealmatcher.Backend.Infrastructure.Services.CartRepositories;
+﻿namespace Dealmatcher.Backend.Infrastructure.Services.CartRepositories;
 
 public sealed class RedisCartRepository(IConnectionMultiplexer redis) : ICartRepository
 {
@@ -10,10 +6,11 @@ public sealed class RedisCartRepository(IConnectionMultiplexer redis) : ICartRep
     private static readonly TimeSpan _expiry = TimeSpan.FromDays(7);
     private static readonly JsonSerializerOptions _jsonOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
 
     private sealed record CartItemData(int OfferId, int Quantity);
+
     private sealed record CartData(List<CartItemData> Items);
 
     private static string Key(int userId) => $"cart:{userId}";
