@@ -26,11 +26,7 @@ public class AddItemToCartCommandHandlerTests
         _cartRepository = Substitute.For<ICartRepository>();
         _offersRepository = Substitute.For<IReadRepository<Offer>>();
 
-        _handler = new AddItemToCartCommandHandler(
-            _mapper,
-            _cartRepository,
-            _offersRepository
-        );
+        _handler = new AddItemToCartCommandHandler(_mapper, _cartRepository, _offersRepository);
     }
 
     [Fact]
@@ -44,7 +40,21 @@ public class AddItemToCartCommandHandlerTests
 
         var existingCart = new CartEntity(userId);
         var offer = new Offer("Test", "Desc", 100m, [], null!, [], 5, null!, []);
-        var offerDto = new OfferDto(offerId, "Test", "Desc", 100m, [], null!, null!, [], [], 1, "Active", DateTime.UtcNow, DateTime.UtcNow);
+        var offerDto = new OfferDto(
+          offerId,
+          "Test",
+          "Desc",
+          100m,
+          [],
+          null!,
+          null!,
+          [],
+          [],
+          1,
+          "Active",
+          DateTime.UtcNow,
+          DateTime.UtcNow
+        );
 
         // This updatedCart is what the handler will return after saving the cart
         var updatedCart = new CartEntity(userId);
@@ -55,10 +65,11 @@ public class AddItemToCartCommandHandlerTests
 
         _offersRepository.GetByIdAsync(offerId, Arg.Any<CancellationToken>()).Returns(offer);
 
-        _cartRepository.GetCartAsync(userId, Arg.Any<CancellationToken>())
-            .Returns(existingCart, updatedCart);
+        _cartRepository
+          .GetCartAsync(userId, Arg.Any<CancellationToken>())
+          .Returns(existingCart, updatedCart);
 
-        _mapper.Map<CartItemDto>((itemInUpdatedCart, offer)).Returns(expectedCartItemDto);
+        _mapper.Map<CartItemDto>((itemInUpdatedCart, offerDto)).Returns(expectedCartItemDto);
         _mapper.Map<OfferDto>(offer).Returns(offerDto);
 
         // Act
@@ -68,7 +79,9 @@ public class AddItemToCartCommandHandlerTests
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldBe(expectedCartItemDto);
         result.Value.Quantity.ShouldBe(quantity);
-        await _cartRepository.Received(1).SaveCartAsync(Arg.Any<CartEntity>(), Arg.Any<CancellationToken>());
+        await _cartRepository
+          .Received(1)
+          .SaveCartAsync(Arg.Any<CartEntity>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -89,7 +102,9 @@ public class AddItemToCartCommandHandlerTests
         result.IsSuccess.ShouldBeFalse();
         result.Status.ShouldBe(ResultStatus.NotFound);
         result.Errors.ShouldContain("Offer not found");
-        await _cartRepository.DidNotReceive().SaveCartAsync(Arg.Any<CartEntity>(), Arg.Any<CancellationToken>());
+        await _cartRepository
+          .DidNotReceive()
+          .SaveCartAsync(Arg.Any<CartEntity>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -116,6 +131,8 @@ public class AddItemToCartCommandHandlerTests
         result.IsSuccess.ShouldBeFalse();
         result.Status.ShouldBe(ResultStatus.Conflict);
         result.Errors.ShouldContain("Item already in cart");
-        await _cartRepository.DidNotReceive().SaveCartAsync(Arg.Any<CartEntity>(), Arg.Any<CancellationToken>());
+        await _cartRepository
+          .DidNotReceive()
+          .SaveCartAsync(Arg.Any<CartEntity>(), Arg.Any<CancellationToken>());
     }
 }
