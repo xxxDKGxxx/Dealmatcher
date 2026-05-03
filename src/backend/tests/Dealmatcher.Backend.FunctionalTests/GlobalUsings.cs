@@ -1,8 +1,10 @@
-﻿global using System.Net;
+﻿global using System.Collections.Concurrent;
+global using System.Net;
 global using System.Net.Http.Headers;
 global using System.Net.Http.Json;
 global using System.Text.Json;
 global using Dealmatcher.Backend.API;
+global using Dealmatcher.Backend.Domain.Core.Cart;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages;
@@ -15,6 +17,7 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Property
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Dealmatcher.Backend.Domain.Interfaces;
+global using Dealmatcher.Backend.Domain.Interfaces.CartRepository;
 global using Dealmatcher.Backend.Infrastructure.Data;
 global using Dealmatcher.Backend.UseCases.Interfaces;
 global using Microsoft.AspNetCore.Hosting;

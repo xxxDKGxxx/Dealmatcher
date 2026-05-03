@@ -1,22 +1,22 @@
 ﻿namespace Dealmatcher.Backend.API.Endpoints.Conversations.SendMessage;
 
-public class SendMessage(
-    IMediator mediator,
-    IClaimsPrincipalManager claimsPrincipalManager) : Endpoint<SendMessageRequest, MessageDto>
+public class SendMessage(IMediator mediator, IClaimsPrincipalManager claimsPrincipalManager)
+  : Endpoint<SendMessageRequest, MessageDto>
 {
     public override void Configure()
     {
         Post("/conversations/{ConversationId}/messages");
         Version(1);
 
-        Description(b => b
-            .Produces<MessageDto>(201, "application/json")
+        Description(b =>
+          b.Produces<MessageDto>(201, "application/json")
             .Produces(400)
             .Produces(401)
             .Produces(403)
             .Produces(404)
             .Produces(409)
-            .Produces(500));
+            .Produces(500)
+        );
 
         Summary(s =>
         {
@@ -41,10 +41,7 @@ public class SendMessage(
             return;
         }
 
-        var command = new SendMessageCommand(
-            req.ConversationId,
-            userId.Value,
-            req.Content);
+        var command = new SendMessageCommand(req.ConversationId, userId.Value, req.Content);
 
         var result = await mediator.Send(command, ct);
 

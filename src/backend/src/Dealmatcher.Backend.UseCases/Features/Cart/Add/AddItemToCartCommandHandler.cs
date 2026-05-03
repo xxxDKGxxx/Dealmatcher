@@ -32,6 +32,6 @@ public sealed class AddItemToCartCommandHandler(
         var addedItem = cart.Items.Single(i => i.OfferId == request.OfferId);
         var addedOfferDto = mapper.Map<OfferDto>(addedOffer);
 
-        return mapper.Map<CartItemDto>((addedItem, addedOfferDto));
+        return Result.Created(mapper.Map<CartItemDto>((addedItem, addedOfferDto)));
     }
 }

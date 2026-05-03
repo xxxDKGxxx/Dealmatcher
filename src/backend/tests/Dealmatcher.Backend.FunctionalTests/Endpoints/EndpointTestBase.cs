@@ -26,6 +26,12 @@ public abstract class EndpointTestBase(CustomWebApplicationFactory factory) : IA
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await SeedData.InitializeAsync(db);
+
+        var cartRepo = _factory.Services.GetRequiredService<Dealmatcher.Backend.Domain.Interfaces.CartRepository.ICartRepository>();
+        if (cartRepo is InMemoryCartRepository inMemoryCartRepo)
+        {
+            inMemoryCartRepo.ClearAll();
+        }
     }
 
     public Task DisposeAsync() => Task.CompletedTask;
