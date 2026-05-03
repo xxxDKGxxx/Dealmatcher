@@ -1,8 +1,4 @@
-﻿using System.Collections.Concurrent;
-using Dealmatcher.Backend.Domain.Core.Cart;
-using Dealmatcher.Backend.Domain.Interfaces.CartRepository;
-
-namespace Dealmatcher.Backend.FunctionalTests;
+﻿namespace Dealmatcher.Backend.FunctionalTests;
 
 public class InMemoryCartRepository : ICartRepository
 {
