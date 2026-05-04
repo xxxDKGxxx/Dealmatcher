@@ -30,6 +30,14 @@ class MenuDrawer extends StatelessWidget {
               context.go('/my-offers');
             },
           ),
+          // My conversations page
+          ListTile(
+            leading: Icon(Icons.chat),
+            title: Text('My Conversations'),
+            onTap: () {
+              context.go('/conversations');
+            },
+          ),
           // Profile Page
           ListTile(
             leading: Icon(Icons.person),
