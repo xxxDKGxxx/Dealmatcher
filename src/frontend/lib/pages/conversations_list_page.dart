@@ -18,7 +18,7 @@ class ConversationsListPage extends StatefulWidget {
 class _ConversationsListPageState extends State<ConversationsListPage> {
   late Future<List<ConversationDetail>> _conversationsFuture;
 
-  late final _apiConversations;
+  late final ApiConversations _apiConversations;
 
   @override
   void initState() {

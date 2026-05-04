@@ -49,21 +49,23 @@ void main() {
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, state) => ConversationsListPage(api: MockApiConversations()),
+          builder: (context, state) =>
+              ConversationsListPage(api: MockApiConversations()),
         ),
         GoRoute(
           path: '/conversation/:id',
-          builder: (context, state) => const Scaffold(body: Text('Conversation Page')),
+          builder: (context, state) =>
+              const Scaffold(body: Text('Conversation Page')),
         ),
       ],
     );
 
-    return MaterialApp.router(
-      routerConfig: router,
-    );
+    return MaterialApp.router(routerConfig: router);
   }
 
-  testWidgets('Should display title and list of conversations', (WidgetTester tester) async {
+  testWidgets('Should display title and list of conversations', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(createTestableWidget());
     await tester.pump();
     await tester.pumpAndSettle();
@@ -72,14 +74,18 @@ void main() {
     expect(find.text('Testowy iPhone'), findsOneWidget);
   });
 
-  testWidgets('Should show badge with unread messages count', (WidgetTester tester) async {
+  testWidgets('Should show badge with unread messages count', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(createTestableWidget());
     await tester.pumpAndSettle();
 
     expect(find.text('5'), findsOneWidget);
   });
 
-  testWidgets('Should react when clicked a list element', (WidgetTester tester) async {
+  testWidgets('Should react when clicked a list element', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(createTestableWidget());
     await tester.pumpAndSettle();
 
