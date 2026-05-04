@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_conversations.dart';
-import 'package:frontend/models/category.dart';
 import 'package:frontend/models/conversation.dart';
-import 'package:frontend/models/offer.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/placeholder_image_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class ConversationsListPage extends StatefulWidget {
-  const ConversationsListPage({super.key});
+  const ConversationsListPage({super.key, this.api});
+
+  final ApiConversations? api;
 
   @override
   State<ConversationsListPage> createState() => _ConversationsListPageState();
@@ -18,11 +18,12 @@ class ConversationsListPage extends StatefulWidget {
 class _ConversationsListPageState extends State<ConversationsListPage> {
   late Future<List<ConversationDetail>> _conversationsFuture;
 
-  final _apiConversations = ApiConversations();
+  late final _apiConversations;
 
   @override
   void initState() {
     super.initState();
+    _apiConversations = widget.api ?? ApiConversations();
     _conversationsFuture = _fetchConversations();
   }
 
@@ -68,7 +69,8 @@ class _ConversationsListPageState extends State<ConversationsListPage> {
               Expanded(
                 child: ListView.separated(
                   itemCount: conversations.length,
-                  separatorBuilder: (context, index) => const Divider(height: 1),
+                  separatorBuilder: (context, index) =>
+                      const Divider(height: 1),
                   itemBuilder: (context, index) {
                     final conversation = conversations[index];
                     return ListTile(
@@ -79,10 +81,11 @@ class _ConversationsListPageState extends State<ConversationsListPage> {
                           height: 50,
                           child: conversation.offer.images.isNotEmpty
                               ? Image.network(
-                            conversation.offer.images.first,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => placeholderImageWidget(),
-                          )
+                                  conversation.offer.images.first,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      placeholderImageWidget(),
+                                )
                               : placeholderImageWidget(),
                         ),
                       ),
@@ -100,7 +103,9 @@ class _ConversationsListPageState extends State<ConversationsListPage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            DateFormat('HH:mm').format(conversation.lastMessageAt),
+                            DateFormat(
+                              'HH:mm',
+                            ).format(conversation.lastMessageAt),
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                           if (conversation.unreadCount > 0)
