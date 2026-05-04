@@ -67,7 +67,9 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString().trim().replaceFirst('Exception: ', '')}'),
+            content: Text(
+              'Error: ${e.toString().trim().replaceFirst('Exception: ', '')}',
+            ),
             backgroundColor: Colors.red.shade700,
           ),
         );

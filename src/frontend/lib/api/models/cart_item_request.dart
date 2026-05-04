@@ -10,10 +10,7 @@ class CartItemRequest extends RequestModel {
 
   @override
   String toJson() {
-    final data = {
-      "offerId": offerId,
-      "quantity": quantity,
-    };
+    final data = {"offerId": offerId, "quantity": quantity};
     return jsonEncode(data);
   }
 }
