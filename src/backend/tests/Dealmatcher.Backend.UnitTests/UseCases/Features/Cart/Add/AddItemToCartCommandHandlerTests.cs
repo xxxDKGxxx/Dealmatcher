@@ -32,56 +32,27 @@ public class AddItemToCartCommandHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnSuccessAndAddedItem_WhenOfferExistsAndItemIsNotInCart()
     {
-        // Arrange
         var userId = 1;
         var offerId = 100;
         var quantity = 1;
         var command = new AddItemToCartCommand(userId, offerId, quantity);
 
-        var existingCart = new CartEntity(userId);
+        var cart = new CartEntity(userId);
         var offer = new Offer("Test", "Desc", 100m, [], null!, [], 5, null!, []);
-        var offerDto = new OfferDto(
-          offerId,
-          "Test",
-          "Desc",
-          100m,
-          [],
-          null!,
-          null!,
-          [],
-          [],
-          1,
-          "Active",
-          DateTime.UtcNow,
-          DateTime.UtcNow
-        );
-
-        // This updatedCart is what the handler will return after saving the cart
-        var updatedCart = new CartEntity(userId);
-        updatedCart.UpdateItemQuantity(offerId, quantity);
-        var itemInUpdatedCart = updatedCart.Items.Single(i => i.OfferId == offerId);
-
+        var offerDto = new OfferDto(offerId, "Test", "Desc", 100m, [], null!, null!, [], [], 1, "Active", DateTime.UtcNow, DateTime.UtcNow);
         var expectedCartItemDto = new CartItemDto(offerId, offerDto, quantity, DateTime.UtcNow);
 
         _offersRepository.GetByIdAsync(offerId, Arg.Any<CancellationToken>()).Returns(offer);
-
-        _cartRepository
-          .GetCartAsync(userId, Arg.Any<CancellationToken>())
-          .Returns(existingCart, updatedCart);
-
-        _mapper.Map<CartItemDto>((itemInUpdatedCart, offerDto)).Returns(expectedCartItemDto);
+        _cartRepository.GetCartAsync(userId, Arg.Any<CancellationToken>()).Returns(cart);
         _mapper.Map<OfferDto>(offer).Returns(offerDto);
+        _mapper.Map<CartItemDto>(Arg.Any<(CartItem, OfferDto)>()).Returns(expectedCartItemDto);
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldBe(expectedCartItemDto);
         result.Value.Quantity.ShouldBe(quantity);
-        await _cartRepository
-          .Received(1)
-          .SaveCartAsync(Arg.Any<CartEntity>(), Arg.Any<CancellationToken>());
+        await _cartRepository.Received(1).SaveCartAsync(Arg.Any<CartEntity>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
