@@ -16,8 +16,7 @@ public class GetConversationDetails(
                             .Produces(401)
                             .Produces(403)
                             .Produces(404)
-                            .Produces(500)
-        );
+                            .Produces(500));
 
         Summary(s =>
         {
@@ -44,12 +43,6 @@ public class GetConversationDetails(
         var query = new GetConversationDetailsQuery(request.ConversationId, userId.Value);
 
         var result = await mediator.Send(query, cancellationToken);
-
-        if (result.IsSuccess)
-        {
-            await SendAsync(result.Value, statusCode: 200, cancellation: cancellationToken);
-            return;
-        }
 
         await result.SendResult(this, ct: cancellationToken);
     }
