@@ -1,4 +1,6 @@
 ﻿global using System.IdentityModel.Tokens.Jwt;
+global using System.IO;
+global using System.Net.Http;
 global using System.Reflection;
 global using System.Security.Claims;
 global using System.Text;
@@ -8,6 +10,7 @@ global using Ardalis.SharedKernel;
 global using Ardalis.Specification.EntityFrameworkCore;
 global using Azure.Storage.Blobs;
 global using Azure.Storage.Blobs.Models;
+global using Bogus;
 global using Dealmatcher.Backend.Domain;
 global using Dealmatcher.Backend.Domain.Core.Cart;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
