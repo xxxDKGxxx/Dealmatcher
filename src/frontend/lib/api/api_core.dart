@@ -1,5 +1,7 @@
 import 'package:frontend/api/api_urls.dart';
 import 'package:frontend/api/models/request_model.dart';
+import 'package:frontend/router/go_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,9 +74,13 @@ class ApiCore {
     switch (response.statusCode) {
       case 401:
         {
-          // TODO: add running check and logout if 401 received
-          // now it logs out only when page is changed but should every time a 401 is received
           await nullToken();
+
+          final navigatorKey = globalRouter.configuration.navigatorKey;
+          final context = navigatorKey.currentContext;
+          if (context != null && context.mounted) {
+            context.go(ApiUrls().login);
+          }
         }
     }
     return response;
