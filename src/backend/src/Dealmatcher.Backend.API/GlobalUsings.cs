@@ -40,3 +40,4 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.IdentityModel.Tokens;
 global using Serilog;
 global using Serilog.Extensions.Logging;
+global using Dealmatcher.Backend.UseCases.Features.Cart.Get;
