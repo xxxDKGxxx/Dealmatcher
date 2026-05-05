@@ -1,6 +1,7 @@
 ﻿using CartEntity = Dealmatcher.Backend.Domain.Core.Cart.Cart;
 
 namespace Dealmatcher.Backend.UnitTests.UseCases.Features.Cart.GetTotal;
+
 public class GetCartTotalQueryHandlerTests
 {
     private readonly ICartRepository _cartRepository;
