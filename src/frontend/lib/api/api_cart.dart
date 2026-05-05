@@ -1,6 +1,6 @@
 import 'package:frontend/api/api_core.dart';
 import 'package:frontend/api/api_urls.dart';
-import 'package:frontend/api/models/cart_item_request.dart';
+import 'package:frontend/api/models/add_cart_item_request.dart';
 
 class ApiCart {
   final _apiCore = ApiCore();
@@ -8,11 +8,10 @@ class ApiCart {
 
   Future<void> addToCart(int offerId, {int quantity = 1}) async {
     try {
-      final request = CartItemRequest(offerId: offerId, quantity: quantity);
+      final request = AddCartItemRequest(offerId: offerId, quantity: quantity);
       final response = await _apiCore.post(_apiAddToCartUrl, request);
 
       switch (response.statusCode) {
-        case 200:
         case 201:
           {
             return;
