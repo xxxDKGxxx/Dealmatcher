@@ -29,6 +29,7 @@ global using Dealmatcher.Backend.Domain.Interfaces.CartRepository;
 global using Dealmatcher.Backend.Infrastructure.Services;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Get;
+global using Dealmatcher.Backend.UseCases.Features.Cart.GetTotal;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Update;
 global using Dealmatcher.Backend.UseCases.Features.Categories.Get;
 global using Dealmatcher.Backend.UseCases.Features.Conversations.Get;
