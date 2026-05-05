@@ -7,6 +7,7 @@ import 'package:frontend/models/offer.dart';
 import 'package:frontend/models/user.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/message_input_widget.dart';
+import 'package:frontend/widgets/placeholder_image_widget.dart';
 import 'package:go_router/go_router.dart';
 
 class ConversationPage extends StatefulWidget {
@@ -154,15 +155,7 @@ class _ConversationPageState extends State<ConversationPage> {
               ),
             )
           else
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Icon(Icons.image, color: Colors.grey),
-            ),
+            placeholderImageWidget(),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

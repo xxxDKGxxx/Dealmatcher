@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_offers.dart';
 import 'package:frontend/api/models/offer_search_request.dart';
+import 'package:frontend/widgets/placeholder_image_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/widgets/offer_filter_widget.dart';
@@ -213,15 +214,7 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
                   ),
                 ),
               )
-            : Container(
-                color: Colors.grey[200],
-                alignment: Alignment.center,
-                child: const Icon(
-                  Icons.image_not_supported,
-                  color: Colors.grey,
-                  size: 40,
-                ),
-              ),
+            : placeholderImageWidget(),
         Positioned(
           bottom: 0,
           left: 0,
