@@ -2,4 +2,5 @@
 
 public sealed record CartItem(
     int OfferId,
-    int Quantity);
+    int Quantity,
+    DateTime AddedAt);

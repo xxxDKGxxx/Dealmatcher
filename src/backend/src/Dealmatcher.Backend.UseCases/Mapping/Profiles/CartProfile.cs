@@ -9,7 +9,7 @@ public sealed class CartProfile : Profile
                 src.Item.OfferId,
                 src.Offer,
                 src.Item.Quantity,
-                DateTime.UtcNow
+                src.Item.AddedAt
             ));
     }
 }

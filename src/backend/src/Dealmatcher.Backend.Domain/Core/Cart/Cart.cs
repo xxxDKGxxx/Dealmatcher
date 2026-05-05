@@ -20,7 +20,7 @@ public sealed class Cart(int userId)
         }
 
         _items.RemoveAll(i => i.OfferId == offerId);
-        _items.Add(new CartItem(offerId, quantity));
+        _items.Add(new CartItem(offerId, quantity, DateTime.Now));
     }
 
     public void RemoveItem(int offerId)
