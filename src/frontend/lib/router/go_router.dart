@@ -1,5 +1,6 @@
 import 'package:frontend/api/api_core.dart';
 import 'package:frontend/pages/conversation_page.dart';
+import 'package:frontend/pages/conversations_list_page.dart';
 import 'package:frontend/pages/create_update_offer_page.dart';
 import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/login_page.dart';
@@ -41,6 +42,10 @@ final GoRouter globalRouter = GoRouter(
         final id = int.parse(state.pathParameters['id']!);
         return OfferDetailsPage(offerId: id);
       },
+    ),
+    GoRoute(
+      path: '/conversations',
+      builder: (context, state) => const ConversationsListPage(),
     ),
     GoRoute(
       path: '/conversation/:id',
