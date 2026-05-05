@@ -4,6 +4,7 @@ global using System.Net.Http.Headers;
 global using System.Net.Http.Json;
 global using System.Text.Json;
 global using Dealmatcher.Backend.API;
+global using Dealmatcher.Backend.API.Endpoints.Cart.GetTotal;
 global using Dealmatcher.Backend.Domain.Core.Cart;
 global using Dealmatcher.Backend.Domain.Core.Cart.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate;
