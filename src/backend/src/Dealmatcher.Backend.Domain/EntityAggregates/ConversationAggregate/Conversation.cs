@@ -35,4 +35,26 @@ public class Conversation : DealmatcherEntityBase, IAggregateRoot
     {
         return Seller.Id == user.Id || Buyer.Id == user.Id;
     }
+
+    public void ReceiveMessages(User receiver)
+    {
+        if (!HasParticipant(receiver))
+            return;
+
+        foreach (var message in Messages.Where(m => !m.WasSentBy(receiver)).Where(m => !m.Status.WasDelivered))
+        {
+            message.Receive();
+        }
+    }
+
+    public void ReadMessages(User reader)
+    {
+        if (!HasParticipant(reader))
+            return;
+
+        foreach (var message in Messages.Where(m => !m.WasSentBy(reader)).Where(m => !m.Status.WasRead))
+        {
+            message.Read();
+        }
+    }
 }
