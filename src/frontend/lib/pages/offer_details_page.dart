@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api/api_cart.dart';
 import 'package:frontend/api/api_categories.dart';
 import 'package:frontend/api/api_conversations.dart';
 import 'package:frontend/api/api_offers.dart';
@@ -21,6 +22,7 @@ class OfferDetailsPage extends StatefulWidget {
 
 class _OfferDetailsPageState extends State<OfferDetailsPage> {
   late Future<(Offer, List<PropertyDefinition>)> _dataFuture;
+  ApiCart apiCart = ApiCart();
   ApiOffers apiOfferDetails = ApiOffers();
   ApiCategories apiProperties = ApiCategories();
 
@@ -71,6 +73,24 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
             content: Text(
               'Error while creating conversation: ${e.toString().trim().replaceFirst('Exception: ', '')}',
             ),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _addToCart(BuildContext context, Offer offer) async {
+    try {
+      await apiCart.addToCart(offer.id);
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Error: ${e.toString().trim().replaceFirst('Exception: ', '')}',
+            ),
+            backgroundColor: Colors.red.shade700,
           ),
         );
       }
@@ -257,7 +277,9 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      await _addToCart(context, offer);
+                    },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),

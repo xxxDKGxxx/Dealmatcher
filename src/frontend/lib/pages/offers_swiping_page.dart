@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api/api_cart.dart';
 import 'package:frontend/api/api_offers.dart';
 import 'package:frontend/api/models/offer_search_request.dart';
 import 'package:frontend/widgets/placeholder_image_widget.dart';
@@ -14,6 +15,7 @@ class OffersSwipingPage extends StatefulWidget {
 }
 
 class _OffersSwipingPageState extends State<OffersSwipingPage> {
+  final apiCart = ApiCart();
   List<Offer> _offersToSwipe = [];
   List<Offer> _offers = [];
   bool _isLoading = true;
@@ -58,18 +60,25 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
     }
   }
 
-  Future<void> _addToCart(Offer offer) async {
-    // this snackbar may be removed later while integrating with api
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Added to cart: ${offer.title}'),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+  Future<bool> _addToCart(BuildContext context, Offer offer) async {
+    try {
+      await apiCart.addToCart(offer.id);
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Error: ${e.toString().trim().replaceFirst('Exception: ', '')}',
+            ),
+            backgroundColor: Colors.red.shade700,
+          ),
+        );
+        return false;
+      }
+    }
 
-    // here will be adding to cart via api
+    return true;
   }
 
   void _openFilters() {
@@ -173,20 +182,26 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
                 child: const Icon(Icons.close, color: Colors.white, size: 60),
               ),
 
-              onDismissed: (direction) async {
+              confirmDismiss: (direction) async {
+                bool dismissed = true;
+
                 final swipedOffer = _offersToSwipe.first;
 
                 if (direction == DismissDirection.startToEnd) {
-                  _addToCart(swipedOffer);
+                  dismissed = await _addToCart(context, swipedOffer);
                 }
 
-                setState(() {
-                  _offersToSwipe.removeAt(0);
-                });
+                if (dismissed) {
+                  setState(() {
+                    _offersToSwipe.removeAt(0);
+                  });
 
-                if (_offersToSwipe.isEmpty) {
-                  await _fetchOffers();
+                  if (_offersToSwipe.isEmpty) {
+                    await _fetchOffers();
+                  }
                 }
+
+                return dismissed;
               },
               child: GestureDetector(
                 onTap: () => context.push('/offer/${_offersToSwipe.first.id}'),
