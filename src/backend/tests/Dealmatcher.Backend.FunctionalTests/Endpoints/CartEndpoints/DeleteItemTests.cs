@@ -1,16 +1,4 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using Dealmatcher.Backend.Domain.Core.Cart.Dto;
-using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
-using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
-using Dealmatcher.Backend.Domain.Interfaces.Authentication;
-using Dealmatcher.Backend.Domain.Interfaces.CartRepository;
-using Dealmatcher.Backend.Infrastructure.Data;
-using Microsoft.Extensions.DependencyInjection;
-using Shouldly;
-using Xunit;
-
-namespace Dealmatcher.Backend.FunctionalTests.Endpoints.CartEndpoints;
+﻿namespace Dealmatcher.Backend.FunctionalTests.Endpoints.CartEndpoints;
 
 public class DeleteItemTests(CustomWebApplicationFactory factory) : EndpointTestBase(factory)
 {
