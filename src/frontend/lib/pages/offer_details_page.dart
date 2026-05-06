@@ -59,12 +59,12 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
   Future<void> _createConversation(BuildContext context) async {
     try {
       final message = _messageController.text;
-      final conversationId = await ApiConversations().createConversation(
+      final conversationDetail = await ApiConversations().createConversation(
         widget.offerId,
         message,
       );
       if (context.mounted) {
-        context.push('/conversation/$conversationId');
+        context.push('/conversation/${conversationDetail.id}');
       }
     } catch (e) {
       if (context.mounted) {
