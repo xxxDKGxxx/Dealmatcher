@@ -12,6 +12,13 @@ public sealed class SendMessageCommandHandler(
             return Result.Invalid(new ValidationError("Message content cannot be empty."));
         }
 
+        var activeUserSpec = new ActiveUserByIdSpec(request.SenderId);
+        var sender = await userRepository.FirstOrDefaultAsync(activeUserSpec, cancellationToken);
+        if (sender is null)
+        {
+            return Result.Invalid(new ValidationError($"Invalid Sender Id: {request.SenderId}"));
+        }
+
         var conversation = await conversationRepository.GetByIdAsync(request.ConversationId, cancellationToken);
 
         if (conversation is null)
@@ -19,7 +26,7 @@ public sealed class SendMessageCommandHandler(
             return Result.NotFound($"Conversation with id {request.ConversationId} was not found.");
         }
 
-        if (conversation.Buyer.Id != request.SenderId && conversation.Seller.Id != request.SenderId)
+        if (!conversation.HasParticipant(sender))
         {
             return Result.Forbidden("You are not a participant in this conversation.");
         }
@@ -27,13 +34,6 @@ public sealed class SendMessageCommandHandler(
         if (conversation.Status == ConversationStatus.Closed)
         {
             return Result.Conflict("Cannot send messages to a closed conversation.");
-        }
-
-        var activeUserSpec = new ActiveUserByIdSpec(request.SenderId);
-        var sender = await userRepository.FirstOrDefaultAsync(activeUserSpec, cancellationToken);
-        if (sender is null)
-        {
-            return Result.Invalid(new ValidationError($"Invalid Sender Id: {request.SenderId}"));
         }
 
         var message = new Message(sender, request.Content);

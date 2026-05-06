@@ -56,7 +56,6 @@ public class SendMessageCommandHandlerTests
     [Fact]
     public async Task Handle_ValidData_ReturnsSuccessAndSavesMessage()
     {
-        // Arrange
         var buyer = CreateUser(1, "buyer@example.com");
         var seller = CreateUser(2, "seller@example.com");
         var offer = CreateOffer(seller);
@@ -66,10 +65,8 @@ public class SendMessageCommandHandlerTests
 
         var command = new SendMessageCommand(100, 1, "Hello, is this still available?");
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         result.IsSuccess.ShouldBeTrue();
 
         await _conversationRepository.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
@@ -82,13 +79,10 @@ public class SendMessageCommandHandlerTests
     [Fact]
     public async Task Handle_EmptyMessageContent_ReturnsInvalid()
     {
-        // Arrange
         var command = new SendMessageCommand(100, 1, "   ");
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         result.Status.ShouldBe(ResultStatus.Invalid);
         result.ValidationErrors.ShouldContain(e => e.ErrorMessage.Contains("Message content cannot be empty"));
         await _conversationRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
@@ -97,16 +91,16 @@ public class SendMessageCommandHandlerTests
     [Fact]
     public async Task Handle_ConversationNotFound_ReturnsNotFound()
     {
-        // Arrange
+        var sender = CreateUser(1);
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>())
+            .Returns(sender);
         _conversationRepository.GetByIdAsync(999, Arg.Any<CancellationToken>())
             .Returns((Conversation?)null);
 
         var command = new SendMessageCommand(999, 1, "Hello");
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         result.Status.ShouldBe(ResultStatus.NotFound);
         await _conversationRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
@@ -114,21 +108,20 @@ public class SendMessageCommandHandlerTests
     [Fact]
     public async Task Handle_UserIsNotParticipant_ReturnsForbidden()
     {
-        // Arrange
         var buyer = CreateUser(1);
         var seller = CreateUser(2);
-        _ = CreateUser(3);
+        var outsider = CreateUser(3);
         var offer = CreateOffer(seller);
         var conversation = CreateConversation(offer, buyer, 100);
 
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>())
+            .Returns(outsider);
         _conversationRepository.GetByIdAsync(100, Arg.Any<CancellationToken>()).Returns(conversation);
 
         var command = new SendMessageCommand(100, 3, "Hello");
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         result.Status.ShouldBe(ResultStatus.Forbidden);
         await _conversationRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
@@ -136,7 +129,6 @@ public class SendMessageCommandHandlerTests
     [Fact]
     public async Task Handle_ConversationIsClosed_ReturnsConflict()
     {
-        // Arrange
         var buyer = CreateUser(1);
         var seller = CreateUser(2);
         var offer = CreateOffer(seller);
@@ -144,14 +136,14 @@ public class SendMessageCommandHandlerTests
 
         typeof(Conversation).GetProperty("Status")?.SetValue(conversation, ConversationStatus.Closed);
 
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>())
+            .Returns(buyer);
         _conversationRepository.GetByIdAsync(100, Arg.Any<CancellationToken>()).Returns(conversation);
 
         var command = new SendMessageCommand(100, 1, "Hello");
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         result.Status.ShouldBe(ResultStatus.Conflict);
         await _conversationRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
@@ -159,7 +151,6 @@ public class SendMessageCommandHandlerTests
     [Fact]
     public async Task Handle_SenderUserNotFoundInDb_ReturnsInvalid()
     {
-        // Arrange
         var buyer = CreateUser(1);
         var seller = CreateUser(2);
         var offer = CreateOffer(seller);
@@ -172,10 +163,8 @@ public class SendMessageCommandHandlerTests
 
         var command = new SendMessageCommand(100, 1, "Hello");
 
-        // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
-        // Assert
         result.Status.ShouldBe(ResultStatus.Invalid);
         result.ValidationErrors.ShouldContain(e => e.ErrorMessage.Contains("Invalid Sender Id"));
         await _conversationRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());

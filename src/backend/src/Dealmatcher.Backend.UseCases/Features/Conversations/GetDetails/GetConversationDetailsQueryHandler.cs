@@ -1,7 +1,7 @@
 ﻿namespace Dealmatcher.Backend.UseCases.Features.Conversations.GetDetails;
 
 public sealed class GetConversationDetailsQueryHandler(
-    IReadRepository<Conversation> conversationsRepository,
+    IRepository<Conversation> conversationsRepository,
     IReadRepository<User> usersRepository,
     IMapper mapper) : IQueryHandler<GetConversationDetailsQuery, Result<ConversationDetailDto>>
 {
@@ -25,6 +25,10 @@ public sealed class GetConversationDetailsQueryHandler(
         {
             return Result.Forbidden($"User with id: {request.RequestingUserId} doesn't participate in the conversation");
         }
+
+        conversation.ReadMessages(user);
+
+        await conversationsRepository.SaveChangesAsync(cancellationToken);
 
         return Result.Success(mapper.Map<ConversationDetailDto>(conversation, opts =>
         {

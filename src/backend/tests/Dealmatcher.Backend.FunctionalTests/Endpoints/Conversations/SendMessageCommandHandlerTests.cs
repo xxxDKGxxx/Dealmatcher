@@ -60,7 +60,7 @@ public class SendMessageTests(CustomWebApplicationFactory factory) : EndpointTes
 
         json.RootElement.GetProperty("id").GetInt32().ShouldBeGreaterThan(0);
         json.RootElement.GetProperty("content").GetString().ShouldBe("Hello, is this still available?");
-        json.RootElement.GetProperty("status").GetString().ShouldBe("DELIVERED");
+        json.RootElement.GetProperty("status").GetString().ShouldBe("SENT");
     }
 
     [Fact]
