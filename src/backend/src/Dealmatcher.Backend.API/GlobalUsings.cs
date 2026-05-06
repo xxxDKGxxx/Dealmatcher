@@ -33,6 +33,7 @@ global using Dealmatcher.Backend.UseCases.Features.Offers.Delete;
 global using Dealmatcher.Backend.UseCases.Features.Offers.Get;
 global using Dealmatcher.Backend.UseCases.Features.Offers.Update;
 global using Dealmatcher.Backend.UseCases.Features.Users.Create;
+global using Dealmatcher.Backend.UseCases.Interfaces;
 global using FastEndpoints;
 global using FastEndpoints.Swagger;
 global using FluentValidation;
