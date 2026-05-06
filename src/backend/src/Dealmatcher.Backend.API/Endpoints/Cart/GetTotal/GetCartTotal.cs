@@ -20,7 +20,6 @@ public class GetCartTotal(
         {
             s.Summary = "Get cart total";
             s.Description = "Returns the total price of all items in the cart";
-
             s.Response<CartTotalDto>(200, "Cart total retrieved successfully", "application/json");
             s.Response(401, "Unauthorized");
             s.Response(500, "Internal server error");
