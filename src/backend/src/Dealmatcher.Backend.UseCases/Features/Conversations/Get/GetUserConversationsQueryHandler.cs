@@ -18,11 +18,11 @@ public sealed class GetUserConversationsQueryHandler(
         var conversationsByUserIdSpec = new ConversationsByUserIdSpec(user.Id);
         var conversations = await conversationRepository.ListAsync(conversationsByUserIdSpec, cancellationToken);
 
-        foreach (var conversation in conversations) 
+        foreach (var conversation in conversations)
         {
             conversation.ReceiveMessages(user);
         }
-        
+
         await conversationRepository.SaveChangesAsync(cancellationToken);
 
         var conversationDtos = mapper.Map<List<ConversationDto>>(conversations, opts =>

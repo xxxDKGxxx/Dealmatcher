@@ -9,7 +9,7 @@ public abstract class MessageStatus(string name, int value) : SmartEnum<MessageS
     public abstract bool WasDelivered { get; }
     public abstract bool WasRead { get; }
 
-    private sealed class SentStatus() : MessageStatus("SENT", 0) 
+    private sealed class SentStatus() : MessageStatus("SENT", 0)
     {
         public override bool WasDelivered => false;
         public override bool WasRead => false;
