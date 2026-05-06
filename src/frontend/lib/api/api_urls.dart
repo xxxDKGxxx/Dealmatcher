@@ -11,6 +11,7 @@ class ApiUrls {
 
   String offerDetailsById(int id) => '/offers/$id';
   String conversationById(int id) => '/conversations/$id';
+  String messagesByConversationId(int id) => '/conversations/$id/messages';
   String propertiesByCategoryName(String categoryName) =>
       '/categories/$categoryName/properties';
   String offerById(int offerId) => '/offers/$offerId';
