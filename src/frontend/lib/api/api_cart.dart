@@ -1,12 +1,14 @@
 import 'package:frontend/api/api_core.dart';
 import 'package:frontend/api/api_urls.dart';
 import 'package:frontend/api/models/add_cart_item_request.dart';
+import 'package:frontend/api/models/add_cart_item_response.dart';
+import 'package:frontend/models/cart_item.dart';
 
 class ApiCart {
   final _apiCore = ApiCore();
   final _apiAddToCartUrl = ApiUrls().cartItems;
 
-  Future<void> addToCart(int offerId, {int quantity = 1}) async {
+  Future<CartItem> addToCart(int offerId, {int quantity = 1}) async {
     try {
       final request = AddCartItemRequest(offerId: offerId, quantity: quantity);
       final response = await _apiCore.post(_apiAddToCartUrl, request);
@@ -14,7 +16,9 @@ class ApiCart {
       switch (response.statusCode) {
         case 201:
           {
-            return;
+            final responseModel = AddCartItemResponse(response: response);
+            responseModel.fromJson();
+            return responseModel.cartItem;
           }
         case 400:
           throw Exception('Invalid request');
