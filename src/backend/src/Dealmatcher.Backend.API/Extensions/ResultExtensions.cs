@@ -2,7 +2,11 @@
 
 public static class ResultExtensions
 {
-    public static async Task SendResult(this Result result, IEndpoint endpoint, CancellationToken ct = default)
+    public static async Task SendResult(
+      this Result result,
+      IEndpoint endpoint,
+      CancellationToken ct = default
+    )
     {
         var response = endpoint.HttpContext.Response;
 
@@ -13,6 +17,13 @@ public static class ResultExtensions
                 await response.SendNoContentAsync(ct);
                 return;
             }
+
+            if (result.IsCreated())
+            {
+                await Results.StatusCode(StatusCodes.Status201Created).ExecuteAsync(endpoint.HttpContext);
+                return;
+            }
+
             await response.SendOkAsync(cancellation: ct);
             return;
         }
@@ -20,7 +31,11 @@ public static class ResultExtensions
         await HandleErrors(result, response, ct);
     }
 
-    public static async Task SendResult<T>(this Result<T> result, IEndpoint endpoint, CancellationToken ct = default)
+    public static async Task SendResult<T>(
+      this Result<T> result,
+      IEndpoint endpoint,
+      CancellationToken ct = default
+    )
     {
         var response = endpoint.HttpContext.Response;
 
@@ -29,6 +44,12 @@ public static class ResultExtensions
             if (result.IsNoContent())
             {
                 await response.SendNoContentAsync(ct);
+                return;
+            }
+
+            if (result.IsCreated())
+            {
+                await response.SendAsync(result.Value, 201, cancellation: ct);
                 return;
             }
             await response.SendAsync(result.Value, 200, cancellation: ct);
@@ -38,7 +59,11 @@ public static class ResultExtensions
         await HandleErrors(result, response, ct);
     }
 
-    private static async Task HandleErrors<T>(Result<T> result, HttpResponse response, CancellationToken ct)
+    private static async Task HandleErrors<T>(
+      Result<T> result,
+      HttpResponse response,
+      CancellationToken ct
+    )
     {
         switch (result.Status)
         {

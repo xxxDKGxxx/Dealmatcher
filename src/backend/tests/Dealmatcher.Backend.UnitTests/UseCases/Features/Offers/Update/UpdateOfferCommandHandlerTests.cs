@@ -11,6 +11,10 @@ public class UpdateOfferCommandHandlerTests
     private readonly User _seller;
     private readonly Offer _offer;
 
+    private static readonly int _przebiegId = 1;
+    private static readonly int _uszkodzonyId = 2;
+    private static readonly int _markaId = 3;
+
     public UpdateOfferCommandHandlerTests()
     {
         _offerRepository = Substitute.For<IRepository<Offer>>();
@@ -25,7 +29,17 @@ public class UpdateOfferCommandHandlerTests
             _mapper);
 
         _seller = new User("seller@example.com", "hash", "Jan", "Kowalski");
+
         var category = new Category("Elektronika", "Kategoria elektroniki");
+        typeof(Category).GetProperty("Id")?.SetValue(category, 1);
+
+        var przebieg = new NumericPropertyDefinition("Przebieg", PropertyType.Numeric) { Id = _przebiegId };
+        var uszkodzony = new BooleanPropertyDefinition("Uszkodzony", PropertyType.Boolean) { Id = _uszkodzonyId };
+        var marka = new SelectPropertyDefinition("Marka", PropertyType.Select, ["Apple", "Samsung", "Sony"]) { Id = _markaId };
+
+        category.AddPropertyDefinition(przebieg);
+        category.AddPropertyDefinition(uszkodzony);
+        category.AddPropertyDefinition(marka);
 
         List<string> initialImages = ["https://blob.com/img1.jpg", "https://blob.com/img2.jpg"];
 
@@ -35,6 +49,10 @@ public class UpdateOfferCommandHandlerTests
         typeof(User).GetProperty("Id")?.SetValue(_seller, 1);
 
         _offerRepository.GetByIdAsync(1, Arg.Any<CancellationToken>()).Returns(_offer);
+
+        _categoryRepository.FirstOrDefaultAsync(Arg.Any<CategoryWithDefinitionsByIdSpec>(), Arg.Any<CancellationToken>())
+            .Returns(category);
+
         _mapper.Map<OfferDto>(Arg.Any<Offer>()).Returns(new OfferDto(1, "Nowy Tytuł", "Opis", 150m, [], null!, null!, [], null!, 5, "DRAFT", DateTime.UtcNow, DateTime.UtcNow));
     }
 
@@ -113,5 +131,115 @@ public class UpdateOfferCommandHandlerTests
 
         // Assert
         result.Status.ShouldBe(ResultStatus.NotFound);
+    }
+
+    [Fact]
+    public async Task Handle_ValidProperties_UpdatesProperties()
+    {
+        // Arrange
+        var command = new UpdateOfferCommand(1, 1, null, null, null, null, null, new Dictionary<string, string>
+        {
+            [_przebiegId.ToString()] = "24",
+            [_uszkodzonyId.ToString()] = "false",
+            [_markaId.ToString()] = "Samsung"
+        }, null);
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        _offer.Properties.Count.ShouldBe(3);
+        await _offerRepository.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_ExistingProperties_UpdatesExistingInstances()
+    {
+        // Arrange
+        var category = _offer.Category;
+        var przebiegDef = category.PropertyDefinitions.First(pd => pd.Id == _przebiegId);
+        var initialProperty = przebiegDef.CreatePropertyFromString("10");
+
+        _offer.SetProperties([initialProperty]);
+
+        var command = new UpdateOfferCommand(1, 1, null, null, null, null, null, new Dictionary<string, string>
+        {
+            [_przebiegId.ToString()] = "20",
+            [_uszkodzonyId.ToString()] = "true",
+            [_markaId.ToString()] = "Apple"
+        }, null);
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        _offer.Properties.Count.ShouldBe(3);
+        var updatedProperty = _offer.Properties.First(p => p.PropertyDefinition.Id == _przebiegId);
+
+        updatedProperty.ShouldBeSameAs(initialProperty);
+        updatedProperty.StringValue.ShouldBe("20");
+
+        await _offerRepository.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_MissingProperties_ReturnsInvalid()
+    {
+        // Arrange
+        var command = new UpdateOfferCommand(1, 1, null, null, null, null, null, new Dictionary<string, string>
+        {
+            [_przebiegId.ToString()] = "24"
+        }, null);
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.Status.ShouldBe(ResultStatus.Invalid);
+        result.ValidationErrors.ShouldContain(e => e.ErrorMessage.Contains("Missing required properties"));
+        await _offerRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_InvalidPropertyValue_ReturnsInvalid()
+    {
+        // Arrange
+        var command = new UpdateOfferCommand(1, 1, null, null, null, null, null, new Dictionary<string, string>
+        {
+            [_przebiegId.ToString()] = "nie-liczba",
+            [_uszkodzonyId.ToString()] = "false",
+            [_markaId.ToString()] = "Samsung"
+        }, null);
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.Status.ShouldBe(ResultStatus.Invalid);
+        result.ValidationErrors.ShouldContain(e => e.ErrorMessage.Contains("Invalid property value"));
+        await _offerRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_UnknownPropertyId_ReturnsInvalid()
+    {
+        // Arrange
+        var command = new UpdateOfferCommand(1, 1, null, null, null, null, null, new Dictionary<string, string>
+        {
+            [_przebiegId.ToString()] = "24",
+            [_uszkodzonyId.ToString()] = "false",
+            [_markaId.ToString()] = "Samsung",
+            ["NieistniejącaProperty"] = "123"
+        }, null);
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.Status.ShouldBe(ResultStatus.Invalid);
+        result.ValidationErrors.ShouldContain(e => e.ErrorMessage.Contains("Invalid property Id"));
+        await _offerRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

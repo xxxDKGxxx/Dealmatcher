@@ -14,6 +14,7 @@ public abstract class PropertyDefinition : DealmatcherEntityBase
     protected PropertyDefinition() { }
 
     public abstract Property CreatePropertyFromString(string value);
+    public abstract void UpdateProperty(Property property, string value);
     public abstract PropertyFilter CreatePropertyFilterFromStrings(List<string> values);
 }
 
@@ -28,6 +29,16 @@ public abstract class PropertyDefinition<T> : PropertyDefinition where T : IPars
     {
         return CreatePropertyTyped(T.Parse(value, null));
     }
+
+    public override void UpdateProperty(Property property, string value)
+    {
+        if (property is not Property<T> typedProperty)
+        {
+            throw new ArgumentException($"Invalid property type for definition {Name}. Expected Property<{typeof(T).Name}>, got {property.GetType().Name}");
+        }
+        typedProperty.SetValue(T.Parse(value, null));
+    }
+
     public abstract PropertyFilter CreatePropertyFilterTyped(List<T> values);
     public override PropertyFilter CreatePropertyFilterFromStrings(List<string> values)
     {

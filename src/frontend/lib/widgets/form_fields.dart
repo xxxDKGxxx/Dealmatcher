@@ -9,15 +9,20 @@ Widget nonEmptyTextFormField({
   int? maxLines = 1,
   void Function(String)? onChanged,
   String? initialValue,
+  bool? enabled,
+  Widget? suffixIcon,
 }) => TextFormField(
   controller: controller,
   initialValue: initialValue,
   obscureText: obscureText,
   maxLines: maxLines,
   onChanged: onChanged,
+  readOnly: !(enabled ?? true),
   decoration: InputDecoration(
     labelText: text,
     border: const OutlineInputBorder(),
+    suffixIcon: suffixIcon,
+    filled: !(enabled ?? true),
   ),
   validator: (value) {
     if (value == null ||
@@ -36,14 +41,19 @@ Widget numberFormField({
   void Function(String)? onChanged,
   String? initialValue,
   String? Function(String?)? validator,
+  bool? enabled,
+  Widget? suffixIcon,
 }) => TextFormField(
   controller: controller,
   initialValue: initialValue,
   keyboardType: keyboardType,
   onChanged: onChanged,
+  readOnly: !(enabled ?? true),
   decoration: InputDecoration(
     labelText: text,
     border: const OutlineInputBorder(),
+    suffixIcon: suffixIcon,
+    filled: !(enabled ?? true),
   ),
   validator:
       validator ??
@@ -80,33 +90,39 @@ Widget dropdownFormField<T>({
   required String text,
   required List<DropdownMenuItem<T>> items,
   required T? value,
-  required void Function(T?) onChanged,
+  void Function(T?)? onChanged,
   String? Function(T?)? validator,
   Widget? icon,
   bool isExpanded = true,
   String Function(T value)? itemLabelBuilder,
+  bool? enabled,
 }) => DropdownButtonFormField<T>(
   initialValue: value,
   items: items,
-  onChanged: onChanged,
+  onChanged: (enabled ?? true) ? onChanged : null,
   isExpanded: isExpanded,
   icon: icon,
   decoration: InputDecoration(
     labelText: text,
     border: const OutlineInputBorder(),
+    filled: !(enabled ?? true),
   ),
   selectedItemBuilder: (context) {
     return items.map((item) {
       final val = item.value;
 
-      return Text(
-        val != null
-            ? (itemLabelBuilder != null
-                  ? itemLabelBuilder(val)
-                  : val.toString())
-            : '',
-        overflow: TextOverflow.ellipsis,
-      );
+      if (val != null && itemLabelBuilder != null) {
+        return Text(itemLabelBuilder(val), overflow: TextOverflow.ellipsis);
+      }
+
+      if (item.child is Text) {
+        return Text(
+          (item.child as Text).data ?? '',
+          overflow: TextOverflow.ellipsis,
+        );
+      }
+
+      return Text(val?.toString() ?? '', overflow: TextOverflow.ellipsis);
     }).toList();
   },
   validator:
@@ -122,5 +138,25 @@ Widget dropdownFormField<T>({
 Widget switchFormField({
   required String text,
   required bool value,
-  required void Function(bool) onChanged,
-}) => SwitchListTile(title: Text(text), value: value, onChanged: onChanged);
+  void Function(bool)? onChanged,
+  bool? enabled,
+}) => InputDecorator(
+  decoration: InputDecoration(
+    labelText: text,
+    border: const OutlineInputBorder(),
+    filled: !(enabled ?? true),
+  ),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(value ? "Yes" : "No"),
+      SizedBox(
+        height: 24,
+        child: Switch(
+          value: value,
+          onChanged: (enabled ?? true) ? onChanged : null,
+        ),
+      ),
+    ],
+  ),
+);

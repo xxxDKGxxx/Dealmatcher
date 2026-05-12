@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/api/api_core.dart';
+import 'package:frontend/api/api_auth.dart';
 import 'package:go_router/go_router.dart';
 
 class MenuDrawer extends StatelessWidget {
@@ -30,6 +30,14 @@ class MenuDrawer extends StatelessWidget {
               context.go('/my-offers');
             },
           ),
+          // My conversations page
+          ListTile(
+            leading: Icon(Icons.chat),
+            title: Text('My Conversations'),
+            onTap: () {
+              context.go('/conversations');
+            },
+          ),
           // Profile Page
           ListTile(
             leading: Icon(Icons.person),
@@ -47,10 +55,10 @@ class MenuDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.exit_to_app_rounded, color: redColor),
             title: Text('Log out', style: TextStyle(color: redColor)),
-            onTap: () {
-              ApiCore().nullToken();
-              context.go('/login');
+            onTap: () async {
+              await ApiAuth().logout();
               if (context.mounted) {
+                context.go('/login');
                 ScaffoldMessenger.of(
                   context,
                 ).showSnackBar(SnackBar(content: Text('Logged out')));

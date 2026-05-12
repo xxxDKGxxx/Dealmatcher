@@ -18,7 +18,7 @@ class ApiAuth {
           {
             final responseModel = AuthResponse(response: response);
             responseModel.fromJson();
-            _apiCore.setToken(responseModel.token);
+            await _apiCore.setToken(responseModel.token);
           }
         case 401:
           throw Exception('Invalid credentials.');
@@ -36,7 +36,7 @@ class ApiAuth {
     }
   }
 
-  void logout() {
-    _apiCore.setToken(null);
+  Future<void> logout() async {
+    await _apiCore.nullToken();
   }
 }

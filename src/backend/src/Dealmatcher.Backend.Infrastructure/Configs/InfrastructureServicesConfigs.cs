@@ -1,4 +1,7 @@
-﻿namespace Dealmatcher.Backend.Infrastructure.Configs;
+﻿using Dealmatcher.Backend.Infrastructure.Services.CartRepositories;
+using StackExchange.Redis;
+
+namespace Dealmatcher.Backend.Infrastructure.Configs;
 
 public static class InfrastructureServicesConfigs
 {
@@ -29,6 +32,15 @@ public static class InfrastructureServicesConfigs
             .AddScoped<ITokenService, JwtTokenService>()
             .AddScoped<IImageStorageService, AzureBlobStorageService>()
             .AddScoped<IOfferSuggestionService, RandomOfferSuggestionService>();
+
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+        {
+            var connectionString = config.GetValue<string>("ConnectionStrings:Redis")
+                ?? throw new Exception("ConnectionStrings:Redis not configured");
+            return ConnectionMultiplexer.Connect(connectionString);
+        });
+
+        services.AddScoped<ICartRepository, RedisCartRepository>();
 
         logger.LogInformation("{Project} services registered.", "Infrastructure");
 

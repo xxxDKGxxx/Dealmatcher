@@ -1,6 +1,9 @@
 import 'package:frontend/api/api_urls.dart';
 import 'package:frontend/api/models/request_model.dart';
+import 'package:frontend/router/go_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiCore {
   static final ApiCore _instance = ApiCore._internal();
@@ -8,20 +11,31 @@ class ApiCore {
   ApiCore._internal();
 
   final String _apiUrl = ApiUrls().apiUrl;
+  static const String _tokenKey = 'auth_token';
 
   String? _baseUrl;
   String? _token;
 
-  void init(String baseUrl) {
+  Future<void> init(String baseUrl) async {
     _baseUrl = baseUrl;
+    final prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString(_tokenKey);
   }
 
-  void setToken(String? token) {
+  Future<void> setToken(String? token) async {
     _token = token;
+    final prefs = await SharedPreferences.getInstance();
+    if (token != null) {
+      await prefs.setString(_tokenKey, token);
+    } else {
+      await prefs.remove(_tokenKey);
+    }
   }
 
-  void nullToken() {
+  Future<void> nullToken() async {
     _token = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_tokenKey);
   }
 
   bool get isAuthenticated => _token != null;
@@ -37,7 +51,7 @@ class ApiCore {
     return headers;
   }
 
-  Map<String, String> get _getHeaders {
+  Map<String, String> get _noContentHeaders {
     final headers = {'Accept': 'application/json'};
     if (_token != null) {
       headers['Authorization'] = 'Bearer $_token';
@@ -60,9 +74,13 @@ class ApiCore {
     switch (response.statusCode) {
       case 401:
         {
-          // TODO: add running check and logout if 401 received
-          // now it logs out only when page is changed but should every time a 401 is received
-          nullToken();
+          await nullToken();
+
+          final navigatorKey = globalRouter.configuration.navigatorKey;
+          final context = navigatorKey.currentContext;
+          if (context != null && context.mounted) {
+            context.go(ApiUrls().login);
+          }
         }
     }
     return response;
@@ -71,7 +89,7 @@ class ApiCore {
   // HTTP methods
   Future<http.Response> get(String endpoint) async {
     return await intercept(
-      () async => http.get(_getUri(endpoint), headers: _getHeaders),
+      () async => http.get(_getUri(endpoint), headers: _noContentHeaders),
     );
   }
 
@@ -107,7 +125,7 @@ class ApiCore {
 
   Future<http.Response> delete(String endpoint) async {
     return await intercept(
-      () => http.delete(_getUri(endpoint), headers: _headers),
+      () => http.delete(_getUri(endpoint), headers: _noContentHeaders),
     );
   }
 
@@ -120,7 +138,7 @@ class ApiCore {
       final uri = _getUri(endpoint);
       var request = http.MultipartRequest('POST', uri);
 
-      request.headers.addAll(_getHeaders);
+      request.headers.addAll(_noContentHeaders);
 
       if (fields != null) {
         request.fields.addAll(fields);

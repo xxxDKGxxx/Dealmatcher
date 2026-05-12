@@ -2,7 +2,7 @@
 
 public class CreateTests(CustomWebApplicationFactory factory) : EndpointTestBase(factory)
 {
-    private async Task<int> CreateCategory()
+    private async Task<(int CategoryId, int PropertyId)> CreateCategoryWithProperty()
     {
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -11,10 +11,13 @@ public class CreateTests(CustomWebApplicationFactory factory) : EndpointTestBase
             "Test Category",
             "Test category description");
 
+        var przebieg = new NumericPropertyDefinition("Przebieg", PropertyType.Numeric);
+        category.AddPropertyDefinition(przebieg);
+
         db.Set<Category>().Add(category);
         await db.SaveChangesAsync();
 
-        return category.Id;
+        return (category.Id, przebieg.Id);
     }
 
     [Fact]
@@ -23,18 +26,26 @@ public class CreateTests(CustomWebApplicationFactory factory) : EndpointTestBase
         var token = await RegisterAndLogin("seller@example.com", "Password123!");
         SetAuthHeader(token);
 
-        var categoryId = await CreateCategory();
+        var (categoryId, propertyId) = await CreateCategoryWithProperty();
 
         using var formData = new MultipartFormDataContent
-        {
-            { new StringContent("Super Oferta"), "Title" },
-            { new StringContent("Bardzo fajny opis produktu"), "Description" },
-            { new StringContent(99.99m.ToString()), "Price" },
-            { new StringContent(categoryId.ToString()), "CategoryId" },
-            { new StringContent("5"), "Availability" },
-            { new StringContent("promocja"), "Tags" },
-            { new StringContent("nowosc"), "Tags" }
-        };
+    {
+        { new StringContent("Super Oferta"), "Title" },
+        { new StringContent("Bardzo fajny opis produktu"), "Description" },
+        { new StringContent(99.99m.ToString()), "Price" },
+        { new StringContent(categoryId.ToString()), "CategoryId" },
+        { new StringContent("5"), "Availability" },
+        { new StringContent("promocja"), "Tags" },
+        { new StringContent("nowosc"), "Tags" }
+    };
+
+        var propertiesDict = new Dictionary<string, string>
+    {
+        { propertyId.ToString(), "150000" }
+    };
+        var propertiesJson = JsonSerializer.Serialize(propertiesDict);
+
+        formData.Add(new StringContent(propertiesJson), "Properties");
 
         var imageBytes = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
         var imageContent = new ByteArrayContent(imageBytes);
@@ -56,6 +67,29 @@ public class CreateTests(CustomWebApplicationFactory factory) : EndpointTestBase
         json.Title.ShouldBe("Super Oferta");
         json.Price.ShouldBe(99.99m);
         json.Images.Count.ShouldBe(1);
+        json.Properties.Count.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task CreateOffer_MissingProperties_ReturnsBadRequest()
+    {
+        var token = await RegisterAndLogin("missingprops@example.com", "Password123!");
+        SetAuthHeader(token);
+
+        var (categoryId, _) = await CreateCategoryWithProperty();
+
+        using var formData = new MultipartFormDataContent
+        {
+            { new StringContent("Super Oferta"), "Title" },
+            { new StringContent("Opis"), "Description" },
+            { new StringContent("99.99"), "Price" },
+            { new StringContent(categoryId.ToString()), "CategoryId" },
+            { new StringContent("5"), "Availability" }
+        };
+
+        var response = await _client.PostAsync("/api/v1/offers", formData);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
     [Fact]
@@ -80,7 +114,7 @@ public class CreateTests(CustomWebApplicationFactory factory) : EndpointTestBase
         var token = await RegisterAndLogin("badrequest@example.com", "Password123!");
         SetAuthHeader(token);
 
-        var categoryId = await CreateCategory();
+        var (categoryId, _) = await CreateCategoryWithProperty();
 
         using var formData = new MultipartFormDataContent
         {

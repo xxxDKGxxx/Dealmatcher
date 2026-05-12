@@ -22,6 +22,81 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Conversation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BuyerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OfferId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuyerId");
+
+                    b.HasIndex("OfferId");
+
+                    b.ToTable("Conversations", (string)null);
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages", (string)null);
+                });
+
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -357,6 +432,42 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("BasicUser");
                 });
 
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Conversation", b =>
+                {
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", "Buyer")
+                        .WithMany()
+                        .HasForeignKey("BuyerId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Offer", "Offer")
+                        .WithMany()
+                        .HasForeignKey("OfferId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("Buyer");
+
+                    b.Navigation("Offer");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages.Message", b =>
+                {
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Conversation", null)
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.Navigation("Sender");
+                });
+
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Offer", b =>
                 {
                     b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories.Category", "Category")
@@ -381,7 +492,7 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                     b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Offer", null)
                         .WithMany("Properties")
                         .HasForeignKey("OfferId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.PropertyDefinition", "PropertyDefinition")
@@ -400,6 +511,11 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Conversation", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories.Category", b =>

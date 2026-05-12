@@ -5,10 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/pages/offers_swiping_page.dart';
 import 'package:frontend/widgets/offer_filter_widget.dart';
+import 'package:frontend/api/api_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   setUpAll(() {
     HttpOverrides.global = _MockHttpOverrides();
+    SharedPreferences.setMockInitialValues({});
+    ApiCore().init('http://localhost:8080');
   });
 
   Widget createTestWidget() {
@@ -91,19 +95,222 @@ class _MockHttpOverrides extends HttpOverrides {
 
 class _MockHttpClient extends Fake implements HttpClient {
   @override
-  Future<HttpClientRequest> getUrl(Uri url) async => _MockHttpClientRequest();
+  Future<HttpClientRequest> getUrl(Uri url) async =>
+      _MockHttpClientRequest(url);
+
+  @override
+  Future<HttpClientRequest> postUrl(Uri url) async =>
+      _MockHttpClientRequest(url);
+
+  @override
+  Future<HttpClientRequest> openUrl(String method, Uri url) async =>
+      _MockHttpClientRequest(url);
+
+  @override
+  void close({bool force = false}) {}
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return null;
+  }
 }
 
 class _MockHttpClientRequest extends Fake implements HttpClientRequest {
+  _MockHttpClientRequest(this.url);
+  final Uri url;
+
+  bool _followRedirects = true;
+  int _maxRedirects = 5;
+  int _contentLength = -1;
+
   @override
-  Future<HttpClientResponse> close() async => _MockHttpClientResponse();
+  final HttpHeaders headers = _MockHttpHeaders();
+
+  @override
+  bool get followRedirects => _followRedirects;
+
+  @override
+  set followRedirects(bool value) => _followRedirects = value;
+
+  @override
+  int get maxRedirects => _maxRedirects;
+
+  @override
+  set maxRedirects(int value) => _maxRedirects = value;
+
+  @override
+  int get contentLength => _contentLength;
+
+  @override
+  set contentLength(int value) => _contentLength = value;
+
+  bool _persistentConnection = true;
+
+  @override
+  bool get persistentConnection => _persistentConnection;
+
+  @override
+  set persistentConnection(bool value) => _persistentConnection = value;
+
+  @override
+  void add(List<int> data) {
+    _bodyData.addAll(data);
+  }
+
+  @override
+  Future<void> addStream(Stream<List<int>> stream) async {
+    await for (final chunk in stream) {
+      _bodyData.addAll(chunk);
+    }
+  }
+
+  final List<int> _bodyData = [];
+
+  @override
+  void write(Object? obj) {
+    if (obj != null) {
+      _bodyData.addAll(obj.toString().codeUnits);
+    }
+  }
+
+  @override
+  Future<HttpClientResponse> get done => close();
+
+  @override
+  Future<HttpClientResponse> close() async {
+    if (url.path.contains('/api/v1/offers/search')) {
+      final bodyStr = String.fromCharCodes(_bodyData);
+      if (bodyStr.contains('NonExistentProduct')) {
+        return _MockHttpClientResponse.emptyJson();
+      }
+      return _MockHttpClientResponse.json();
+    }
+    if (url.path.contains('/api/v1/categories')) {
+      return _MockHttpClientResponse.categoriesJson();
+    }
+    return _MockHttpClientResponse.image();
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return null;
+  }
+}
+
+class _MockHttpHeaders extends Fake implements HttpHeaders {
+  int _contentLength = -1;
+  bool _chunkedTransferEncoding = false;
+
+  @override
+  void set(String name, Object value, {bool preserveHeaderCase = false}) {}
+
+  @override
+  void add(String name, Object value, {bool preserveHeaderCase = false}) {}
+
+  @override
+  int get contentLength => _contentLength;
+
+  @override
+  set contentLength(int value) => _contentLength = value;
+
+  @override
+  bool get chunkedTransferEncoding => _chunkedTransferEncoding;
+
+  @override
+  set chunkedTransferEncoding(bool value) => _chunkedTransferEncoding = value;
+
+  @override
+  void forEach(void Function(String name, List<String> values) action) {
+    action('content-type', ['application/json; charset=utf-8']);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return null;
+  }
 }
 
 class _MockHttpClientResponse extends Fake implements HttpClientResponse {
+  _MockHttpClientResponse(this._data);
+
+  @override
+  final HttpHeaders headers = _MockHttpHeaders();
+
+  @override
+  bool get isRedirect => false;
+
+  @override
+  List<RedirectInfo> get redirects => [];
+
+  @override
+  bool get persistentConnection => true;
+
+  @override
+  String get reasonPhrase => 'OK';
+
+  factory _MockHttpClientResponse.image() {
+    return _MockHttpClientResponse(_transparentImage);
+  }
+
+  factory _MockHttpClientResponse.json() {
+    final jsonStr = '''
+    [
+        {
+          "id": 1,
+          "title": "Apple Mac Pro",
+          "description": "Mac Pro with M2 Ultra",
+          "price": 262000.0,
+          "images": ["https://example.com/macpro.jpg"],
+          "seller": {"id": 1, "name": "Tim Cook"},
+          "category": {"id": 1, "name": "Computers", "description": ""},
+          "tags": ["apple", "mac"],
+          "properties": {},
+          "availability": 10,
+          "status": "active",
+          "createdAt": "2023-01-01T00:00:00Z",
+          "updatedAt": "2023-01-01T00:00:00Z"
+        },
+        {
+          "id": 2,
+          "title": "ThinkPad T500",
+          "description": "Classic IBM ThinkPad",
+          "price": 420.0,
+          "images": ["https://example.com/thinkpad.jpg"],
+          "seller": {"id": 2, "name": "IBM Fan"},
+          "category": {"id": 1, "name": "Computers", "description": ""},
+          "tags": ["lenovo", "thinkpad"],
+          "properties": {},
+          "availability": 1,
+          "status": "active",
+          "createdAt": "2023-01-01T00:00:00Z",
+          "updatedAt": "2023-01-01T00:00:00Z"
+        }
+    ]
+    ''';
+    return _MockHttpClientResponse(Uint8List.fromList(jsonStr.codeUnits));
+  }
+
+  factory _MockHttpClientResponse.emptyJson() {
+    return _MockHttpClientResponse(Uint8List.fromList('[]'.codeUnits));
+  }
+
+  factory _MockHttpClientResponse.categoriesJson() {
+    final jsonStr = '''
+    [
+      {"id": 1, "name": "Computers", "description": ""}
+    ]
+    ''';
+    return _MockHttpClientResponse(Uint8List.fromList(jsonStr.codeUnits));
+  }
+
+  final Uint8List _data;
+
   @override
   int get statusCode => 200;
+
   @override
-  int get contentLength => _transparentImage.length;
+  int get contentLength => _data.length;
+
   @override
   HttpClientResponseCompressionState get compressionState =>
       HttpClientResponseCompressionState.notCompressed;
@@ -115,7 +322,7 @@ class _MockHttpClientResponse extends Fake implements HttpClientResponse {
     void Function()? onDone,
     bool? cancelOnError,
   }) {
-    return Stream<List<int>>.fromIterable([_transparentImage]).listen(
+    return Stream<List<int>>.fromIterable([_data]).listen(
       onData,
       onError: onError,
       onDone: onDone,

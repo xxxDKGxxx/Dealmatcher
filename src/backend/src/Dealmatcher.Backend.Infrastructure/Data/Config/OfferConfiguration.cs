@@ -8,7 +8,7 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
 
         builder.ToTable($"{nameof(Offer)}s");
 
-        builder.HasQueryFilter(o => o.Seller.Status == UserStatus.Active.Value);
+        builder.HasQueryFilter(o => !o.IsDeleted && o.Seller.Status == UserStatus.Active.Value);
 
         builder
           .Property(o => o.Title)
@@ -58,7 +58,7 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
           .WithOne()
           .HasForeignKey("OfferId")
           .IsRequired()
-          .OnDelete(DeleteBehavior.NoAction);
+          .OnDelete(DeleteBehavior.ClientCascade);
 
         builder
           .Navigation(o => o.Properties)

@@ -3,6 +3,7 @@ import 'package:frontend/api/api_offers.dart';
 import 'package:frontend/api/api_profile.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
+import 'package:frontend/widgets/placeholder_image_widget.dart';
 import 'package:go_router/go_router.dart';
 
 class MyOffersPage extends StatefulWidget {
@@ -76,6 +77,7 @@ class _MyOffersPageState extends State<MyOffersPage> {
           itemCount: offers.length,
           itemBuilder: (context, index) {
             final offer = offers[index];
+
             return Card(
               child: SizedBox(
                 height: 120,
@@ -87,10 +89,12 @@ class _MyOffersPageState extends State<MyOffersPage> {
                         padding: const EdgeInsets.all(8),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            offer.images.first,
-                            fit: BoxFit.cover,
-                          ),
+                          child: offer.images.isNotEmpty
+                              ? Image.network(
+                                  offer.images.first,
+                                  fit: BoxFit.cover,
+                                )
+                              : placeholderImageWidget(),
                         ),
                       ),
                     ),

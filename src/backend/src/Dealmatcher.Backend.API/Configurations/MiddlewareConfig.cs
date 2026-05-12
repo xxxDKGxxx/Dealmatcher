@@ -61,9 +61,13 @@ public static class MiddlewareConfig
 
             if (app.Environment.IsDevelopment())
             {
-                await SeedData.InitializeTestAsync(context);
+                var storageService = services.GetService<IImageStorageService>();
+                await SeedData.InitializeTestAsync(context, storageService);
             }
-            await SeedData.InitializeAsync(context);
+            else
+            {
+                await SeedData.InitializeAsync(context);
+            }
         }
         catch (Exception ex)
         {

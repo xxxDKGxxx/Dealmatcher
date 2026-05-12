@@ -61,6 +61,21 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
             services.AddSingleton(substituteStorageService);
 
+            var connectionMultiplexerDescriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(StackExchange.Redis.IConnectionMultiplexer));
+            if (connectionMultiplexerDescriptor != null)
+            {
+                services.Remove(connectionMultiplexerDescriptor);
+            }
+
+            var cartRepositoryDescriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(Dealmatcher.Backend.Domain.Interfaces.CartRepository.ICartRepository));
+            if (cartRepositoryDescriptor != null)
+            {
+                services.Remove(cartRepositoryDescriptor);
+            }
+
+            services.AddSingleton<Dealmatcher.Backend.Domain.Interfaces.CartRepository.ICartRepository, InMemoryCartRepository>();
         });
     }
 

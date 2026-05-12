@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api/api_cart.dart';
+import 'package:frontend/api/api_offers.dart';
+import 'package:frontend/api/models/offer_search_request.dart';
+import 'package:frontend/widgets/placeholder_image_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/widgets/offer_filter_widget.dart';
-import 'package:frontend/models/category.dart';
 
 class OffersSwipingPage extends StatefulWidget {
   const OffersSwipingPage({super.key});
@@ -12,9 +15,13 @@ class OffersSwipingPage extends StatefulWidget {
 }
 
 class _OffersSwipingPageState extends State<OffersSwipingPage> {
+  final apiCart = ApiCart();
+  List<Offer> _offersToSwipe = [];
   List<Offer> _offers = [];
   bool _isLoading = true;
   Map<String, dynamic> _currentFilters = {};
+  static double maxPriceLimit = 9007199254740991.0;
+  static int limit = 10;
 
   @override
   void initState() {
@@ -24,10 +31,28 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
 
   Future<void> _fetchOffers() async {
     setState(() => _isLoading = true);
+
     try {
-      final results = await MockApi.searchOffers(_currentFilters);
+      final request = OfferSearchRequest(
+        categoryId: _currentFilters['categoryId'],
+        minPrice: (_currentFilters['minPrice'] as num?)?.toDouble() ?? 0.0,
+        maxPrice:
+            (_currentFilters['maxPrice'] as num?)?.toDouble() ?? maxPriceLimit,
+        tags:
+            (_currentFilters['tags'] as List<dynamic>?)?.cast<String>() ??
+            <String>[],
+        properties:
+            (_currentFilters['properties'] as Map<dynamic, dynamic>?)
+                ?.cast<String, List<String>>() ??
+            <String, List<String>>{},
+        searchPhrase: _currentFilters['searchPhrase'] ?? '',
+        limit: limit,
+      );
+
+      final results = await ApiOffers().searchOffers(request);
       setState(() {
         _offers = results;
+        _offersToSwipe = results;
         _isLoading = false;
       });
     } catch (e) {
@@ -35,21 +60,29 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
     }
   }
 
-  Future<void> _addToCart(Offer offer) async {
-    // this snackbar may be removed later while integrating with api
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Added to cart: ${offer.title}'),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+  Future<bool> _addToCart(BuildContext context, Offer offer) async {
+    try {
+      await apiCart.addToCart(offer.id);
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Error: ${e.toString().trim().replaceFirst('Exception: ', '')}',
+            ),
+            backgroundColor: Colors.red.shade700,
+          ),
+        );
+        return false;
+      }
+    }
 
-    // here will be adding to cart via api
+    return true;
   }
 
   void _openFilters() {
+    Map<String, dynamic>? pendingFilters;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -84,9 +117,9 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
                     ),
                   ),
                   OfferFilterWidget(
+                    initialFilters: _currentFilters,
                     onFilterChanged: (filters) {
-                      _currentFilters = filters;
-                      _fetchOffers();
+                      pendingFilters = filters;
                     },
                   ),
                 ],
@@ -95,7 +128,14 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
           },
         );
       },
-    );
+    ).then((_) {
+      if (pendingFilters != null) {
+        setState(() {
+          _currentFilters = pendingFilters!;
+        });
+        _fetchOffers();
+      }
+    });
   }
 
   @override
@@ -121,7 +161,7 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
               ),
             )
           : Dismissible(
-              key: ValueKey(_offers.first.id),
+              key: ValueKey(_offersToSwipe.first.id),
               direction: DismissDirection.horizontal,
 
               background: Container(
@@ -142,20 +182,30 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
                 child: const Icon(Icons.close, color: Colors.white, size: 60),
               ),
 
-              onDismissed: (direction) {
-                final swipedOffer = _offers.first;
+              confirmDismiss: (direction) async {
+                bool dismissed = true;
+
+                final swipedOffer = _offersToSwipe.first;
 
                 if (direction == DismissDirection.startToEnd) {
-                  _addToCart(swipedOffer);
+                  dismissed = await _addToCart(context, swipedOffer);
                 }
 
-                setState(() {
-                  _offers.removeAt(0);
-                });
+                if (dismissed) {
+                  setState(() {
+                    _offersToSwipe.removeAt(0);
+                  });
+
+                  if (_offersToSwipe.isEmpty) {
+                    await _fetchOffers();
+                  }
+                }
+
+                return dismissed;
               },
               child: GestureDetector(
-                onTap: () => context.push('/offer/${_offers.first.id}'),
-                child: _buildOfferPage(_offers.first),
+                onTap: () => context.push('/offer/${_offersToSwipe.first.id}'),
+                child: _buildOfferPage(_offersToSwipe.first),
               ),
             ),
     );
@@ -165,14 +215,21 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Image.network(
-          offer.images.isNotEmpty
-              ? offer.images.first
-              : 'https://media1.tenor.com/m/j4MNRU71aeUAAAAC/just-stop-stop-it.gif',
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) =>
-              Container(color: Colors.grey[800]),
-        ),
+        offer.images.isNotEmpty
+            ? Image.network(
+                offer.images.first,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  color: Colors.grey[200],
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.broken_image,
+                    color: Colors.grey,
+                    size: 40,
+                  ),
+                ),
+              )
+            : placeholderImageWidget(),
         Positioned(
           bottom: 0,
           left: 0,
@@ -246,145 +303,5 @@ class _OffersSwipingPageState extends State<OffersSwipingPage> {
         ),
       ],
     );
-  }
-}
-
-class MockApi {
-  static final List<Category> _categories = [
-    Category(
-      id: 0,
-      name: "Computers",
-      description: "PC, Laptops and Notebooks",
-    ),
-    Category(
-      id: 1,
-      name: "Apartments",
-      description: "Apartments for rent or for sale",
-    ),
-  ];
-
-  static final List<Offer> _allOffers = [
-    Offer(
-      id: 1,
-      title: "Apple Mac Pro",
-      description: "Świetna tarka do sera w przystępniej cenie, stan igła.",
-      price: 262000.0,
-      images: ["https://txesmika.com/3376-large_default/mac-pro-m2-ultra.jpg"],
-      seller: const Seller(id: 1, name: "Tadeusz Norek"),
-      category: _categories[0],
-      tags: ["apple", "mac", "pro"],
-      properties: {0: "Mac Pro", 1: "128", 2: "2048", 3: "MacOS", 4: "true"},
-      availability: 1,
-      status: OfferStatus.active,
-      createdAt: DateTime.now().subtract(const Duration(days: 2)),
-      updatedAt: DateTime.now(),
-    ),
-    Offer(
-      id: 2,
-      title: "ThinkPad T500",
-      description:
-          "Biznesowy sprzęt dla profesjonalistów nie zwracających uwagi na drobne zarysowania. Arch na spokojnie na nim pójdzie.",
-      price: 420.0,
-      images: [
-        "https://preview.redd.it/anxious-that-my-stand-will-scratch-the-thinkpad-v0-q2ne3m8ggikg1.png?width=1080&format=png&auto=webp&s=8bd6b81827d5c41f58dc77594bb8a27aa9b1374a",
-      ],
-      seller: const Seller(id: 2, name: "Karol Krawczyk"),
-      category: _categories[0],
-      tags: ["lenovo", "thinkpad", "linux"],
-      properties: {0: "T500", 1: "2", 2: "128", 3: "Linux", 4: "false"},
-      availability: 5,
-      status: OfferStatus.active,
-      createdAt: DateTime.now().subtract(const Duration(days: 5)),
-      updatedAt: DateTime.now(),
-    ),
-    Offer(
-      id: 3,
-      title: "Kawalerka na Bemowie",
-      description:
-          "Przestronna kawalerka o 9m2 na Bemowie z widokiem na świecące całą dobę logo Biedronki.",
-      price: 850000.0,
-      images: [
-        "https://wykop.pl/cdn/c3397993/5fb02469f44bec7c07524bb0f86d3da6ed87dd74e5a14bec271200a4418d0c79,w300h194.jpg",
-      ],
-      seller: const Seller(
-        id: 3,
-        name: "Agencja Nieruchomości 'Tanie Mieszkanie'",
-      ),
-      category: _categories[1],
-      tags: ["Bemowo", "używane", "kawalerka", "warszawa"],
-      properties: {5: "1", 6: "4", 7: "false", 8: "Gas"},
-      availability: 1,
-      status: OfferStatus.active,
-      createdAt: DateTime.now().subtract(const Duration(days: 10)),
-      updatedAt: DateTime.now(),
-    ),
-    Offer(
-      id: 4,
-      title: "Apartament w Suwałkach",
-      description:
-          "Drogi, luksusowy apartament o 120m2 na Północy w Suwałkach.",
-      price: 600000.0,
-      images: [
-        "https://storage.googleapis.com/bd-pl-01/buildings-v2/2560x1920/47700.jpg",
-      ],
-      seller: const Seller(id: 4, name: "Optimus Prime"),
-      category: _categories[1],
-      tags: ["drogie", "luksusowe", "apartament"],
-      properties: {5: "4", 6: "2", 7: "true", 8: "Central"},
-      availability: 1,
-      status: OfferStatus.active,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    ),
-  ];
-
-  static Future<List<Offer>> searchOffers(Map<String, dynamic> filters) async {
-    await Future.delayed(const Duration(milliseconds: 800));
-
-    final String phrase = (filters['phrase'] as String?)?.toLowerCase() ?? '';
-    final double? priceMin = filters['priceMin'] as double?;
-    final double? priceMax = filters['priceMax'] as double?;
-    final List<String> tags = (filters['tags'] as List<String>?) ?? [];
-    final int? categoryId = filters['categoryId'] as int?;
-    final Map<int, List<String>> properties =
-        (filters['properties'] as Map<int, List<String>>?) ?? {};
-
-    return _allOffers.where((offer) {
-      if (categoryId != null && offer.category.id != categoryId) return false;
-      if (priceMin != null && offer.price < priceMin) return false;
-      if (priceMax != null && offer.price > priceMax) return false;
-      if (phrase.isNotEmpty &&
-          !offer.title.toLowerCase().contains(phrase) &&
-          !offer.description.toLowerCase().contains(phrase)) {
-        return false;
-      }
-      if (tags.isNotEmpty) {
-        bool hasAnyTag = tags.any((tag) => offer.tags.contains(tag));
-        if (!hasAnyTag) return false;
-      }
-
-      for (var entry in properties.entries) {
-        final propId = entry.key;
-        final filterValues = entry.value;
-
-        if (filterValues.isEmpty) continue;
-
-        if (filterValues.length == 2 &&
-            (filterValues[0].isNotEmpty || filterValues[1].isNotEmpty)) {
-          final offerVal = double.tryParse(offer.properties[propId] ?? '');
-          final minVal = double.tryParse(filterValues[0]);
-          final maxVal = double.tryParse(filterValues[1]);
-
-          if (offerVal != null) {
-            if (minVal != null && offerVal < minVal) return false;
-            if (maxVal != null && offerVal > maxVal) return false;
-          }
-        } else if (filterValues.isNotEmpty && filterValues.first.isNotEmpty) {
-          if (!filterValues.contains(offer.properties[propId])) return false;
-        }
-      }
-
-      return true;
-    }).toList();
   }
 }

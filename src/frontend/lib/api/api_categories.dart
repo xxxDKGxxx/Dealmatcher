@@ -1,6 +1,6 @@
 import 'package:frontend/api/api_core.dart';
 import 'package:frontend/api/api_urls.dart';
-import 'package:frontend/api/models/categoreis_response.dart';
+import 'package:frontend/api/models/categories_response.dart';
 import 'package:frontend/api/models/category_property_definitions_response.dart';
 import 'package:frontend/models/category.dart';
 import 'package:frontend/models/property_definition.dart';
