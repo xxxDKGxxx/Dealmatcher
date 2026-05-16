@@ -23,6 +23,7 @@ global using Dealmatcher.Backend.Domain.Interfaces;
 global using Dealmatcher.Backend.Domain.Interfaces.Authentication;
 global using Dealmatcher.Backend.Domain.Interfaces.CartRepository;
 global using Dealmatcher.Backend.Domain.Interfaces.OfferSuggestion;
+global using Dealmatcher.Backend.Domain.Interfaces.Payment;
 global using Dealmatcher.Backend.Infrastructure.Data;
 global using Dealmatcher.Backend.Infrastructure.Data.Interceptors;
 global using Dealmatcher.Backend.Infrastructure.Services;
