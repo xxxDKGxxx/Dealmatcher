@@ -6,7 +6,7 @@ public class User(string email, string passwordHash, string name, string surname
     public string PasswordHash { get; private set; } = passwordHash;
     public string Name { get; private set; } = name;
     public string Surname { get; private set; } = surname;
-    public bool IsPrivileged { get; private set; } = false;
+    public virtual bool IsPrivileged { get; private set; } = false;
     public UserStatus Status { get; private set; } = UserStatus.Active;
 
     public void UpdateEmail(string email)

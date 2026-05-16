@@ -32,7 +32,7 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
         Price = price;
         _images = images;
         Seller = seller;
-        Status = OfferStatus.Active;
+        Status = OfferStatus.Draft;
         _tags = tags;
         Availability = availability;
         Category = category;
@@ -142,5 +142,21 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
     public void SetStatusToDraft()
     {
         Status = OfferStatus.Draft;
+    }
+
+    public void Activate()
+    {
+        if (Status.CanBeActivated)
+        {
+            Status = OfferStatus.Active;
+        }
+    }
+
+    public void Sell()
+    {
+        if (Status.CanBeSold)
+        {
+            Status = OfferStatus.Sold;
+        }
     }
 }
