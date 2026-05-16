@@ -37,3 +37,4 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.IdentityModel.Tokens;
 global using StackExchange.Redis;
+global using Dealmatcher.Backend.Domain.EntityAggregates.PaymentMethodAggregate;
