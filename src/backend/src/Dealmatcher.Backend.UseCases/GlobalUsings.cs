@@ -18,6 +18,8 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properti
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Specifications;
+global using Dealmatcher.Backend.Domain.EntityAggregates.PaymentMethodAggregate;
+global using Dealmatcher.Backend.Domain.EntityAggregates.PaymentMethodAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Specifications;
@@ -28,5 +30,3 @@ global using Dealmatcher.Backend.Domain.Interfaces.Filtering;
 global using Dealmatcher.Backend.Domain.Interfaces.OfferSuggestion;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Interfaces;
-global using Dealmatcher.Backend.Domain.EntityAggregates.PaymentMethodAggregate;
-global using Dealmatcher.Backend.Domain.EntityAggregates.PaymentMethodAggregate.Dto;

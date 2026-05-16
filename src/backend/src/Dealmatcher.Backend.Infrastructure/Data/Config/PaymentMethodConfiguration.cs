@@ -10,7 +10,7 @@ public sealed class PaymentMethodConfiguration : IEntityTypeConfiguration<Paymen
 
         builder.Property(p => p.Name)
             .IsRequired()
-            .HasMaxLength (DataSchemaConstants.PaymentMethodNameMaxLength);
+            .HasMaxLength(DataSchemaConstants.PaymentMethodNameMaxLength);
 
         builder.Property(p => p.ProviderName)
             .IsRequired()

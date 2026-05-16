@@ -1,14 +1,9 @@
 ﻿using Dealmatcher.Backend.Domain.Interfaces.Payment;
 
 namespace Dealmatcher.Backend.Infrastructure.Services.PaymentProviders;
-public sealed class PaymentProviderService : IPaymentProviderService
+public sealed class PaymentProviderService(IEnumerable<IPaymentProvider> providers) : IPaymentProviderService
 {
-    private readonly Dictionary<string, IPaymentProvider> _providers;
-
-    public PaymentProviderService(IEnumerable<IPaymentProvider> providers)
-    {
-        _providers = providers.ToDictionary(p => p.Name, p => p);
-    }
+    private readonly Dictionary<string, IPaymentProvider> _providers = providers.ToDictionary(p => p.Name, p => p);
 
     public IPaymentProvider GetPaymentProviderByName(string providerName)
     {
