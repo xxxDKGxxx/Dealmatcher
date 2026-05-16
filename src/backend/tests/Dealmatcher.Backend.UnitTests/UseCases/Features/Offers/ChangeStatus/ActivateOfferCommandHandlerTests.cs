@@ -22,7 +22,7 @@ public class ActivateOfferCommandHandlerTests
         return admin;
     }
 
-    private static User CreateRegularUser(int id = 2)
+    private static BasicUser CreateRegularUser(int id = 2)
     {
         var user = new BasicUser("user@example.com", "hash", "Regular", "User") { Id = id };
         return user;
