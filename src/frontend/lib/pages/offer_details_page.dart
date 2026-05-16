@@ -3,9 +3,11 @@ import 'package:frontend/api/api_cart.dart';
 import 'package:frontend/api/api_categories.dart';
 import 'package:frontend/api/api_conversations.dart';
 import 'package:frontend/api/api_offers.dart';
+import 'package:frontend/api/api_profile.dart';
 import 'package:frontend/models/category.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/models/property_definition.dart';
+import 'package:frontend/models/user.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/display_field.dart';
 import 'package:frontend/widgets/message_input_widget.dart';
@@ -25,12 +27,15 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
   ApiCart apiCart = ApiCart();
   ApiOffers apiOfferDetails = ApiOffers();
   ApiCategories apiProperties = ApiCategories();
+  ApiProfile apiProfile = ApiProfile();
 
   final TextEditingController _messageController = TextEditingController();
+
   bool createConversation = false;
+  bool isMyOffer = false;
 
   @override
-  void initState() {
+  Future<void> initState() async {
     super.initState();
     _dataFuture = _fetchData();
   }
@@ -38,6 +43,9 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
   Future<(Offer, List<PropertyDefinition>)> _fetchData() async {
     final offer = await _fetchOfferDetails(widget.offerId);
     final properties = await _fetchProperties(offer.category);
+
+    isMyOffer = (await _fetchCurrentUser()).id == offer.seller.id;
+
     return (offer, properties);
   }
 
@@ -54,6 +62,12 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
   Future<List<PropertyDefinition>> _fetchProperties(Category category) async {
     var properties = await apiProperties.getPropertyDefinitions(category.name);
     return properties;
+  }
+
+  Future<User> _fetchCurrentUser() async {
+    var user = await apiProfile.getProfile();
+
+    return user;
   }
 
   Future<void> _createConversation(BuildContext context) async {
@@ -274,54 +288,56 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                 const SizedBox(height: 32),
 
                 // Action Buttons
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await _addToCart(context, offer);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: const Text(
-                      "ADD TO CART",
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                if (!createConversation) ...[
+                if (!isMyOffer) ...[
                   SizedBox(
                     width: double.infinity,
-                    child: OutlinedButton(
+                    child: ElevatedButton(
                       onPressed: () async {
-                        final conversation = await ApiConversations()
-                            .getConversationByOfferId(offer.id);
-                        if (conversation != null && context.mounted) {
-                          context.push('/conversation/${conversation.id}');
-                        } else {
-                          setState(() {
-                            createConversation = true;
-                          });
-                        }
+                        await _addToCart(context, offer);
                       },
-                      style: OutlinedButton.styleFrom(
+                      style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                       child: const Text(
-                        "CONTACT SELLER",
+                        "ADD TO CART",
                         style: TextStyle(fontSize: 18),
                       ),
                     ),
                   ),
-                ] else ...[
-                  buildMessageInput(
-                    context,
-                    messageController: _messageController,
-                    onSubmit: () => _createConversation(context),
-                  ),
+                  const SizedBox(height: 12),
+                  if (!createConversation) ...[
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () async {
+                          final conversation = await ApiConversations()
+                              .getConversationByOfferId(offer.id);
+                          if (conversation != null && context.mounted) {
+                            context.push('/conversation/${conversation.id}');
+                          } else {
+                            setState(() {
+                              createConversation = true;
+                            });
+                          }
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        child: const Text(
+                          "CONTACT SELLER",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    buildMessageInput(
+                      context,
+                      messageController: _messageController,
+                      onSubmit: () => _createConversation(context),
+                    ),
+                  ],
+                  const SizedBox(height: 64),
                 ],
-                const SizedBox(height: 64),
               ],
             ),
           ),
