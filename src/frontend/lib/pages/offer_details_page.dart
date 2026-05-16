@@ -35,7 +35,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
   bool isMyOffer = false;
 
   @override
-  Future<void> initState() async {
+  void initState() {
     super.initState();
     _dataFuture = _fetchData();
   }
