@@ -5,15 +5,17 @@ public sealed class DeliveryMethod : DealmatcherEntityBase, IAggregateRoot
     public string StringId { get; init; } = null!;
     public string Name { get; init; } = null!;
     public string Description { get; private set; } = null!;
+    public string ProviderName { get; init; } = null!;
     public decimal Price { get; private set; }
     public int EstimatedDays { get; private set; }
 
     private DeliveryMethod() { }
 
-    public DeliveryMethod(string stringId, string name, string description, decimal price, int estimatedDays)
+    public DeliveryMethod(string stringId, string name, string providerName, string description, decimal price, int estimatedDays)
     {
         StringId = stringId;
         Name = name;
+        ProviderName = providerName;
         Description = description;
         Price = price;
         EstimatedDays = estimatedDays;

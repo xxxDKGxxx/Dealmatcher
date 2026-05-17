@@ -20,6 +20,10 @@ public sealed class DeliveryMethodConfiguration : DealmatcherBaseEntityConfigura
             .IsRequired()
             .HasMaxLength(DataSchemaConstants.DeliveryMethodDescriptionMaxLength);
 
+        builder.Property(d => d.ProviderName)
+            .IsRequired()
+            .HasMaxLength(DataSchemaConstants.DeliveryMethodProviderNameMaxLength);
+
         builder.Property(d => d.Price)
             .IsRequired()
             .HasColumnType("decimal(18,2)");
