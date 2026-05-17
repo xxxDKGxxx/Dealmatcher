@@ -313,7 +313,7 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PaymentMethod");
+                    b.ToTable("PaymentMethods", (string)null);
                 });
 
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", b =>

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dealmatcher.Backend.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260516155804_AddPaymentMethodModel")]
+    [Migration("20260517170423_AddPaymentMethodModel")]
     partial class AddPaymentMethodModel
     {
         /// <inheritdoc />
@@ -316,7 +316,7 @@ namespace Dealmatcher.Backend.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PaymentMethod");
+                    b.ToTable("PaymentMethods", (string)null);
                 });
 
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", b =>
