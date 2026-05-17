@@ -4,8 +4,13 @@ public sealed class ExamplePaymentProvider : IPaymentProvider
 {
     public string Name => "ExampleProviderName";
 
-    public Task<string> GetPaymentRedirectUrl(decimal amount, string currency)
+    public Task<PaymentSession> CreatePaymentSessionAsync(decimal amount, string currency)
     {
-        return Task.FromResult("exampleUrl");
+        return Task.FromResult(new PaymentSession(Name, "exampleId", "exampleUrl", amount, currency));
+    }
+
+    public Task<PaymentStatus> GetPaymentStatusAsync(PaymentSession session)
+    {
+        return Task.FromResult(PaymentStatus.Pending);
     }
 }

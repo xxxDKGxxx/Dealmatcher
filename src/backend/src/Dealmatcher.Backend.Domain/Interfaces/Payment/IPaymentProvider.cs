@@ -3,5 +3,6 @@
 public interface IPaymentProvider
 {
     public string Name { get; }
-    public Task<string> GetPaymentRedirectUrl(decimal amount, string currency);
+    public Task<PaymentSession> CreatePaymentSessionAsync(decimal amount, string currency);
+    public Task<PaymentStatus> GetPaymentStatusAsync(PaymentSession session);
 }

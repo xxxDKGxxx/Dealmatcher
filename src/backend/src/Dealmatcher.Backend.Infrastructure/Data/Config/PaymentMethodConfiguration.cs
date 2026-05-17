@@ -7,7 +7,7 @@ public sealed class PaymentMethodConfiguration : DealmatcherBaseEntityConfigurat
         base.Configure(builder);
 
         builder.ToTable($"{nameof(PaymentMethod)}s");
-        
+
         builder.Property(p => p.StringId)
             .IsRequired()
             .HasMaxLength(DataSchemaConstants.PaymentMethodIdMaxLength);
