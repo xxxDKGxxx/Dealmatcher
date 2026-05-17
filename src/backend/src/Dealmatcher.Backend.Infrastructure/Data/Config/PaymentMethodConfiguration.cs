@@ -1,9 +1,13 @@
 ﻿namespace Dealmatcher.Backend.Infrastructure.Data.Config;
 
-public sealed class PaymentMethodConfiguration : IEntityTypeConfiguration<PaymentMethod>
+public sealed class PaymentMethodConfiguration : DealmatcherBaseEntityConfiguration<PaymentMethod>
 {
-    public void Configure(EntityTypeBuilder<PaymentMethod> builder)
+    public override void Configure(EntityTypeBuilder<PaymentMethod> builder)
     {
+        base.Configure(builder);
+
+        builder.ToTable($"{nameof(PaymentMethod)}s");
+        
         builder.Property(p => p.StringId)
             .IsRequired()
             .HasMaxLength(DataSchemaConstants.PaymentMethodIdMaxLength);
