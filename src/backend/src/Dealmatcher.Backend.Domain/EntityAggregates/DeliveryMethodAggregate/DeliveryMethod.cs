@@ -9,6 +9,7 @@ public sealed class DeliveryMethod : DealmatcherEntityBase, IAggregateRoot
     public decimal Price { get; private set; }
     public int EstimatedDays { get; private set; }
 
+    /* EF Core */
     private DeliveryMethod() { }
 
     public DeliveryMethod(string stringId, string name, string providerName, string description, decimal price, int estimatedDays)
