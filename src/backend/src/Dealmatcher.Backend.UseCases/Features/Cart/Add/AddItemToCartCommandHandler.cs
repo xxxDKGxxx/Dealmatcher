@@ -19,7 +19,7 @@ public sealed class AddItemToCartCommandHandler(
             return Result.NotFound("Offer not found");
         }
 
-        if (addedOffer.Seller is null || addedOffer.Seller.Id == request.UserId)
+        if (addedOffer.Seller.Id == request.UserId)
         {
             return Result.Conflict("Cannot add own offer to cart");
         }
