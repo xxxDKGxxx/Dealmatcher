@@ -14,6 +14,7 @@ global using Bogus;
 global using Dealmatcher.Backend.Domain;
 global using Dealmatcher.Backend.Domain.Core.Cart;
 global using Dealmatcher.Backend.Domain.Core.Payment;
+global using Dealmatcher.Backend.Domain.EntityAggregates.DeliveryMethodAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
