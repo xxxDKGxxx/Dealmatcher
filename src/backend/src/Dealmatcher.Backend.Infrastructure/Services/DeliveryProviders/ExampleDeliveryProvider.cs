@@ -6,8 +6,21 @@ public sealed class ExampleDeliveryProvider : IDeliveryProvider
 {
     public string Name => "ExampleCourier";
 
-    public Task<string> RegisterParcelAsync(int orderId, string targetAddress)
+    public Task<string> RegisterParcelAsync(DeliveryContext context)
     {
-        return Task.FromResult($"MOCK-TRACKING-{orderId}");
+        return Task.FromResult($"MOCK-TRACKING-{context.OfferId}");
+    }
+
+    public Task<int> GetEstimatedDaysAsync(DeliveryContext context)
+    {
+        int estimatedDays = context.RequestTime.DayOfWeek switch
+        {
+            DayOfWeek.Friday => 3,
+            DayOfWeek.Saturday => 2,
+            DayOfWeek.Sunday => 1,
+            _ => 1
+        };
+
+        return Task.FromResult(estimatedDays);
     }
 }

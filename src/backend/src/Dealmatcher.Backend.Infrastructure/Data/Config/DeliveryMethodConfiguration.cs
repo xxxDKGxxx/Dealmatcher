@@ -27,8 +27,5 @@ public sealed class DeliveryMethodConfiguration : DealmatcherBaseEntityConfigura
         builder.Property(d => d.Price)
             .IsRequired()
             .HasColumnType("decimal(18,2)");
-
-        builder.Property(d => d.EstimatedDays)
-            .IsRequired();
     }
 }

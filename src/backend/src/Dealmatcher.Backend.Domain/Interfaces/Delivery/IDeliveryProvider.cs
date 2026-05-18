@@ -4,5 +4,7 @@ public interface IDeliveryProvider
 {
     string Name { get; }
 
-    Task<string> RegisterParcelAsync(int orderId, string targetAddress);
+    Task<string> RegisterParcelAsync(DeliveryContext context);
+
+    Task<int> GetEstimatedDaysAsync(DeliveryContext context);
 }
