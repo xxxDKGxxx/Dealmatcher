@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:frontend/api/api_core.dart';
 import 'package:frontend/pages/offer_details_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Helper mock to avoid NetworkImage exceptions during widget tests
 class _MockHttpOverrides extends HttpOverrides {
@@ -136,6 +138,8 @@ const List<int> _transparentImage = [
 void main() {
   setUpAll(() {
     HttpOverrides.global = _MockHttpOverrides();
+    SharedPreferences.setMockInitialValues({});
+    ApiCore().init('http://localhost:8080');
   });
 
   Widget createWidgetUnderTest() {
