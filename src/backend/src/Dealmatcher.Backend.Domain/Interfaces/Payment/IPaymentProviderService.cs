@@ -2,5 +2,5 @@
 
 public interface IPaymentProviderService
 {
-    IPaymentProvider GetPaymentProviderByName(string providerName);
+    IPaymentProvider GetPaymentProviderById(string providerId);
 }

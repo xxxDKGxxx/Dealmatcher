@@ -2,10 +2,10 @@
 
 public sealed class PaymentProviderService(IEnumerable<IPaymentProvider> providers) : IPaymentProviderService
 {
-    private readonly Dictionary<string, IPaymentProvider> _providers = providers.ToDictionary(p => p.Name, p => p);
+    private readonly Dictionary<string, IPaymentProvider> _providers = providers.ToDictionary(p => p.Id, p => p);
 
-    public IPaymentProvider GetPaymentProviderByName(string providerName)
+    public IPaymentProvider GetPaymentProviderById(string providerId)
     {
-        return _providers.TryGetValue(providerName, out var provider) ? provider : throw new ArgumentException($"Wrong PaymentProviderName: {providerName}");
+        return _providers.TryGetValue(providerId, out var provider) ? provider : throw new ArgumentException($"Wrong PaymentProviderId: {providerId}");
     }
 }
