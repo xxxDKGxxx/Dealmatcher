@@ -17,7 +17,6 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.M
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.Dto;
-global using Dealmatcher.Backend.Domain.EntityAggregates.PaymentMethodAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Dto;
 global using Dealmatcher.Backend.Infrastructure.Configs;
 global using Dealmatcher.Backend.Infrastructure.Data;
