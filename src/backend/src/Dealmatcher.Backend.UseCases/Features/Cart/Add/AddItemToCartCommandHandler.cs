@@ -11,11 +11,17 @@ public sealed class AddItemToCartCommandHandler(
       CancellationToken cancellationToken
     )
     {
-        var addedOffer = await offersRepository.GetByIdAsync(request.OfferId, cancellationToken);
+        var spec = new OfferByIdWithDetailsSpec(request.OfferId);
+        var addedOffer = await offersRepository.FirstOrDefaultAsync(spec, cancellationToken);
 
         if (addedOffer is null)
         {
             return Result.NotFound("Offer not found");
+        }
+
+        if (addedOffer.Seller.Id == request.UserId)
+        {
+            return Result.Conflict("Cannot add own offer to cart");
         }
 
         var cart = await cartRepository.GetCartAsync(request.UserId, cancellationToken);

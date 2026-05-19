@@ -1,14 +1,5 @@
-﻿using Ardalis.Result;
-using Dealmatcher.Backend.Domain.Core.Cart;
-using Dealmatcher.Backend.Domain.Core.Cart.Dto;
-using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
-using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Dto;
-using Dealmatcher.Backend.Domain.Interfaces;
-using Dealmatcher.Backend.UseCases.Features.Cart.Add;
-using Dealmatcher.Backend.UseCases.Mapping;
-using NSubstitute;
-using Shouldly;
-using Xunit;
+﻿using Dealmatcher.Backend.UseCases.Features.Cart.Add;
+
 using CartEntity = Dealmatcher.Backend.Domain.Core.Cart.Cart;
 
 namespace Dealmatcher.Backend.UnitTests.UseCases.Features.Cart.Add;
@@ -38,11 +29,13 @@ public class AddItemToCartCommandHandlerTests
         var command = new AddItemToCartCommand(userId, offerId, quantity);
 
         var cart = new CartEntity(userId);
-        var offer = new Offer("Test", "Desc", 100m, [], null!, [], 5, null!, []);
+        var seller = new User("seller@test.com", "hash", "Name", "Surname") { Id = 2 };
+        var category = new Category("Test", "Desc");
+        var offer = new Offer("Test", "Desc", 100m, [], seller, [], 5, category, []);
         var offerDto = new OfferDto(offerId, "Test", "Desc", 100m, [], null!, null!, [], [], 1, "Active", DateTime.UtcNow, DateTime.UtcNow);
         var expectedCartItemDto = new CartItemDto(offerId, offerDto, quantity, DateTime.UtcNow);
 
-        _offersRepository.GetByIdAsync(offerId, Arg.Any<CancellationToken>()).Returns(offer);
+        _offersRepository.FirstOrDefaultAsync(Arg.Any<OfferByIdWithDetailsSpec>(), Arg.Any<CancellationToken>()).Returns(offer);
         _cartRepository.GetCartAsync(userId, Arg.Any<CancellationToken>()).Returns(cart);
         _mapper.Map<OfferDto>(offer).Returns(offerDto);
         _mapper.Map<CartItemDto>(Arg.Any<(CartItem, OfferDto)>()).Returns(expectedCartItemDto);
@@ -64,7 +57,7 @@ public class AddItemToCartCommandHandlerTests
         var quantity = 1;
         var command = new AddItemToCartCommand(userId, offerId, quantity);
 
-        _offersRepository.GetByIdAsync(offerId, Arg.Any<CancellationToken>()).ReturnsNull();
+        _offersRepository.FirstOrDefaultAsync(Arg.Any<OfferByIdWithDetailsSpec>(), Arg.Any<CancellationToken>()).ReturnsNull();
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -90,9 +83,11 @@ public class AddItemToCartCommandHandlerTests
         var existingCart = new CartEntity(userId);
         existingCart.UpdateItemQuantity(offerId, 1); // Add item to cart to simulate conflict
 
-        var offer = new Offer("Test", "Desc", 100m, [], null!, [], 5, null!, []);
+        var seller = new User("seller@test.com", "hash", "Name", "Surname") { Id = 2 };
+        var category = new Category("Test", "Desc");
+        var offer = new Offer("Test", "Desc", 100m, [], seller, [], 5, category, []);
 
-        _offersRepository.GetByIdAsync(offerId, Arg.Any<CancellationToken>()).Returns(offer);
+        _offersRepository.FirstOrDefaultAsync(Arg.Any<OfferByIdWithDetailsSpec>(), Arg.Any<CancellationToken>()).Returns(offer);
         _cartRepository.GetCartAsync(userId, Arg.Any<CancellationToken>()).Returns(existingCart);
 
         // Act
@@ -102,6 +97,33 @@ public class AddItemToCartCommandHandlerTests
         result.IsSuccess.ShouldBeFalse();
         result.Status.ShouldBe(ResultStatus.Conflict);
         result.Errors.ShouldContain("Item already in cart");
+        await _cartRepository
+          .DidNotReceive()
+          .SaveCartAsync(Arg.Any<CartEntity>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_ShouldReturnConflict_WhenAddingOwnOffer()
+    {
+        // Arrange
+        var userId = 1;
+        var offerId = 100;
+        var quantity = 1;
+        var command = new AddItemToCartCommand(userId, offerId, quantity);
+
+        var seller = new User("email@test.com", "hash", "Name", "Surname") { Id = userId };
+        var category = new Category("Test", "Desc");
+        var offer = new Offer("Test", "Desc", 100m, [], seller, [], 5, category, []);
+
+        _offersRepository.FirstOrDefaultAsync(Arg.Any<OfferByIdWithDetailsSpec>(), Arg.Any<CancellationToken>()).Returns(offer);
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeFalse();
+        result.Status.ShouldBe(ResultStatus.Conflict);
+        result.Errors.ShouldContain("Cannot add own offer to cart");
         await _cartRepository
           .DidNotReceive()
           .SaveCartAsync(Arg.Any<CartEntity>(), Arg.Any<CancellationToken>());

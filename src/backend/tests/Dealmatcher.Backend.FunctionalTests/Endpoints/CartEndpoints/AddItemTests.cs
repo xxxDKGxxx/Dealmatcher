@@ -39,6 +39,33 @@ public class AddItemTests(CustomWebApplicationFactory factory) : EndpointTestBas
         return offer.Id;
     }
 
+    private async Task<int> SeedUser(int userId)
+    {
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var user = db.Set<User>().Find(userId)!;
+        var category = db.Set<Category>().First(c => c.Name == "Cars");
+
+        var offer = new OfferEntity(
+            "My Own Offer",
+            "Test Description",
+            100,
+            ["image1.jpg"],
+            user,
+            ["tag1"],
+            5,
+            category,
+            []
+        );
+
+        db.Set<OfferEntity>().Add(offer);
+
+        await db.SaveChangesAsync();
+
+        return offer.Id;
+    }
+
     [Fact]
     public async Task AddItem_ValidData_ReturnsCreated()
     {
@@ -124,5 +151,30 @@ public class AddItemTests(CustomWebApplicationFactory factory) : EndpointTestBas
 
         // Assert
         secondResponse.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+    }
+
+    [Fact]
+    public async Task AddItem_OwnOffer_ReturnsConflict()
+    {
+        // Arrange
+        var email = $"seller_{Guid.NewGuid()}@example.com";
+        var token = await RegisterAndLogin(email, "Password123!");
+        SetAuthHeader(token);
+
+        int userId;
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            userId = db.Set<User>().Single(u => u.Email == email).Id;
+        }
+
+        var offerId = await SeedUser(userId);
+        var request = new { OfferId = offerId, Quantity = 1 };
+
+        // Act
+        var response = await _client.PostAsJsonAsync("/api/v1/cart/items", request);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
     }
 }
