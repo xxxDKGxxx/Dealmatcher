@@ -12,7 +12,8 @@ public sealed class DeleteOfferCommandHandler(
             return Result.NotFound();
         }
 
-        if (offer.Seller.Id != request.UserId)
+        bool isOwner = offer.Seller.Id == request.UserId;
+        if (!isOwner && !request.IsAdmin)
         {
             return Result.Forbidden();
         }

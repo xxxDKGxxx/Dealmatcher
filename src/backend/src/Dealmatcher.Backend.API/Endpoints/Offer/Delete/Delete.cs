@@ -33,13 +33,16 @@ public sealed class Delete(
     public override async Task HandleAsync(DeleteRequest request, CancellationToken cancellationToken)
     {
         var userId = claimsManager.GetUserId(User);
+
         if (userId is null)
         {
             await SendUnauthorizedAsync(cancellation: cancellationToken);
             return;
         }
 
-        var command = new DeleteOfferCommand(request.OfferId, userId.Value);
+        var isAdmin = User.IsInRole("Admin");
+
+        var command = new DeleteOfferCommand(request.OfferId, userId.Value, isAdmin);
         var result = await mediator.Send(command, cancellationToken);
 
         if (result.IsSuccess)
