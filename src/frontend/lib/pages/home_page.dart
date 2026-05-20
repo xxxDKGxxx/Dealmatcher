@@ -13,6 +13,13 @@ class HomePage extends StatelessWidget {
       appBar: DealmatcherAppBar(
         actions: [
           IconButton(
+            icon: Icon(Icons.shopping_cart_rounded),
+            tooltip: 'Show cart',
+            onPressed: () {
+              context.go('/cart');
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.add_circle_outline),
             tooltip: 'Add offer',
             onPressed: () {
