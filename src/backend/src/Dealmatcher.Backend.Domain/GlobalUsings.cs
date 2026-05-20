@@ -14,4 +14,3 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properti
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Dealmatcher.Backend.Domain.Interfaces.Filtering;
-global using Microsoft.Extensions.Logging;

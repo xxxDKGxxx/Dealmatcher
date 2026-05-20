@@ -2,5 +2,6 @@
 
 public interface IDeliveryProviderService
 {
-    IDeliveryProvider GetDeliveryProviderByName(string providerName);
+    IReadOnlyCollection<IDeliveryProvider> GetAllDeliveryProviders();
+    IDeliveryProvider GetDeliveryProviderById(string id);
 }

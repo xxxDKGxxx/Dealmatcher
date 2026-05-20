@@ -1,4 +1,4 @@
-﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.DeliveryMethodAggregate.Dto;
+﻿namespace Dealmatcher.Backend.Domain.Core.Delivery;
 
 public sealed record DeliveryMethodDto(
     string Id,
