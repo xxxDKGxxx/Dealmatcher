@@ -235,133 +235,149 @@ class _CheckoutFormWidgetState extends State<CheckoutFormWidget> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Contact and Shipping Details",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 32),
-          const Text(
-            "Delivery Method",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          FormField<DeliveryMethod>(
-            validator: (value) {
-              if (_selectedDelivery == null) {
-                return 'Please select a delivery method';
-              }
-              return null;
-            },
-            builder: (FormFieldState<DeliveryMethod> state) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FutureBuilder<List<DeliveryMethod>>(
-                    future: _deliveryMethodsFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Text(
-                          'Error loading delivery methods: ${snapshot.error}',
-                        );
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Text('No delivery methods available');
-                      }
-
-                      final methods = snapshot.data!;
-                      if (_selectedDelivery != null &&
-                          !methods.any((m) => m.id == _selectedDelivery!.id)) {
-                        _selectedDelivery = null;
-                      }
-
-                      return _buildDeliveryList(methods, state);
-                    },
-                  ),
-                  if (state.hasError)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8, left: 12),
-                      child: Text(
-                        state.errorText!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 32),
-          const Text(
-            "Payment Method",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          FormField<PaymentMethod>(
-            validator: (value) {
-              if (_selectedPayment == null) {
-                return 'Please select a payment method';
-              }
-              return null;
-            },
-            builder: (FormFieldState<PaymentMethod> state) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FutureBuilder<List<PaymentMethod>>(
-                    future: _paymentMethodsFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Text(
-                          'Error loading payment methods: ${snapshot.error}',
-                        );
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Text('No payment methods available');
-                      }
-
-                      final methods = snapshot.data!;
-                      if (_selectedPayment != null &&
-                          !methods.any((m) => m.id == _selectedPayment!.id)) {
-                        _selectedPayment = null;
-                      }
-
-                      return _buildPaymentList(methods, state);
-                    },
-                  ),
-                  if (state.hasError)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8, left: 12),
-                      child: Text(
-                        state.errorText!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 48),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _submit,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: const Text("Place Order", style: TextStyle(fontSize: 18)),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Contact and Shipping Details",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-          ),
-        ],
+            const SizedBox(height: 32),
+            const Text(
+              "Delivery Method",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            FormField<DeliveryMethod>(
+              validator: (value) {
+                if (_selectedDelivery == null) {
+                  return 'Please select a delivery method';
+                }
+                return null;
+              },
+              builder: (FormFieldState<DeliveryMethod> state) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FutureBuilder<List<DeliveryMethod>>(
+                      future: _deliveryMethodsFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text(
+                            'Error loading delivery methods: ${snapshot.error}',
+                          );
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return const Text('No delivery methods available');
+                        }
+
+                        final methods = snapshot.data!;
+                        if (_selectedDelivery != null &&
+                            !methods.any(
+                              (m) => m.id == _selectedDelivery!.id,
+                            )) {
+                          _selectedDelivery = null;
+                        }
+
+                        return _buildDeliveryList(methods, state);
+                      },
+                    ),
+                    if (state.hasError)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8, left: 12),
+                        child: Text(
+                          state.errorText!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 32),
+            const Text(
+              "Payment Method",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            FormField<PaymentMethod>(
+              validator: (value) {
+                if (_selectedPayment == null) {
+                  return 'Please select a payment method';
+                }
+                return null;
+              },
+              builder: (FormFieldState<PaymentMethod> state) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FutureBuilder<List<PaymentMethod>>(
+                      future: _paymentMethodsFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text(
+                            'Error loading payment methods: ${snapshot.error}',
+                          );
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return const Text('No payment methods available');
+                        }
+
+                        final methods = snapshot.data!;
+                        if (_selectedPayment != null &&
+                            !methods.any((m) => m.id == _selectedPayment!.id)) {
+                          _selectedPayment = null;
+                        }
+
+                        return _buildPaymentList(methods, state);
+                      },
+                    ),
+                    if (state.hasError)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8, left: 12),
+                        child: Text(
+                          state.errorText!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 48),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _submit,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: const Text(
+                  "Review Order",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

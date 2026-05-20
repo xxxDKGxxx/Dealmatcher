@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:frontend/api/api_cart.dart';
 import 'package:frontend/models/cart_item.dart';
 import 'package:frontend/models/price.dart';
+import 'package:frontend/widgets/checkout_form_widget.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/placeholder_image_widget.dart';
+import 'package:go_router/go_router.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key, this.apiCart});
@@ -237,14 +239,36 @@ class _CartPageState extends State<CartPage> {
                   ],
                 ),
                 ElevatedButton(
-                  onPressed: totalSnapshot.hasData ? () {} : null,
+                  onPressed: !totalSnapshot.hasData
+                      ? null
+                      : () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: CheckoutFormWidget(
+                                  onSubmit: (delivery, payment) {
+                                    context.pop();
+                                    context.push(
+                                      '/order-summary',
+                                      extra: {
+                                        'deliveryMethod': delivery,
+                                        'paymentMethod': payment,
+                                      },
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 32,
                       vertical: 16,
                     ),
                   ),
-                  child: const Text('Payment'),
+                  child: const Text('Payment and Delivery'),
                 ),
               ],
             ),
