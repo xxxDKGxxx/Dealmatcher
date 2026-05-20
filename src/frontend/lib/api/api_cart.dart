@@ -123,17 +123,12 @@ class ApiCart {
     }
   }
 
-  Future<CartItem> removeItem(int itemId) async {
+  Future<void> removeItem(int itemId) async {
     try {
       final response = await _apiCore.delete(ApiUrls().cartItemById(itemId));
 
       switch (response.statusCode) {
-        case 204:
-          {
-            final responseModel = CartItemResponse(response: response);
-            responseModel.fromJson();
-            return responseModel.cartItem;
-          }
+        case 204: { }
         case 401:
           throw Exception('Unauthorized');
         case 403:
