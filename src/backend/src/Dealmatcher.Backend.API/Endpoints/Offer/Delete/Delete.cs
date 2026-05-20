@@ -40,8 +40,6 @@ public sealed class Delete(
             return;
         }
 
-        var isAdmin = User.IsInRole("Admin");
-
         var command = new DeleteOfferCommand(request.OfferId, userId.Value);
         var result = await mediator.Send(command, cancellationToken);
 
