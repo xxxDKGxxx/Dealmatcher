@@ -1,6 +1,4 @@
-﻿using Dealmatcher.Backend.UseCases.Features.Cart.Delete;
-
-namespace Dealmatcher.Backend.API.Endpoints.Cart.Delete;
+﻿namespace Dealmatcher.Backend.API.Endpoints.Cart.Delete;
 
 public sealed class DeleteItem(IMediator mediator, IClaimsPrincipalManager claimsPrincipalManager)
   : Endpoint<DeleteItemRequest>
@@ -11,14 +9,14 @@ public sealed class DeleteItem(IMediator mediator, IClaimsPrincipalManager claim
         Delete("/cart/items/{CartItemId}");
 
         Description(d =>
-          d.Produces<CartItemDto>(204).Produces(401).Produces(403).Produces(404).Produces(500)
+          d.Produces(204).Produces(401).Produces(403).Produces(404).Produces(500)
         );
 
         Summary(s =>
         {
             s.Summary = "Remove item from cart";
             s.Description = "Removes a specific item from the user's cart";
-            s.Response<CategoryDto>(204, "Item removed successfully");
+            s.Response(204, "Item removed successfully");
             s.Response(401, "Unauthorized");
             s.Response(403, "Forbidden - not your cart item");
             s.Response(404, "Cart item not found");

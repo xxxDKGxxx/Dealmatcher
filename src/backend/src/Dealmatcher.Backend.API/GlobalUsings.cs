@@ -23,6 +23,7 @@ global using Dealmatcher.Backend.Infrastructure.Data;
 global using Dealmatcher.Backend.Infrastructure.Data.Config;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Add;
+global using Dealmatcher.Backend.UseCases.Features.Cart.Delete;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Get;
 global using Dealmatcher.Backend.UseCases.Features.Cart.GetTotal;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Update;
