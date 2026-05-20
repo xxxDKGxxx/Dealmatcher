@@ -1,4 +1,4 @@
-﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.PaymentMethodAggregate.Dto;
+﻿namespace Dealmatcher.Backend.Domain.Core.Payment;
 
 public sealed record PaymentMethodDto(
     string Id,

@@ -6,6 +6,7 @@ global using Ardalis.Specification;
 global using AutoMapper;
 global using Dealmatcher.Backend.Domain.Core.Cart;
 global using Dealmatcher.Backend.Domain.Core.Cart.Dto;
+global using Dealmatcher.Backend.Domain.Core.Payment;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages;
@@ -26,6 +27,7 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Specifica
 global using Dealmatcher.Backend.Domain.Interfaces;
 global using Dealmatcher.Backend.Domain.Interfaces.Authentication;
 global using Dealmatcher.Backend.Domain.Interfaces.CartRepository;
+global using Dealmatcher.Backend.Domain.Interfaces.Payment;
 global using Dealmatcher.Backend.Infrastructure.Services;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Get;
