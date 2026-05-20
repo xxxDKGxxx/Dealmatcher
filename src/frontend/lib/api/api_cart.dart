@@ -128,7 +128,8 @@ class ApiCart {
       final response = await _apiCore.delete(ApiUrls().cartItemById(itemId));
 
       switch (response.statusCode) {
-        case 204: { }
+        case 204:
+          {}
         case 401:
           throw Exception('Unauthorized');
         case 403:

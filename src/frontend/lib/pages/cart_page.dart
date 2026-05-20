@@ -6,14 +6,16 @@ import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/placeholder_image_widget.dart';
 
 class CartPage extends StatefulWidget {
-  const CartPage({super.key});
+  const CartPage({super.key, this.apiCart});
+
+  final ApiCart? apiCart;
 
   @override
   State<CartPage> createState() => _CartPageState();
 }
 
 class _CartPageState extends State<CartPage> {
-  final ApiCart _apiCart = ApiCart();
+  late final ApiCart _apiCart = widget.apiCart ?? ApiCart();
 
   late Future<List<CartItem>> _cartItemsFuture;
   late Future<Price> _cartTotalFuture;
@@ -43,7 +45,9 @@ class _CartPageState extends State<CartPage> {
       await _apiCart.updateItemQuantity(itemId, newQuantity);
       _loadCartData();
     } catch (e) {
-      _showErrorSnackBar('Could not update quantity: ${e.toString().trim().replaceFirst('Exception: ', '')}');
+      _showErrorSnackBar(
+        'Could not update quantity: ${e.toString().trim().replaceFirst('Exception: ', '')}',
+      );
     }
   }
 
@@ -52,7 +56,9 @@ class _CartPageState extends State<CartPage> {
       await _apiCart.removeItem(itemId);
       _loadCartData();
     } catch (e) {
-      _showErrorSnackBar('Could not remove item from cart: ${e.toString().trim().replaceFirst('Exception: ', '')}');
+      _showErrorSnackBar(
+        'Could not remove item from cart: ${e.toString().trim().replaceFirst('Exception: ', '')}',
+      );
     }
   }
 
@@ -129,9 +135,9 @@ class _CartPageState extends State<CartPage> {
                               borderRadius: BorderRadius.circular(8),
                               child: offer.images.isNotEmpty
                                   ? Image.network(
-                                offer.images.first,
-                                fit: BoxFit.cover,
-                              )
+                                      offer.images.first,
+                                      fit: BoxFit.cover,
+                                    )
                                   : placeholderImageWidget(),
                             ),
                           ),
@@ -142,10 +148,10 @@ class _CartPageState extends State<CartPage> {
                             IconButton(
                               icon: const Icon(Icons.remove_circle_outline),
                               onPressed: () {
-                                if (item.quantity > 0){
+                                if (item.quantity > 0) {
                                   _updateQuantity(item.id, item.quantity - 1);
                                 }
-                              }
+                              },
                             ),
                             Text(
                               '${item.quantity}',
@@ -157,8 +163,8 @@ class _CartPageState extends State<CartPage> {
                             IconButton(
                               icon: const Icon(Icons.add_circle_outline),
                               onPressed: () {
-                                  _updateQuantity(item.id, item.quantity + 1);
-                              }
+                                _updateQuantity(item.id, item.quantity + 1);
+                              },
                             ),
                           ],
                         ),
