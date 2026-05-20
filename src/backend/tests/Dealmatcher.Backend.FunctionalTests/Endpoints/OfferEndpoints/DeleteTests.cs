@@ -75,4 +75,42 @@ public class DeleteOfferTests(CustomWebApplicationFactory factory) : EndpointTes
 
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
+    [Fact]
+    public async Task DeleteOffer_AdminDeletesOtherUserOffer_ReturnsNoContent()
+    {
+        // Arrange
+        var ownerEmail = "common_user_delete@example.com";
+        await RegisterAndLogin(ownerEmail, "Password123!");
+        var offerId = await SeedOffer(ownerEmail);
+
+        var adminEmail = "admin_deleter@example.com";
+        var adminPassword = "AdminPassword123!";
+        await RegisterAndLogin(adminEmail, adminPassword);
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var adminUser = await db.Set<User>().FirstAsync(u => u.Email == adminEmail);
+
+            db.Entry(adminUser).Property("IsPrivileged").CurrentValue = true;
+            await db.SaveChangesAsync();
+        }
+
+        var loginResponse = await _client.PostAsJsonAsync("/api/v1/users/login", new
+        {
+            Email = adminEmail,
+            Password = adminPassword
+        });
+
+        var json = await loginResponse.Content.ReadFromJsonAsync<JsonDocument>();
+        var adminToken = json!.RootElement.GetProperty("accessToken").GetString()!;
+
+        SetAuthHeader(adminToken);
+
+        // Act
+        var response = await _client.DeleteAsync($"/api/v1/offers/{offerId}");
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+    }
 }

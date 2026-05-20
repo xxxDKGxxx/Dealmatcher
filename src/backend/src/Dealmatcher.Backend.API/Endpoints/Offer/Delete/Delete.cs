@@ -33,6 +33,7 @@ public sealed class Delete(
     public override async Task HandleAsync(DeleteRequest request, CancellationToken cancellationToken)
     {
         var userId = claimsManager.GetUserId(User);
+
         if (userId is null)
         {
             await SendUnauthorizedAsync(cancellation: cancellationToken);

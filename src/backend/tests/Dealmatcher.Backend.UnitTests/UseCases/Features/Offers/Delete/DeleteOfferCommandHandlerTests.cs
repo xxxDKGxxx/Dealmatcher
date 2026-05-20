@@ -3,6 +3,7 @@
 public class DeleteOfferCommandHandlerTests
 {
     private readonly IRepository<Offer> _offerRepository;
+    private readonly IRepository<User> _userRepository;
     private readonly DeleteOfferCommandHandler _handler;
 
     private readonly User _seller;
@@ -11,7 +12,8 @@ public class DeleteOfferCommandHandlerTests
     public DeleteOfferCommandHandlerTests()
     {
         _offerRepository = Substitute.For<IRepository<Offer>>();
-        _handler = new DeleteOfferCommandHandler(_offerRepository);
+        _userRepository = Substitute.For<IRepository<User>>();
+        _handler = new DeleteOfferCommandHandler(_offerRepository, _userRepository);
 
         _seller = new User("seller@example.com", "hash", "Jan", "Kowalski");
         var category = new Category("Samochody", "Opis");
@@ -48,6 +50,29 @@ public class DeleteOfferCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_AdminDeletesOtherUserOffer_ReturnsSuccess()
+    {
+        // Arrange
+        _offerRepository.GetByIdAsync(1, Arg.Any<CancellationToken>()).Returns(_offer);
+        var adminUser = new User("admin@example.com", "hash", "Jan", "Kowalski");
+
+        typeof(User).GetProperty("Id")?.SetValue(adminUser, 999);
+
+        typeof(User).GetField("<IsPrivileged>k__BackingField", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+            ?.SetValue(adminUser, true);
+
+        _userRepository.GetByIdAsync(999, Arg.Any<CancellationToken>()).Returns(adminUser);
+
+        var command = new DeleteOfferCommand(OfferId: 1, UserId: 999);
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        await _offerRepository.Received(1).DeleteAsync(_offer, Arg.Any<CancellationToken>());
+    }
+    [Fact]
     public async Task Handle_OfferNotFound_ReturnsNotFound()
     {
         // Arrange
@@ -63,11 +88,12 @@ public class DeleteOfferCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_UserIsNotSeller_ReturnsForbidden()
+    public async Task Handle_UserIsNotSellerAndNotAdmin_ReturnsForbidden()
     {
         // Arrange
         _offerRepository.GetByIdAsync(1, Arg.Any<CancellationToken>()).Returns(_offer);
-        var command = new DeleteOfferCommand(OfferId: 1, UserId: 999); // Inny user (ID 999)
+
+        var command = new DeleteOfferCommand(OfferId: 1, UserId: 999);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
