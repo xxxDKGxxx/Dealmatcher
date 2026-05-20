@@ -11,6 +11,7 @@ global using Azure.Storage.Blobs.Models;
 global using Bogus;
 global using Dealmatcher.Backend.Domain;
 global using Dealmatcher.Backend.Domain.Core.Cart;
+global using Dealmatcher.Backend.Domain.Core.Delivery;
 global using Dealmatcher.Backend.Domain.Core.Payment;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Categories;

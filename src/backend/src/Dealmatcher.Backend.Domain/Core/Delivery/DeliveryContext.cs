@@ -1,4 +1,4 @@
-﻿namespace Dealmatcher.Backend.Domain.Interfaces.Delivery;
+﻿namespace Dealmatcher.Backend.Domain.Core.Delivery;
 
 public sealed record DeliveryContext(
     User Buyer,

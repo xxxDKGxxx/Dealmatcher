@@ -2,6 +2,7 @@
 global using Ardalis.SmartEnum;
 global using Ardalis.Specification;
 global using Dealmatcher.Backend.Domain.Core.Cart;
+global using Dealmatcher.Backend.Domain.Core.Delivery;
 global using Dealmatcher.Backend.Domain.Core.Filtering;
 global using Dealmatcher.Backend.Domain.Core.Payment;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages;
