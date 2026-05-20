@@ -16,6 +16,12 @@ class CartGetTotalResponse extends ResponseModel {
       return;
     }
 
-    price = Price(value: data['totalPrice'], currency: data['currency']);
+    final value = data['totalPrice'].toDouble();
+
+    if (value == null){
+      return;
+    }
+
+    price = Price(value: value, currency: data['currency']);
   }
 }

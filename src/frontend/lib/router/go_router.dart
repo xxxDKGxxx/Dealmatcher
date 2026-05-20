@@ -1,4 +1,5 @@
 import 'package:frontend/api/api_core.dart';
+import 'package:frontend/pages/cart_page.dart';
 import 'package:frontend/pages/conversation_page.dart';
 import 'package:frontend/pages/conversations_list_page.dart';
 import 'package:frontend/pages/create_update_offer_page.dart';
@@ -31,6 +32,7 @@ final GoRouter globalRouter = GoRouter(
     GoRoute(path: '/register', builder: (context, state) => RegisterPage()),
     GoRoute(path: '/login', builder: (context, state) => LoginPage()),
     GoRoute(path: '/profile', builder: (context, state) => ProfilePage()),
+    GoRoute(path: '/cart', builder: (context, state) => CartPage()),
     GoRoute(
       path: '/profile-edit',
       builder: (context, state) => ProfileEditPage(),
