@@ -27,8 +27,8 @@ public class UserConfiguration : DealmatcherBaseEntityConfiguration<User>
             .IsRequired()
             .HasMaxLength(DataSchemaConstants.SurnameMaxLength);
 
-        builder.Property(u => u.IsPrivileged)
-            .IsRequired();
+        //builder.Property(u => u.IsPrivileged)
+        //    .IsRequired();
 
         builder.Property(u => u.Status)
             .HasConversion(

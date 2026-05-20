@@ -5,6 +5,7 @@ public abstract class UserStatus(string name, int value) : SmartEnum<UserStatus>
     public static readonly UserStatus Active = new ActiveStatus();
     public static readonly UserStatus Inactive = new InactiveStatus();
     public static readonly UserStatus Banned = new BannedStatus();
+    public static readonly UserStatus Admin = new AdminStatus();
 
     public abstract bool CanLogin { get; }
 
@@ -21,5 +22,10 @@ public abstract class UserStatus(string name, int value) : SmartEnum<UserStatus>
     private sealed class BannedStatus() : UserStatus("BANNED", 3)
     {
         public override bool CanLogin => false;
+    }
+
+    private sealed class AdminStatus() : UserStatus("ADMIN", 4)
+    {
+        public override bool CanLogin => true;
     }
 }
