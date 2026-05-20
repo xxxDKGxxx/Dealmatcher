@@ -18,7 +18,7 @@ class CartGetTotalResponse extends ResponseModel {
 
     final value = data['totalPrice'].toDouble();
 
-    if (value == null){
+    if (value == null) {
       return;
     }
 

@@ -3,6 +3,7 @@ import 'package:frontend/api/api_cart.dart';
 import 'package:frontend/models/cart_item.dart';
 import 'package:frontend/models/price.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
+import 'package:frontend/widgets/placeholder_image_widget.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -32,10 +33,7 @@ class _CartPageState extends State<CartPage> {
 
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
@@ -45,7 +43,7 @@ class _CartPageState extends State<CartPage> {
       await _apiCart.updateItemQuantity(itemId, newQuantity);
       _loadCartData();
     } catch (e) {
-      _showErrorSnackBar('Could not update quantity: ${e.toString()}');
+      _showErrorSnackBar('Could not update quantity: ${e.toString().trim().replaceFirst('Exception: ', '')}');
     }
   }
 
@@ -53,11 +51,8 @@ class _CartPageState extends State<CartPage> {
     try {
       await _apiCart.removeItem(itemId);
       _loadCartData();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Removed item from cart.')),
-      );
     } catch (e) {
-      _showErrorSnackBar('Could not remove item from cart: ${e.toString()}');
+      _showErrorSnackBar('Could not remove item from cart: ${e.toString().trim().replaceFirst('Exception: ', '')}');
     }
   }
 
@@ -100,38 +95,78 @@ class _CartPageState extends State<CartPage> {
             );
           }
 
+          final theme = Theme.of(context);
+
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 16, top: 16, bottom: 32),
+                child: Text(
+                  'Cart',
+                  style: theme.textTheme.displaySmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     final item = items[index];
+                    final offer = item.offer;
                     return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: ListTile(
-                        leading: const CircleAvatar(
-                          child: Icon(Icons.shopping_bag),
+                        leading: AspectRatio(
+                          aspectRatio: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.all(0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: offer.images.isNotEmpty
+                                  ? Image.network(
+                                offer.images.first,
+                                fit: BoxFit.cover,
+                              )
+                                  : placeholderImageWidget(),
+                            ),
+                          ),
                         ),
-                        title: Text('Item #${item.id}'),
+                        title: Text(offer.title),
                         subtitle: Row(
                           children: [
                             IconButton(
                               icon: const Icon(Icons.remove_circle_outline),
-                              onPressed: () => _updateQuantity(item.id, item.quantity - 1),
+                              onPressed: () {
+                                if (item.quantity > 0){
+                                  _updateQuantity(item.id, item.quantity - 1);
+                                }
+                              }
                             ),
                             Text(
                               '${item.quantity}',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             IconButton(
                               icon: const Icon(Icons.add_circle_outline),
-                              onPressed: () => _updateQuantity(item.id, item.quantity + 1),
+                              onPressed: () {
+                                  _updateQuantity(item.id, item.quantity + 1);
+                              }
                             ),
                           ],
                         ),
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete_outline, color: Colors.red),
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                          ),
                           onPressed: () => _removeItem(item.id),
                         ),
                       ),
@@ -154,7 +189,8 @@ class _CartPageState extends State<CartPage> {
       builder: (context, totalSnapshot) {
         String totalText = 'Loading...';
 
-        if (totalSnapshot.hasData && totalSnapshot.connectionState != ConnectionState.waiting) {
+        if (totalSnapshot.hasData &&
+            totalSnapshot.connectionState != ConnectionState.waiting) {
           final price = totalSnapshot.data!;
           totalText = '${price.value} ${price.currency}';
         } else if (totalSnapshot.hasError) {
@@ -187,15 +223,20 @@ class _CartPageState extends State<CartPage> {
                     ),
                     Text(
                       totalText,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
                 ElevatedButton(
-                  onPressed: totalSnapshot.hasData ? () {
-                  } : null,
+                  onPressed: totalSnapshot.hasData ? () {} : null,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 16,
+                    ),
                   ),
                   child: const Text('Payment'),
                 ),

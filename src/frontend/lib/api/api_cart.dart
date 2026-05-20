@@ -93,7 +93,10 @@ class ApiCart {
   Future<CartItem> updateItemQuantity(int itemId, int quantity) async {
     try {
       final request = CartUpdateQuantityRequest(quantity: quantity);
-      final response = await _apiCore.patch(ApiUrls().cartItemById(itemId), request);
+      final response = await _apiCore.patch(
+        ApiUrls().cartItemById(itemId),
+        request,
+      );
 
       switch (response.statusCode) {
         case 200:
