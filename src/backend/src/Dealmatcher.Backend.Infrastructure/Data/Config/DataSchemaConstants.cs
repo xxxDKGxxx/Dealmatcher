@@ -17,8 +17,4 @@ public static class DataSchemaConstants
     public const int PropertyRelatedEnumValueNameMaxLength = 50;
     public const int TextValueMaxLength = 50;
     public const int MessageMaxLength = 4000;
-    public const int PaymentMethodIdMaxLength = 255;
-    public const int PaymentMethodNameMaxLength = 255;
-    public const int PaymentMethodProviderNameMaxLength = 255;
-    public const int PaymentMethodIconMaxLength = 255;
 }
