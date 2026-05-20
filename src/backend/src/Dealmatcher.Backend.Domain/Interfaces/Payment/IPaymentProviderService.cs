@@ -3,4 +3,5 @@
 public interface IPaymentProviderService
 {
     IPaymentProvider GetPaymentProviderById(string providerId);
+    IReadOnlyCollection<IPaymentProvider> GetAllPaymentProviders();
 }

@@ -8,4 +8,9 @@ public sealed class PaymentProviderService(IEnumerable<IPaymentProvider> provide
     {
         return _providers.TryGetValue(providerId, out var provider) ? provider : throw new ArgumentException($"Wrong PaymentProviderId: {providerId}");
     }
+
+    public IReadOnlyCollection<IPaymentProvider> GetAllPaymentProviders()
+    {
+        return _providers.Values.ToList().AsReadOnly();
+    }
 }
