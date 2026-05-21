@@ -8,7 +8,7 @@ public sealed class LoginCommandHandler(
 {
     public async Task<Result<LoginDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var spec = new ActiveOrBannedUserByEmailSpec(request.Email);
+        var spec = new ActiveOrBannedOrAdminUserByEmailSpec(request.Email);
         var user = await userRepository.SingleOrDefaultAsync(spec, cancellationToken);
 
         if (user is null)
