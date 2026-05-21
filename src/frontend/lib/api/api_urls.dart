@@ -10,6 +10,7 @@ class ApiUrls {
   String get conversations => '/conversations';
   String get cartItems => '/cart/items';
   String get cartTotal => '/cart/total';
+  String get adminGetOffers => '/admin/offers';
 
   String offerDetailsById(int id) => '/offers/$id';
   String conversationById(int id) => '/conversations/$id';
