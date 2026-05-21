@@ -58,8 +58,7 @@ public class DeleteOfferCommandHandlerTests
 
         typeof(User).GetProperty("Id")?.SetValue(adminUser, 999);
 
-        typeof(User).GetField("<IsPrivileged>k__BackingField", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-            ?.SetValue(adminUser, true);
+        adminUser.GrantAdminPrivileges();
 
         _userRepository.GetByIdAsync(999, Arg.Any<CancellationToken>()).Returns(adminUser);
 

@@ -92,7 +92,8 @@ public class DeleteOfferTests(CustomWebApplicationFactory factory) : EndpointTes
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var adminUser = await db.Set<User>().FirstAsync(u => u.Email == adminEmail);
 
-            db.Entry(adminUser).Property("IsPrivileged").CurrentValue = true;
+            adminUser.GrantAdminPrivileges();
+
             await db.SaveChangesAsync();
         }
 

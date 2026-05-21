@@ -4,7 +4,7 @@ public sealed class ActiveOrBannedUserByEmailSpec : SingleResultSpecification<Us
 {
     public ActiveOrBannedUserByEmailSpec(string email)
     {
-        var blockingStatuses = new[] { UserStatus.Active, UserStatus.Banned };
+        var blockingStatuses = new[] { UserStatus.Active, UserStatus.Banned, UserStatus.Admin };
 
         Query.Where(u => u.Email == email)
              .Where(u => blockingStatuses.Contains(u.Status));
