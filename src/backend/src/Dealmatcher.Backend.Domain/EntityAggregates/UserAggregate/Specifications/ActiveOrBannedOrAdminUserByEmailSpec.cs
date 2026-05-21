@@ -1,4 +1,5 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Specifications;
+
 public sealed class ActiveOrBannedOrAdminUserByEmailSpec : SingleResultSpecification<User>
 {
     public ActiveOrBannedOrAdminUserByEmailSpec(string email)
