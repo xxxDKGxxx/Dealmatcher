@@ -22,6 +22,7 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Dto;
 global using Dealmatcher.Backend.Infrastructure.Configs;
 global using Dealmatcher.Backend.Infrastructure.Data;
 global using Dealmatcher.Backend.Infrastructure.Data.Config;
+global using Dealmatcher.Backend.UseCases.Features.Admin.ListOffers;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Add;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Delete;

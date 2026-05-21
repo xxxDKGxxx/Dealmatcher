@@ -31,6 +31,7 @@ global using Dealmatcher.Backend.Domain.Interfaces.CartRepository;
 global using Dealmatcher.Backend.Domain.Interfaces.Delivery;
 global using Dealmatcher.Backend.Domain.Interfaces.Payment;
 global using Dealmatcher.Backend.Infrastructure.Services;
+global using Dealmatcher.Backend.UseCases.Features.Admin.ListOffers;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Get;
 global using Dealmatcher.Backend.UseCases.Features.Cart.GetTotal;
