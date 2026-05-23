@@ -78,7 +78,6 @@ public class DeleteOfferTests(CustomWebApplicationFactory factory) : EndpointTes
     [Fact]
     public async Task DeleteOffer_AdminDeletesOtherUserOffer_ReturnsNoContent()
     {
-        // Arrange
         var ownerEmail = "common_user_delete@example.com";
         await RegisterAndLogin(ownerEmail, "Password123!");
         var offerId = await SeedOffer(ownerEmail);
@@ -91,9 +90,7 @@ public class DeleteOfferTests(CustomWebApplicationFactory factory) : EndpointTes
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var adminUser = await db.Set<User>().FirstAsync(u => u.Email == adminEmail);
-
             adminUser.GrantAdminPrivileges();
-
             await db.SaveChangesAsync();
         }
 
@@ -102,16 +99,12 @@ public class DeleteOfferTests(CustomWebApplicationFactory factory) : EndpointTes
             Email = adminEmail,
             Password = adminPassword
         });
-
         var json = await loginResponse.Content.ReadFromJsonAsync<JsonDocument>();
         var adminToken = json!.RootElement.GetProperty("accessToken").GetString()!;
-
         SetAuthHeader(adminToken);
 
-        // Act
         var response = await _client.DeleteAsync($"/api/v1/offers/{offerId}");
 
-        // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     }
 }
