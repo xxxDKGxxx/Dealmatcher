@@ -15,7 +15,7 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
     public Category Category { get; private set; } = null!;
     private readonly List<Property> _properties = [];
     public IReadOnlyCollection<Property> Properties => _properties.AsReadOnly();
-    public byte[] RowVersion { get; private set; } = null!;
+    public byte[] RowVersion { get; private set; } = new byte[8];
     public Offer(
         string title,
         string description,
