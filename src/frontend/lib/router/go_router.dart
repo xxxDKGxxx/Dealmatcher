@@ -1,6 +1,7 @@
 import 'package:frontend/api/api_core.dart';
 import 'package:frontend/models/delivery_method.dart';
 import 'package:frontend/models/payment_method.dart';
+import 'package:frontend/pages/admin_offers_view_page.dart';
 import 'package:frontend/pages/cart_page.dart';
 import 'package:frontend/pages/conversation_page.dart';
 import 'package:frontend/pages/conversations_list_page.dart';
@@ -36,6 +37,10 @@ final GoRouter globalRouter = GoRouter(
     GoRoute(path: '/login', builder: (context, state) => LoginPage()),
     GoRoute(path: '/profile', builder: (context, state) => ProfilePage()),
     GoRoute(path: '/cart', builder: (context, state) => CartPage()),
+    GoRoute(
+      path: '/admin-offers',
+      builder: (context, state) => AdminOffersViewPage(),
+    ),
     GoRoute(
       path: '/profile-edit',
       builder: (context, state) => ProfileEditPage(),
