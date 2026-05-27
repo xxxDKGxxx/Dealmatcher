@@ -1,7 +1,8 @@
 ﻿namespace Dealmatcher.Backend.UseCases.Features.Offers.Delete;
 
 public sealed class DeleteOfferCommandHandler(
-    IRepository<Offer> offerRepository) : ICommandHandler<DeleteOfferCommand, Result>
+    IRepository<Offer> offerRepository,
+    IRepository<User> userRepository) : ICommandHandler<DeleteOfferCommand, Result>
 {
     public async Task<Result> Handle(DeleteOfferCommand request, CancellationToken cancellationToken)
     {
@@ -12,7 +13,11 @@ public sealed class DeleteOfferCommandHandler(
             return Result.NotFound();
         }
 
-        if (offer.Seller.Id != request.UserId)
+        bool isOwner = offer.Seller.Id == request.UserId;
+
+        var user = await userRepository.GetByIdAsync(request.UserId, cancellationToken);
+        bool isAdmin = user is not null && user.IsPrivileged;
+        if (!isOwner && !isAdmin)
         {
             return Result.Forbidden();
         }

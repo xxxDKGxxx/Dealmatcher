@@ -6,8 +6,8 @@ public class User(string email, string passwordHash, string name, string surname
     public string PasswordHash { get; private set; } = passwordHash;
     public string Name { get; private set; } = name;
     public string Surname { get; private set; } = surname;
-    public bool IsPrivileged { get; private set; } = false;
     public UserStatus Status { get; private set; } = UserStatus.Active;
+    public bool IsPrivileged => Status == UserStatus.Admin;
 
     public void UpdateEmail(string email)
     {
@@ -43,12 +43,12 @@ public class User(string email, string passwordHash, string name, string surname
 
     public void GrantAdminPrivileges()
     {
-        IsPrivileged = true;
+        Status = UserStatus.Admin;
     }
 
     public void RevokeAdminPrivileges()
     {
-        IsPrivileged = false;
+        Status = UserStatus.Active;
     }
 
     public void BanUser()

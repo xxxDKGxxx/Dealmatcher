@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_auth.dart';
+import 'package:frontend/api/api_profile.dart';
 import 'package:go_router/go_router.dart';
 
 class MenuDrawer extends StatelessWidget {
@@ -44,6 +45,38 @@ class MenuDrawer extends StatelessWidget {
             title: Text('Profile'),
             onTap: () {
               context.go('/profile');
+            },
+          ),
+
+          FutureBuilder(
+            future: ApiProfile().getProfile(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasError &&
+                  snapshot.hasData &&
+                  snapshot.data!.status.name.toString().trim().toLowerCase() ==
+                      'admin') {
+                return Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      child: Divider(height: 1),
+                    ),
+
+                    ListTile(
+                      leading: Icon(Icons.local_offer_rounded),
+                      title: Text('All Offers'),
+                      onTap: () {
+                        context.go('/admin-offers');
+                      },
+                    ),
+                  ],
+                );
+              }
+
+              return SizedBox(height: 0);
             },
           ),
 

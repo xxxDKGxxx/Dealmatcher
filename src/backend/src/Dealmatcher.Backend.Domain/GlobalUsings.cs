@@ -2,7 +2,9 @@
 global using Ardalis.SmartEnum;
 global using Ardalis.Specification;
 global using Dealmatcher.Backend.Domain.Core.Cart;
+global using Dealmatcher.Backend.Domain.Core.Delivery;
 global using Dealmatcher.Backend.Domain.Core.Filtering;
+global using Dealmatcher.Backend.Domain.Core.Payment;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate;
@@ -13,4 +15,3 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properti
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Dealmatcher.Backend.Domain.Interfaces.Filtering;
-global using Microsoft.Extensions.Logging;

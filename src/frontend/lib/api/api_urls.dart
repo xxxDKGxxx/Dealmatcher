@@ -9,6 +9,8 @@ class ApiUrls {
   String get categories => '/categories';
   String get conversations => '/conversations';
   String get cartItems => '/cart/items';
+  String get cartTotal => '/cart/total';
+  String get adminGetOffers => '/admin/offers';
 
   String offerDetailsById(int id) => '/offers/$id';
   String conversationById(int id) => '/conversations/$id';
@@ -16,4 +18,5 @@ class ApiUrls {
   String propertiesByCategoryName(String categoryName) =>
       '/categories/$categoryName/properties';
   String offerById(int offerId) => '/offers/$offerId';
+  String cartItemById(int cartItemId) => '/cart/items/$cartItemId';
 }

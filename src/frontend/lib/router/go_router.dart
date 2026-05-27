@@ -1,4 +1,8 @@
 import 'package:frontend/api/api_core.dart';
+import 'package:frontend/models/delivery_method.dart';
+import 'package:frontend/models/payment_method.dart';
+import 'package:frontend/pages/admin_offers_view_page.dart';
+import 'package:frontend/pages/cart_page.dart';
 import 'package:frontend/pages/conversation_page.dart';
 import 'package:frontend/pages/conversations_list_page.dart';
 import 'package:frontend/pages/create_update_offer_page.dart';
@@ -6,6 +10,7 @@ import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/login_page.dart';
 import 'package:frontend/pages/my_offers_page.dart';
 import 'package:frontend/pages/offer_details_page.dart';
+import 'package:frontend/pages/order_summary_page.dart';
 import 'package:frontend/pages/profile_edit_page.dart';
 import 'package:frontend/pages/profile_page.dart';
 import 'package:frontend/pages/register_page.dart';
@@ -31,6 +36,11 @@ final GoRouter globalRouter = GoRouter(
     GoRoute(path: '/register', builder: (context, state) => RegisterPage()),
     GoRoute(path: '/login', builder: (context, state) => LoginPage()),
     GoRoute(path: '/profile', builder: (context, state) => ProfilePage()),
+    GoRoute(path: '/cart', builder: (context, state) => CartPage()),
+    GoRoute(
+      path: '/admin-offers',
+      builder: (context, state) => AdminOffersViewPage(),
+    ),
     GoRoute(
       path: '/profile-edit',
       builder: (context, state) => ProfileEditPage(),
@@ -59,6 +69,17 @@ final GoRouter globalRouter = GoRouter(
       builder: (context, state) {
         final id = int.parse(state.pathParameters['id']!);
         return CreateOfferPage(offerId: id);
+      },
+    ),
+    GoRoute(
+      path: '/order-summary',
+      builder: (context, state) {
+        final extras = state.extra as Map<String, dynamic>;
+
+        return OrderSummaryPage(
+          deliveryMethod: extras['deliveryMethod'] as DeliveryMethod,
+          paymentMethod: extras['paymentMethod'] as PaymentMethod,
+        );
       },
     ),
   ],

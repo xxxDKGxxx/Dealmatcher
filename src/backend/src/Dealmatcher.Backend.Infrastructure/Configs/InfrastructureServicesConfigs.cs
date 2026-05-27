@@ -1,7 +1,4 @@
-﻿using Dealmatcher.Backend.Infrastructure.Services.CartRepositories;
-using StackExchange.Redis;
-
-namespace Dealmatcher.Backend.Infrastructure.Configs;
+﻿namespace Dealmatcher.Backend.Infrastructure.Configs;
 
 public static class InfrastructureServicesConfigs
 {
@@ -41,6 +38,12 @@ public static class InfrastructureServicesConfigs
         });
 
         services.AddScoped<ICartRepository, RedisCartRepository>();
+
+        services.AddScoped<IPaymentProvider, ExamplePaymentProvider>();
+        services.AddScoped<IPaymentProviderService, PaymentProviderService>();
+
+        services.AddScoped<IDeliveryProvider, ExampleDeliveryProvider>();
+        services.AddScoped<IDeliveryProviderService, DeliveryProviderService>();
 
         logger.LogInformation("{Project} services registered.", "Infrastructure");
 

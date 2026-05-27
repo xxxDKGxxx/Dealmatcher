@@ -39,6 +39,7 @@ class User {
 }
 
 enum UserStatus {
+  admin,
   active,
   inactive,
   banned;
