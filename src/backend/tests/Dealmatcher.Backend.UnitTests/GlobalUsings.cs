@@ -32,6 +32,7 @@ global using Dealmatcher.Backend.Domain.Interfaces.Delivery;
 global using Dealmatcher.Backend.Domain.Interfaces.Payment;
 global using Dealmatcher.Backend.Infrastructure.Services;
 global using Dealmatcher.Backend.UseCases.Features.Admin.ListOffers;
+global using Dealmatcher.Backend.UseCases.Features.Admin.ListUsers;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Get;
 global using Dealmatcher.Backend.UseCases.Features.Cart.GetTotal;
@@ -58,3 +59,4 @@ global using NSubstitute;
 global using NSubstitute.ReturnsExtensions;
 global using Shouldly;
 global using Xunit;
+

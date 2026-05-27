@@ -21,6 +21,7 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Dealmatcher.Backend.Domain.Interfaces;
 global using Dealmatcher.Backend.Domain.Interfaces.CartRepository;
 global using Dealmatcher.Backend.Infrastructure.Data;
+global using Dealmatcher.Backend.UseCases.Features.Admin.ListUsers;
 global using Dealmatcher.Backend.UseCases.Interfaces;
 global using Microsoft.AspNetCore.Hosting;
 global using Microsoft.AspNetCore.Mvc.Testing;
