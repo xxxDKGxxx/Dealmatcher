@@ -64,5 +64,9 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
           .Navigation(o => o.Properties)
           .UsePropertyAccessMode(PropertyAccessMode.Field)
           .AutoInclude();
+
+        builder
+            .Property(o => o.RowVersion)
+            .IsRowVersion();
     }
 }
