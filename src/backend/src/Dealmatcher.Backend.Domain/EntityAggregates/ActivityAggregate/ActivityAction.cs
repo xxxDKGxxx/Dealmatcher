@@ -1,4 +1,5 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.ActivityAggregate;
+
 public abstract class ActivityAction(string name, int value) : SmartEnum<ActivityAction>(name, value)
 {
     public static readonly ActivityAction Create = new CreateAction();
