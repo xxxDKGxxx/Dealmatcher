@@ -8,6 +8,8 @@ global using Dealmatcher.Backend.Domain.Core.Cart;
 global using Dealmatcher.Backend.Domain.Core.Cart.Dto;
 global using Dealmatcher.Backend.Domain.Core.Delivery;
 global using Dealmatcher.Backend.Domain.Core.Payment;
+global using Dealmatcher.Backend.Domain.EntityAggregates.ActivityAggregate;
+global using Dealmatcher.Backend.Domain.EntityAggregates.ActivityAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Messages;
