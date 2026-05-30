@@ -32,5 +32,13 @@ public class UserConfiguration : DealmatcherBaseEntityConfiguration<User>
                 s => s.Value,
                 v => UserStatus.FromValue(v))
             .IsRequired();
+
+        builder.HasMany(u => u.Bans)
+            .WithOne()
+            .HasForeignKey(b => b.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Metadata.FindNavigation(nameof(User.Bans))!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
     }
 }

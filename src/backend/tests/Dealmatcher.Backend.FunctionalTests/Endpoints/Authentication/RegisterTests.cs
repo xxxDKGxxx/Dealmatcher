@@ -63,7 +63,7 @@ public class RegisterTests(CustomWebApplicationFactory factory) : EndpointTestBa
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var user = db.Set<User>().First(u => u.Email == "banned@example.com");
-            user.BanUser();
+            user.BanUser("", 0, null);
             await db.SaveChangesAsync();
         }
 
