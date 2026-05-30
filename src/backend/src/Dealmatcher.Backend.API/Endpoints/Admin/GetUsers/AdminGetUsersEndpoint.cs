@@ -1,6 +1,4 @@
-﻿using Dealmatcher.Backend.API.Endpoints.Admin.GetOffers;
-
-namespace Dealmatcher.Backend.API.Endpoints.Admin.GetUsers;
+﻿namespace Dealmatcher.Backend.API.Endpoints.Admin.GetUsers;
 
 public sealed class AdminGetUsersEndpoint(
     IMediator mediator,
