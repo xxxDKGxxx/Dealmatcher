@@ -73,7 +73,8 @@ public class CreateUserCommandHandlerTests
     {
         var command = new CreateUserCommand(ValidEmail, ValidPassword, "Jan", "Kowalski");
         var bannedUser = CreateUser();
-        bannedUser.BanUser();
+        var admin = CreateUser();
+        bannedUser.BanUser("", admin, null);
 
         _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveOrBannedUserByEmailSpec>(), Arg.Any<CancellationToken>())
             .Returns(bannedUser);

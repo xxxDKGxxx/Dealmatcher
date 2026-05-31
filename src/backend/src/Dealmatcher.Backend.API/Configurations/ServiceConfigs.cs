@@ -7,7 +7,9 @@ public static class ServiceConfigs
         services.AddInfrastructureServices(builder.Configuration, logger, builder.Environment.IsProduction())
             .AddMediatrConfigs();
 
-        logger.LogInformation("{Project} services registered", "Mediatr, AutoMapper");
+        services.AddHostedService<BanExpirationWorker>();
+
+        logger.LogInformation("{Project} services registered", "Mediatr, AutoMapper, Background Workers");
 
         return services;
     }

@@ -319,6 +319,52 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Ban", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IssuedById")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IssuedById");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Bans", (string)null);
+                });
+
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", b =>
                 {
                     b.Property<int>("Id")
@@ -573,6 +619,25 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Ban", b =>
+                {
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", "IssuedBy")
+                        .WithMany()
+                        .HasForeignKey("IssuedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", "User")
+                        .WithMany("Bans")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("IssuedBy");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Conversation", b =>
                 {
                     b.Navigation("Messages");
@@ -586,6 +651,11 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Offer", b =>
                 {
                     b.Navigation("Properties");
+                });
+
+            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", b =>
+                {
+                    b.Navigation("Bans");
                 });
 #pragma warning restore 612, 618
         }
