@@ -1,6 +1,8 @@
 ﻿namespace Dealmatcher.Backend.API.Endpoints.Offer.Get;
 
-public sealed class GetById(IMediator mediator) : Endpoint<GetByIdRequest, OfferDto>
+public sealed class GetById(
+    IClaimsPrincipalManager claimsManager,
+    IMediator mediator) : Endpoint<GetByIdRequest, OfferDto>
 {
     public override void Configure()
     {
@@ -22,7 +24,8 @@ public sealed class GetById(IMediator mediator) : Endpoint<GetByIdRequest, Offer
 
     public override async Task HandleAsync(GetByIdRequest req, CancellationToken ct)
     {
-        var request = new GetOfferQuery(req.OfferId);
+        var userId = claimsManager.GetUserId(User);
+        var request = new GetOfferQuery(req.OfferId, userId);
         var result = await mediator.Send(request, ct);
 
         await result.SendResult(this, ct);
