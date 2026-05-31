@@ -313,6 +313,8 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IssuedById");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Bans", (string)null);
@@ -556,11 +558,21 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
 
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Ban", b =>
                 {
-                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", null)
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", "IssuedBy")
+                        .WithMany()
+                        .HasForeignKey("IssuedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", "User")
                         .WithMany("Bans")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("IssuedBy");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Conversation", b =>

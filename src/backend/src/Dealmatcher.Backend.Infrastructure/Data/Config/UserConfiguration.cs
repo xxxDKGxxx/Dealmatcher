@@ -34,7 +34,7 @@ public class UserConfiguration : DealmatcherBaseEntityConfiguration<User>
             .IsRequired();
 
         builder.HasMany(u => u.Bans)
-            .WithOne()
+            .WithOne(b => b.User)
             .HasForeignKey("UserId")
             .OnDelete(DeleteBehavior.NoAction);
 

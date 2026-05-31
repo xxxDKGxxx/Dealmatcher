@@ -31,12 +31,21 @@ public partial class AddBans : Migration
             {
                 table.PrimaryKey("PK_Bans", x => x.Id);
                 table.ForeignKey(
+                    name: "FK_Bans_Users_IssuedById",
+                    column: x => x.IssuedById,
+                    principalTable: "Users",
+                    principalColumn: "Id");
+                table.ForeignKey(
                     name: "FK_Bans_Users_UserId",
                     column: x => x.UserId,
                     principalTable: "Users",
-                    principalColumn: "Id",
-                    onDelete: ReferentialAction.Cascade);
+                    principalColumn: "Id");
             });
+
+        migrationBuilder.CreateIndex(
+            name: "IX_Bans_IssuedById",
+            table: "Bans",
+            column: "IssuedById");
 
         migrationBuilder.CreateIndex(
             name: "IX_Bans_UserId",

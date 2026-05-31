@@ -1,6 +1,6 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 
-public class Ban : DealmatcherEntityBase, IAggregateRoot
+public class Ban : DealmatcherEntityBase
 {
     public User User { get; private set; } = null!;
     public string Reason { get; private set; } = null!;
