@@ -35,8 +35,8 @@ public class UserConfiguration : DealmatcherBaseEntityConfiguration<User>
 
         builder.HasMany(u => u.Bans)
             .WithOne()
-            .HasForeignKey(b => b.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey("UserId")
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Metadata.FindNavigation(nameof(User.Bans))!
             .SetPropertyAccessMode(PropertyAccessMode.Field);

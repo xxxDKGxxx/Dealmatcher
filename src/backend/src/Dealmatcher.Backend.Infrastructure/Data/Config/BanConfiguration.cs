@@ -17,5 +17,10 @@ public class BanConfiguration : DealmatcherBaseEntityConfiguration<Ban>
 
         builder.Property(b => b.IsActive)
             .IsRequired();
+
+        builder.HasOne(b => b.IssuedBy)
+            .WithMany()
+            .HasForeignKey("IssuedById")
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

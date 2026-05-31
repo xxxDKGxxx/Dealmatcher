@@ -13,9 +13,10 @@ public class UserTests
     public void BanUser_ValidParameters_UpdatesStatusAndAddsBan()
     {
         var user = CreateUser();
+        var admin = CreateUser();
         var expiresAt = DateTime.UtcNow.AddDays(7);
 
-        user.BanUser("Złamanie regulaminu", 1, expiresAt);
+        user.BanUser("Złamanie regulaminu", admin, expiresAt);
 
         user.Status.ShouldBe(UserStatus.Banned);
         user.Bans.Count.ShouldBe(1);
@@ -27,7 +28,8 @@ public class UserTests
     public void RevokeBan_LastActiveBan_ChangesStatusToActive()
     {
         var user = CreateUser();
-        user.BanUser("Tymczasowy ban", 1, DateTime.UtcNow.AddDays(1));
+        var admin = CreateUser();
+        user.BanUser("Tymczasowy ban", admin, DateTime.UtcNow.AddDays(1));
         var banId = user.Bans.First().Id;
 
         user.RevokeBan(banId);
@@ -40,8 +42,9 @@ public class UserTests
     public void RevokeBan_WithOtherActiveBans_KeepsStatusBanned()
     {
         var user = CreateUser();
-        user.BanUser("Ban 1", 1, DateTime.UtcNow.AddDays(1));
-        user.BanUser("Ban 2 (Permaban)", 1, null);
+        var admin = CreateUser();
+        user.BanUser("Ban 1", admin, DateTime.UtcNow.AddDays(1));
+        user.BanUser("Ban 2 (Permaban)", admin, null);
 
         var banToRevoke = user.Bans.First();
 

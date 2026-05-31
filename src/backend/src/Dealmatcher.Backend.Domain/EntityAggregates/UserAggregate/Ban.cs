@@ -1,21 +1,22 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 
-public class Ban : DealmatcherEntityBase
+public class Ban : DealmatcherEntityBase, IAggregateRoot
 {
-    public int UserId { get; private set; }
+    public User User { get; private set; } = null!;
     public string Reason { get; private set; } = null!;
-    public int IssuedById { get; private set; }
+    public User IssuedBy { get; private set; } = null!;
     public DateTime IssuedAt { get; private set; }
     public DateTime? ExpiresAt { get; private set; }
     public bool IsActive { get; private set; }
 
+    /* EF Core*/
     private Ban() { }
 
-    internal Ban(int userId, string reason, int issuedById, DateTime? expiresAt)
+    internal Ban(User user, string reason, User issuedBy, DateTime? expiresAt)
     {
-        UserId = userId;
+        User = user;
         Reason = reason;
-        IssuedById = issuedById;
+        IssuedBy = issuedBy;
         IssuedAt = DateTime.UtcNow;
         ExpiresAt = expiresAt;
         IsActive = true;

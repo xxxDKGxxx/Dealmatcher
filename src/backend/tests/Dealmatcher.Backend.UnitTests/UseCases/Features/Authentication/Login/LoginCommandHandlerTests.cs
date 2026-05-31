@@ -86,7 +86,8 @@ public class LoginCommandHandlerTests
     public async Task Handle_BannedUser_ReturnsForbidden()
     {
         var user = CreateUser();
-        user.BanUser("", 0, null);
+        var admin = CreateUser();
+        user.BanUser("", admin, null);
         var command = new LoginCommand(ValidEmail, ValidPassword);
 
         _userRepository.SingleOrDefaultAsync(Arg.Any<ActiveOrBannedOrAdminUserByEmailSpec>(), Arg.Any<CancellationToken>())

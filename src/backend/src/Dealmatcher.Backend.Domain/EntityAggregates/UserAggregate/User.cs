@@ -54,9 +54,9 @@ public class User(string email, string passwordHash, string name, string surname
         Status = UserStatus.Active;
     }
 
-    public void BanUser(string reason, int issuedById, DateTime? expiresAt)
+    public void BanUser(string reason, User issuedBy, DateTime? expiresAt)
     {
-        var ban = new Ban(Id, reason, issuedById, expiresAt);
+        var ban = new Ban(this, reason, issuedBy, expiresAt);
         _bans.Add(ban);
 
         Status = UserStatus.Banned;

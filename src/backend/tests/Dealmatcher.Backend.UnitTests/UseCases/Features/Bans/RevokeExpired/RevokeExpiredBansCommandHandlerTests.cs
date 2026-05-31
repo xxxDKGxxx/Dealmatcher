@@ -15,7 +15,8 @@ public class RevokeExpiredBansCommandHandlerTests
     public async Task Handle_UsersWithExpiredBans_RevokesBansAndUpdatesRepository()
     {
         var user = new User("test@example.com", "hash", "Jan", "Kowalski");
-        user.BanUser("Wygasły ban", 1, DateTime.UtcNow.AddDays(-1));
+        var admin = new User("admin@example.com", "hash", "Jan", "Kowalski");
+        user.BanUser("Wygasły ban", admin, DateTime.UtcNow.AddDays(-1));
         var usersList = new List<User> { user };
 
         _userRepository.ListAsync(Arg.Any<ISpecification<User>>(), Arg.Any<CancellationToken>())

@@ -41,7 +41,7 @@ public class GetMeTests(CustomWebApplicationFactory factory) : EndpointTestBase(
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var user = db.Set<User>().First(u => u.Email == "banned_me@example.com");
-            user.BanUser("", 0, null);
+            user.BanUser("", new User("admin@example.com", "hash", "Jan", "Kowalski"), null);
             await db.SaveChangesAsync();
         }
 
