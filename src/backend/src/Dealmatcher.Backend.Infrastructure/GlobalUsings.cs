@@ -32,6 +32,7 @@ global using Dealmatcher.Backend.Infrastructure.Services.CartRepositories;
 global using Dealmatcher.Backend.Infrastructure.Services.DeliveryProviders;
 global using Dealmatcher.Backend.Infrastructure.Services.OfferSuggestionServices;
 global using Dealmatcher.Backend.Infrastructure.Services.PaymentProviders;
+global using Dealmatcher.Backend.Infrastructure.Services.Purchases;
 global using Dealmatcher.Backend.UseCases.Interfaces;
 global using Dealmatcher.Backend.UseCases.Mapping.Profiles;
 global using Microsoft.EntityFrameworkCore;

@@ -137,6 +137,7 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Availability")
+                        .IsConcurrencyToken()
                         .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
@@ -160,12 +161,6 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<int>("SellerId")
                         .HasColumnType("int");

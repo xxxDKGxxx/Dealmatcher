@@ -22,7 +22,7 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
 
         builder.Property(o => o.Price).HasPrecision(18, 2).IsRequired();
 
-        builder.Property(o => o.Availability).IsRequired();
+        builder.Property(o => o.Availability).IsRequired().IsConcurrencyToken();
 
         builder
           .Property(o => o.Images)
@@ -64,9 +64,5 @@ public sealed class OfferConfiguration : DealmatcherBaseEntityConfiguration<Offe
           .Navigation(o => o.Properties)
           .UsePropertyAccessMode(PropertyAccessMode.Field)
           .AutoInclude();
-
-        builder
-            .Property(o => o.RowVersion)
-            .IsRowVersion();
     }
 }

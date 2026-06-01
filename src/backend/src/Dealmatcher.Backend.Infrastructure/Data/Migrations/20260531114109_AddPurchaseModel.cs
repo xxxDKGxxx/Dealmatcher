@@ -6,19 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Dealmatcher.Backend.Infrastructure.Data.Migrations;
 
 /// <inheritdoc />
-public partial class AddPurchaseModelAndOfferRowVersion : Migration
+public partial class AddPurchaseModel : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        migrationBuilder.AddColumn<byte[]>(
-            name: "RowVersion",
-            table: "Offers",
-            type: "rowversion",
-            rowVersion: true,
-            nullable: false,
-            defaultValue: Array.Empty<byte>());
-
         migrationBuilder.CreateTable(
             name: "Purchases",
             columns: table => new
@@ -68,9 +60,5 @@ public partial class AddPurchaseModelAndOfferRowVersion : Migration
     {
         migrationBuilder.DropTable(
             name: "Purchases");
-
-        migrationBuilder.DropColumn(
-            name: "RowVersion",
-            table: "Offers");
     }
 }

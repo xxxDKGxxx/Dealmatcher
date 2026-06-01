@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dealmatcher.Backend.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260527213942_AddPurchaseModelAndOfferRowVersion")]
-    partial class AddPurchaseModelAndOfferRowVersion
+    [Migration("20260531114109_AddPurchaseModel")]
+    partial class AddPurchaseModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -140,6 +140,7 @@ namespace Dealmatcher.Backend.Infrastructure.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Availability")
+                        .IsConcurrencyToken()
                         .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
@@ -163,12 +164,6 @@ namespace Dealmatcher.Backend.Infrastructure.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<int>("SellerId")
                         .HasColumnType("int");

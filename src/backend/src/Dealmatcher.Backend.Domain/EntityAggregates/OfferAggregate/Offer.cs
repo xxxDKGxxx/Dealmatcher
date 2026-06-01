@@ -15,7 +15,7 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
     public Category Category { get; private set; } = null!;
     private readonly List<Property> _properties = [];
     public IReadOnlyCollection<Property> Properties => _properties.AsReadOnly();
-    public byte[] RowVersion { get; private set; } = new byte[8];
+
     public Offer(
         string title,
         string description,
@@ -73,14 +73,6 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
         if (price >= 0)
         {
             Price = price;
-        }
-    }
-
-    public void Sell(int amount)
-    {
-        if (Status.CanBeSold && Availability >= amount)
-        {
-            Status = OfferStatus.Sold;
         }
     }
 
@@ -162,13 +154,24 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
 
     public void ReserveQuantity(int quantity)
     {
+        if (!Status.CanBeSold)
+            throw new InvalidOperationException($"Cannot sell offer in status {Status.Name}");
         if (Availability < quantity)
             throw new InvalidOperationException("Not enough availability");
         Availability -= quantity;
+        if (Availability == 0)
+        {
+            Status = OfferStatus.Sold;
+        }
     }
 
     public void RestoreQuantity(int quantity)
     {
+        if (Availability == 0)
+        {
+            Status = OfferStatus.Active;
+        }
         Availability += quantity;
+
     }
 }
