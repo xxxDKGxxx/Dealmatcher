@@ -11,7 +11,7 @@ public sealed class ActivitiesByUserIdFromToSpec : Specification<Activity>
             Query.Where(a => a.CreatedAt >= from);
         }
 
-        if (to is not null) 
+        if (to is not null)
         {
             Query.Where(a => a.CreatedAt <= to);
         }
