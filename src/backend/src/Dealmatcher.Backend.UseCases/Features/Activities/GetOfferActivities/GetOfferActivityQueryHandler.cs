@@ -1,6 +1,6 @@
 ﻿namespace Dealmatcher.Backend.UseCases.Features.Activities.GetOfferActivities;
 
-public sealed record GetOfferActivityQueryHandler(
+public sealed class GetOfferActivityQueryHandler(
     IReadRepository<User> usersRepository,
     IReadRepository<Activity> activitiesRepository,
     IReadRepository<Offer> offersRepository,

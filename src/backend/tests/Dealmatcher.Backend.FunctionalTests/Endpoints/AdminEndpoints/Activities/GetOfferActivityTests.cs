@@ -1,4 +1,4 @@
-﻿namespace Dealmatcher.Backend.FunctionalTests.Endpoints.AdminEndpoints;
+﻿namespace Dealmatcher.Backend.FunctionalTests.Endpoints.AdminEndpoints.Activities;
 
 public class GetOfferActivityTests(CustomWebApplicationFactory factory) : EndpointTestBase(factory)
 {

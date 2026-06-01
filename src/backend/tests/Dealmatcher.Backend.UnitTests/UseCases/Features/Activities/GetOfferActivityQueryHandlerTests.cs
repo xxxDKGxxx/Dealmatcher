@@ -1,6 +1,4 @@
-﻿using Dealmatcher.Backend.UseCases.Features.Activities.GetOfferActivities;
-
-namespace Dealmatcher.Backend.UnitTests.UseCases.Features.Activities.GetOfferActivity;
+﻿namespace Dealmatcher.Backend.UnitTests.UseCases.Features.Activities;
 
 public class GetOfferActivityQueryHandlerTests
 {
@@ -41,7 +39,7 @@ public class GetOfferActivityQueryHandlerTests
 
     private static Activity CreateActivity(User user, Offer offer, ActivityAction action)
     {
-        return new Activity(user, offer, action, new Dictionary<string, string>(), System.Net.IPAddress.Parse("127.0.0.1"));
+        return new Activity(user, offer, action, [], System.Net.IPAddress.Parse("127.0.0.1"));
     }
 
     private void SetupMapper()
@@ -118,7 +116,7 @@ public class GetOfferActivityQueryHandlerTests
 
         _usersRepository.GetByIdAsync(1, Arg.Any<CancellationToken>()).Returns(admin);
         _offersRepository.GetByIdAsync(10, Arg.Any<CancellationToken>()).Returns(offer);
-        _activitiesRepository.ListAsync(Arg.Any<ActivitiesByOfferIdFromToSpec>(), Arg.Any<CancellationToken>()).Returns(new List<Activity>());
+        _activitiesRepository.ListAsync(Arg.Any<ActivitiesByOfferIdFromToSpec>(), Arg.Any<CancellationToken>()).Returns([]);
         SetupMapper();
 
         var result = await _handler.Handle(new GetOfferActivityQuery(1, 10, DateTime.UtcNow.AddDays(-7), DateTime.UtcNow), CancellationToken.None);

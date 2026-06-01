@@ -2,8 +2,8 @@
 
 public sealed class ActivitiesByOfferIdFromToSpec : Specification<Activity>
 {
-    public ActivitiesByOfferIdFromToSpec(int userId, DateTime from, DateTime to)
+    public ActivitiesByOfferIdFromToSpec(int offerId, DateTime from, DateTime to)
     {
-        Query.Where(a => a.Offer != null && a.Offer.Id == userId && a.CreatedAt >= from && a.CreatedAt <= to);
+        Query.Where(a => a.Offer != null && a.Offer.Id == offerId && a.CreatedAt >= from && a.CreatedAt <= to);
     }
 }
