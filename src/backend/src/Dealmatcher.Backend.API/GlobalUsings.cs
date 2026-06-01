@@ -29,6 +29,7 @@ global using Dealmatcher.Backend.UseCases.Features.Admin.ListOffers;
 global using Dealmatcher.Backend.UseCases.Features.Admin.ListUsers;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Bans.Get;
+global using Dealmatcher.Backend.UseCases.Features.Bans.Create;
 global using Dealmatcher.Backend.UseCases.Features.Bans.RevokeExpired;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Add;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Delete;
