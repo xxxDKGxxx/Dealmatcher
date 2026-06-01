@@ -11,6 +11,7 @@ class ApiUrls {
   String get cartItems => '/cart/items';
   String get cartTotal => '/cart/total';
   String get adminGetOffers => '/admin/offers';
+  String get adminGetUsers => '/admin/users';
 
   String offerDetailsById(int id) => '/offers/$id';
   String conversationById(int id) => '/conversations/$id';
