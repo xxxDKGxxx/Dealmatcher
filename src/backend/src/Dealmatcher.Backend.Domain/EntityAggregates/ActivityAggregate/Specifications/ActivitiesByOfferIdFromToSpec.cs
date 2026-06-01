@@ -1,10 +1,10 @@
 ﻿namespace Dealmatcher.Backend.Domain.EntityAggregates.ActivityAggregate.Specifications;
 
-public sealed class ActivitiesByUserIdFromToSpec : Specification<Activity>
+public sealed class ActivitiesByOfferIdFromToSpec : Specification<Activity>
 {
-    public ActivitiesByUserIdFromToSpec(int userId, DateTime? from, DateTime? to)
+    public ActivitiesByOfferIdFromToSpec(int offerId, DateTime? from, DateTime? to)
     {
-        Query.Where(a => a.User.Id == userId);
+        Query.Where(a => a.Offer != null && a.Offer.Id == offerId);
 
         if (from is not null)
         {

@@ -3,5 +3,5 @@
 public sealed record GetUserActivityQuery(
     int AdminId,
     int UserId,
-    DateTime From,
-    DateTime To) : IQuery<Result<List<ActivityDto>>>;
+    DateTime? From,
+    DateTime? To) : IQuery<Result<List<ActivityDto>>>;
