@@ -40,6 +40,7 @@ global using Dealmatcher.Backend.UseCases.Features.Admin.ListOffers;
 global using Dealmatcher.Backend.UseCases.Features.Admin.ListUsers;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
 global using Dealmatcher.Backend.UseCases.Features.Bans.Create;
+global using Dealmatcher.Backend.UseCases.Features.Bans.Delete;
 global using Dealmatcher.Backend.UseCases.Features.Bans.Get;
 global using Dealmatcher.Backend.UseCases.Features.Bans.RevokeExpired;
 global using Dealmatcher.Backend.UseCases.Features.Cart.Get;
@@ -67,3 +68,4 @@ global using NSubstitute;
 global using NSubstitute.ReturnsExtensions;
 global using Shouldly;
 global using Xunit;
+
