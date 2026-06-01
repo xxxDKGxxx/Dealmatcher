@@ -2,8 +2,18 @@
 
 public sealed class ActivitiesByUserIdFromToSpec : Specification<Activity>
 {
-    public ActivitiesByUserIdFromToSpec(int userId, DateTime from, DateTime to)
+    public ActivitiesByUserIdFromToSpec(int userId, DateTime? from, DateTime? to)
     {
-        Query.Where(a => a.User.Id == userId && a.CreatedAt >= from && a.CreatedAt <= to);
+        Query.Where(a => a.User.Id == userId);
+
+        if (from is not null)
+        {
+            Query.Where(a => a.CreatedAt >= from);
+        }
+
+        if (to is not null) 
+        {
+            Query.Where(a => a.CreatedAt <= to);
+        }
     }
 }
