@@ -117,7 +117,7 @@ public class GetMeOffersTests(CustomWebApplicationFactory factory) : EndpointTes
         {
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var user = await db.Set<User>().FirstAsync(u => u.Email == "bannedoffers@example.com");
-            user.BanUser();
+            user.BanUser("", new User("admin@example.com", "hash", "Jan", "Kowalski"), null);
             await db.SaveChangesAsync();
         }
 

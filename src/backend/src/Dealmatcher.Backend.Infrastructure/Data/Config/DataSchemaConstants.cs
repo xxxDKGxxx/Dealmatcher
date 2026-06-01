@@ -17,4 +17,5 @@ public static class DataSchemaConstants
     public const int PropertyRelatedEnumValueNameMaxLength = 50;
     public const int TextValueMaxLength = 50;
     public const int MessageMaxLength = 4000;
+    public const int BanReasonMaxLength = 1000;
 }

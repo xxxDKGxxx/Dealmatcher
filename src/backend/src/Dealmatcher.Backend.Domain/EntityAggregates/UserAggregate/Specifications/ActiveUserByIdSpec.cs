@@ -4,7 +4,7 @@ public sealed class ActiveUserByIdSpec : SingleResultSpecification<User>
 {
     public ActiveUserByIdSpec(int id)
     {
-        var allowedStatuses = new[] { UserStatus.Active };
+        var allowedStatuses = new[] { UserStatus.Active, UserStatus.Admin };
         Query.Where(u => u.Id == id)
             .Where(u => allowedStatuses.Contains(u.Status));
     }
