@@ -4,6 +4,7 @@ global using System.Net.Http.Headers;
 global using System.Net.Http.Json;
 global using System.Text.Json;
 global using Dealmatcher.Backend.API;
+global using Dealmatcher.Backend.API.Endpoints.Bans.Create;
 global using Dealmatcher.Backend.API.Endpoints.Cart.GetTotal;
 global using Dealmatcher.Backend.Domain.Core.Cart;
 global using Dealmatcher.Backend.Domain.Core.Cart.Dto;
@@ -20,6 +21,7 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properti
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
+global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Dto;
 global using Dealmatcher.Backend.Domain.Interfaces;
 global using Dealmatcher.Backend.Domain.Interfaces.CartRepository;
 global using Dealmatcher.Backend.Infrastructure.Data;
