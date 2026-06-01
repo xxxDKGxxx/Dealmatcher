@@ -137,7 +137,6 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Availability")
-                        .IsConcurrencyToken()
                         .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
@@ -273,62 +272,6 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                     b.HasDiscriminator<string>("DefinitionType").HasValue("PropertyDefinition");
 
                     b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.PurchaseAggregate.Purchase", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BuyerId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeliveryProviderId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("OfferId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PaymentProviderId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("PaymentSessionId")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BuyerId");
-
-                    b.HasIndex("OfferId");
-
-                    b.ToTable("Purchases", (string)null);
                 });
 
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", b =>
@@ -565,25 +508,6 @@ namespace Dealmatcher.Backend.Infrastructure.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.PurchaseAggregate.Purchase", b =>
-                {
-                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.User", "Buyer")
-                        .WithMany()
-                        .HasForeignKey("BuyerId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Offer", "Offer")
-                        .WithMany()
-                        .HasForeignKey("OfferId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Buyer");
-
-                    b.Navigation("Offer");
                 });
 
             modelBuilder.Entity("Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate.Conversation", b =>
