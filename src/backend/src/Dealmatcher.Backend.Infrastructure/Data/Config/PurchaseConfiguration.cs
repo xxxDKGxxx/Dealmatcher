@@ -25,5 +25,8 @@ public sealed class PurchaseConfiguration : DealmatcherBaseEntityConfiguration<P
         builder.HasOne(p => p.Offer)
             .WithMany()
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Navigation(p => p.Offer).AutoInclude();
+        builder.Navigation(p => p.Buyer).AutoInclude();
     }
 }

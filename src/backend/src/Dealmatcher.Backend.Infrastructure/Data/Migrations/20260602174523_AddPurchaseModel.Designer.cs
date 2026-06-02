@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dealmatcher.Backend.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260601170750_AddPurchaseModel")]
+    [Migration("20260602174523_AddPurchaseModel")]
     partial class AddPurchaseModel
     {
         /// <inheritdoc />

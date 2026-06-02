@@ -3,6 +3,7 @@
 public sealed class UpdateOfferCommandHandler(
     IRepository<Offer> offerRepository,
     IReadRepository<Category> categoryRepository,
+    IReadRepository<Purchase> purchaseRepository,
     IImageStorageService imageStorageService,
     IMapper mapper) : ICommandHandler<UpdateOfferCommand, Result<OfferDto>>
 {
@@ -14,6 +15,13 @@ public sealed class UpdateOfferCommandHandler(
         if (offer.Seller.Id != request.UserId)
         {
             return Result.Forbidden();
+        }
+
+        var pendingPurchasesSpec = new PendingPurchasesByOfferIdSpec(request.OfferId);
+        var pendingPurchases = await purchaseRepository.ListAsync(pendingPurchasesSpec, cancellationToken);
+        if (pendingPurchases.Count > 0)
+        {
+            return Result.Conflict("Cannot edit offer with active pending purchases");
         }
 
         if (request.Title is not null)

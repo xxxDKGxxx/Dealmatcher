@@ -2,7 +2,8 @@
 
 public sealed class DeleteOfferCommandHandler(
     IRepository<Offer> offerRepository,
-    IRepository<User> userRepository) : ICommandHandler<DeleteOfferCommand, Result>
+    IRepository<User> userRepository,
+    IReadRepository<Purchase> purchaseRepository) : ICommandHandler<DeleteOfferCommand, Result>
 {
     public async Task<Result> Handle(DeleteOfferCommand request, CancellationToken cancellationToken)
     {
@@ -20,6 +21,13 @@ public sealed class DeleteOfferCommandHandler(
         if (!isOwner && !isAdmin)
         {
             return Result.Forbidden();
+        }
+
+        var pendingPurchasesSpec = new PendingPurchasesByOfferIdSpec(request.OfferId);
+        var pendingPurchases = await purchaseRepository.ListAsync(pendingPurchasesSpec, cancellationToken);
+        if (pendingPurchases.Count > 0)
+        {
+            return Result.Conflict("Cannot delete offer with active pending purchases");
         }
 
         await offerRepository.DeleteAsync(offer, cancellationToken);

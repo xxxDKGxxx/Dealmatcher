@@ -4,6 +4,7 @@ public class DeleteOfferCommandHandlerTests
 {
     private readonly IRepository<Offer> _offerRepository;
     private readonly IRepository<User> _userRepository;
+    private readonly IReadRepository<Purchase> _purchaseRepository;
     private readonly DeleteOfferCommandHandler _handler;
     private readonly User _seller;
     private readonly Offer _offer;
@@ -12,7 +13,10 @@ public class DeleteOfferCommandHandlerTests
     {
         _offerRepository = Substitute.For<IRepository<Offer>>();
         _userRepository = Substitute.For<IRepository<User>>();
-        _handler = new DeleteOfferCommandHandler(_offerRepository, _userRepository);
+        _purchaseRepository = Substitute.For<IReadRepository<Purchase>>();
+        _purchaseRepository.ListAsync(Arg.Any<PendingPurchasesByOfferIdSpec>(), Arg.Any<CancellationToken>())
+            .Returns([]);
+        _handler = new DeleteOfferCommandHandler(_offerRepository, _userRepository, _purchaseRepository);
 
         _seller = new User("seller@example.com", "hash", "Jan", "Kowalski");
         var category = new Category("Samochody", "Opis");
