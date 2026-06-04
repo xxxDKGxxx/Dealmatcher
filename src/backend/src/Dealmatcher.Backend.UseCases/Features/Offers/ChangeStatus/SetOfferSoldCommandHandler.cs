@@ -41,7 +41,15 @@ public sealed class SetOfferSoldCommandHandler(
         }
 
         offer.Sell();
-        await offersRepository.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await offersRepository.SaveChangesAsync(cancellationToken);
+        }
+        catch (ConcurrencyException)
+        {
+            return Result.Conflict("Offer was modified concurrently and cannot be set to SOLD");
+        }
 
         return Result.Success(mapper.Map<OfferDto>(offer));
     }

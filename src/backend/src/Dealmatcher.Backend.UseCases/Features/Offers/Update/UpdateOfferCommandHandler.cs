@@ -72,7 +72,14 @@ public sealed class UpdateOfferCommandHandler(
             }
         }
 
-        await offerRepository.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await offerRepository.SaveChangesAsync(cancellationToken);
+        }
+        catch (ConcurrencyException)
+        {
+            return Result.Conflict("Offer was modified concurrently and cannot be updated");
+        }
 
         var offerDto = mapper.Map<OfferDto>(offer);
         return Result.Success(offerDto);

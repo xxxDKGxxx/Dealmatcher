@@ -28,6 +28,7 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.PurchaseAggregate.Spec;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Specifications;
+global using Dealmatcher.Backend.Domain.Exceptions;
 global using Dealmatcher.Backend.Domain.Interfaces;
 global using Dealmatcher.Backend.Domain.Interfaces.Authentication;
 global using Dealmatcher.Backend.Domain.Interfaces.CartRepository;

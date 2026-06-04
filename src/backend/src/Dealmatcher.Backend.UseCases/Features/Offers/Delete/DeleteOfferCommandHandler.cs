@@ -30,8 +30,15 @@ public sealed class DeleteOfferCommandHandler(
             return Result.Conflict("Cannot delete offer with active pending purchases");
         }
 
-        await offerRepository.DeleteAsync(offer, cancellationToken);
-        await offerRepository.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await offerRepository.DeleteAsync(offer, cancellationToken);
+            await offerRepository.SaveChangesAsync(cancellationToken);
+        }
+        catch (ConcurrencyException)
+        {
+            return Result.Conflict("Offer was modified concurrently and cannot be deleted");
+        }
 
         return Result.Success();
     }
