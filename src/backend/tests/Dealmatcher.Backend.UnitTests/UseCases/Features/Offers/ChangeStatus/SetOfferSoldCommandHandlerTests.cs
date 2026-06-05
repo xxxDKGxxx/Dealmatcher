@@ -4,6 +4,7 @@ public class SetOfferSoldCommandHandlerTests
 {
     private readonly IReadRepository<User> _usersRepository;
     private readonly IRepository<Offer> _offersRepository;
+    private readonly IReadRepository<Purchase> _purchaseRepository;
     private readonly IMapper _mapper;
     private readonly SetOfferSoldCommandHandler _handler;
 
@@ -11,8 +12,11 @@ public class SetOfferSoldCommandHandlerTests
     {
         _usersRepository = Substitute.For<IReadRepository<User>>();
         _offersRepository = Substitute.For<IRepository<Offer>>();
+        _purchaseRepository = Substitute.For<IReadRepository<Purchase>>();
+        _purchaseRepository.ListAsync(Arg.Any<PendingPurchasesByOfferIdSpec>(), Arg.Any<CancellationToken>())
+            .Returns([]);
         _mapper = Substitute.For<IMapper>();
-        _handler = new SetOfferSoldCommandHandler(_usersRepository, _offersRepository, _mapper);
+        _handler = new SetOfferSoldCommandHandler(_usersRepository, _offersRepository, _purchaseRepository, _mapper);
     }
 
     private static User CreateUser(int id, string email = "seller@example.com")

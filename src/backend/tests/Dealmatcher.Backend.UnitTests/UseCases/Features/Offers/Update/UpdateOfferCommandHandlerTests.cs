@@ -4,6 +4,7 @@ public class UpdateOfferCommandHandlerTests
 {
     private readonly IRepository<Offer> _offerRepository;
     private readonly IReadRepository<Category> _categoryRepository;
+    private readonly IReadRepository<Purchase> _purchaseRepository;
     private readonly IImageStorageService _imageStorageService;
     private readonly IMapper _mapper;
     private readonly UpdateOfferCommandHandler _handler;
@@ -19,14 +20,19 @@ public class UpdateOfferCommandHandlerTests
     {
         _offerRepository = Substitute.For<IRepository<Offer>>();
         _categoryRepository = Substitute.For<IReadRepository<Category>>();
+        _purchaseRepository = Substitute.For<IReadRepository<Purchase>>();
         _imageStorageService = Substitute.For<IImageStorageService>();
         _mapper = Substitute.For<IMapper>();
 
         _handler = new UpdateOfferCommandHandler(
             _offerRepository,
             _categoryRepository,
+            _purchaseRepository,
             _imageStorageService,
             _mapper);
+
+        _purchaseRepository.ListAsync(Arg.Any<PendingPurchasesByOfferIdSpec>(), Arg.Any<CancellationToken>())
+            .Returns([]);
 
         _seller = new User("seller@example.com", "hash", "Jan", "Kowalski");
 
