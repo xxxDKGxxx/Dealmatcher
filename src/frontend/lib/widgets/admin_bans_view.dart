@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_admin.dart';
-import 'package:frontend/api/api_profile.dart';
 import 'package:frontend/models/ban.dart';
-import 'package:frontend/models/user.dart';
 import 'package:frontend/widgets/ban_list_tile.dart';
-import 'package:frontend/widgets/user_list_tile.dart';
 
 class AdminBansView extends StatefulWidget {
   const AdminBansView({super.key, this.bansFuture});
