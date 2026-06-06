@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/offer.dart';
 import 'package:frontend/models/user.dart';
 import 'package:frontend/widgets/admin_offers_view.dart';
+import 'package:frontend/widgets/admin_user_activity_view.dart';
 import 'package:frontend/widgets/admin_users_view.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 
@@ -16,7 +17,7 @@ class AdminViewPage extends StatelessWidget {
     return Scaffold(
       appBar: DealmatcherAppBar(),
       body: DefaultTabController(
-        length: 2,
+        length: 3,
         child: Scaffold(
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(110),
@@ -24,6 +25,7 @@ class AdminViewPage extends StatelessWidget {
               tabs: [
                 Tab(icon: Icon(Icons.local_offer), text: 'Offers'),
                 Tab(icon: Icon(Icons.people), text: 'Users'),
+                Tab(icon: Icon(Icons.local_activity), text: 'Activities'),
               ],
             ),
           ),
@@ -31,6 +33,7 @@ class AdminViewPage extends StatelessWidget {
             children: [
               AdminOffersView(offersFuture: offersFuture),
               AdminUsersView(usersFuture: usersFuture),
+              const AdminUserActivityView(),
             ],
           ),
         ),
