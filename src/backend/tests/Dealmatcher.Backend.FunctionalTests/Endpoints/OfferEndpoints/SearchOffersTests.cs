@@ -57,6 +57,14 @@ public class SearchOffersTests(CustomWebApplicationFactory factory) : EndpointTe
     }
 
     [Fact]
+    public async Task Search_EmptyRequest_ReturnsBadRequest()
+    {
+        var response = await _client.PostAsJsonAsync("/api/v1/offers/search", "");
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
     public async Task Search_NoOffers_ReturnsNoContent()
     {
         var response = await SearchOffers();
