@@ -14,6 +14,7 @@ class ApiUrls {
   String get adminGetUsers => '/admin/users';
   String get deliveryMethods => '/purchases/delivery-methods';
   String get paymentMethods => '/purchases/payment-methods';
+  String get getBans => '/bans';
 
   String offerDetailsById(int id) => '/offers/$id';
   String conversationById(int id) => '/conversations/$id';
@@ -22,4 +23,5 @@ class ApiUrls {
       '/categories/$categoryName/properties';
   String offerById(int offerId) => '/offers/$offerId';
   String cartItemById(int cartItemId) => '/cart/items/$cartItemId';
+  String adminUserActivity(int userId) => '/admin/activity/user/$userId';
 }

@@ -138,4 +138,21 @@ public class ActivateOfferCommandHandlerTests
 
         await _offersRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
+
+    [Fact]
+    public async Task Handle_ConcurrencyOnSave_ReturnsConflict()
+    {
+        var admin = CreateAdmin();
+        var seller = CreateRegularUser(3);
+        var offer = CreateDraftOffer(seller);
+
+        _usersRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>()).Returns(admin);
+        _offersRepository.GetByIdAsync(10, Arg.Any<CancellationToken>()).Returns(offer);
+        _offersRepository.SaveChangesAsync(Arg.Any<CancellationToken>())
+            .Returns(Task.FromException<int>(new ConcurrencyException()));
+
+        var result = await _handler.Handle(new ActivateOfferCommand(1, 10), CancellationToken.None);
+
+        result.Status.ShouldBe(ResultStatus.Conflict);
+    }
 }
