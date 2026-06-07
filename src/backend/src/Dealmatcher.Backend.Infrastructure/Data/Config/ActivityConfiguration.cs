@@ -36,5 +36,8 @@ public sealed class ActivityConfiguration : DealmatcherBaseEntityConfiguration<A
                 s => JsonSerializer.Deserialize<Dictionary<string, string>>(s, JsonSerializerOptions.Default) ?? new())
             .HasColumnType("nvarchar(max)")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.Navigation(a => a.User).AutoInclude();
+        builder.Navigation(a => a.Offer).AutoInclude();
     }
 }
