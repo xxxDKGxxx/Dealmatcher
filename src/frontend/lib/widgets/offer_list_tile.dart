@@ -6,6 +6,7 @@ Widget offerListTile({
   required Offer offer,
   required ThemeData theme,
   required void Function() onDelete,
+  required void Function() activateOffer,
 }) {
   return Card(
     child: SizedBox(
@@ -60,6 +61,16 @@ Widget offerListTile({
               ),
             ),
           ),
+          if (offer.status == OfferStatus.draft) ...[
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: TextButton.icon(
+                onPressed: activateOffer,
+                icon: Icon(Icons.check_rounded),
+                label: Text('Activate'),
+              ),
+            ),
+          ],
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: IconButton(

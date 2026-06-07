@@ -3,9 +3,12 @@ import 'package:frontend/api/api_urls.dart';
 import 'package:frontend/api/models/admin_all_offers_response.dart';
 import 'package:frontend/api/models/admin_all_users_response.dart';
 import 'package:frontend/api/models/admin_get_bans_response.dart';
+import 'package:frontend/api/models/admin_update_offer_status_request.dart';
+import 'package:frontend/api/models/offer_response.dart';
 import 'package:frontend/models/all_offers.dart';
 import 'package:frontend/models/all_users.dart';
 import 'package:frontend/models/ban.dart';
+import 'package:frontend/models/offer.dart';
 
 class ApiAdmin {
   final ApiCore _apiCore = ApiCore();
@@ -94,6 +97,44 @@ class ApiAdmin {
           throw Exception('Unauthorized.');
         case 403:
           throw Exception('Forbidden - admin only.');
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown error: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Offer> activateOffer(int offerId) async =>
+      updateOfferStatus(offerId, OfferStatus.active);
+
+  Future<Offer> updateOfferStatus(int offerId, OfferStatus status) async {
+    try {
+      final request = AdminUpdateOfferStatusRequest(status: status.toString());
+      final response = await _apiCore.put(
+        ApiUrls().offerUpdateStatus(offerId),
+        request,
+      );
+
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = OfferResponse(response: response);
+            responseModel.fromJson();
+            return responseModel.offer;
+          }
+        case 400:
+          throw Exception('Invalid status value.');
+        case 401:
+          throw Exception('Unauthorized.');
+        case 403:
+          throw Exception('Forbidden - admin only.');
+        case 404:
+          throw Exception('Offer not found.');
+        case 409:
+          throw Exception('Cannot change status from current state.');
         case 500:
           throw Exception('Internal server error.');
         default:

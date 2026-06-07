@@ -431,6 +431,8 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
         return Colors.green;
       case OfferStatus.deleted:
         return Colors.grey;
+      case OfferStatus.draft:
+        return Colors.orange.shade300;
       case OfferStatus.sold:
         return Colors.blue;
     }

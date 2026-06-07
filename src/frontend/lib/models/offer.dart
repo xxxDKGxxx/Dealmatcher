@@ -112,6 +112,7 @@ class Seller {
 enum OfferStatus {
   active,
   deleted,
+  draft,
   sold;
 
   static OfferStatus fromString(String s) {

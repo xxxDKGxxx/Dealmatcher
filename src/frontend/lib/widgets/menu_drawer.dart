@@ -52,9 +52,9 @@ class MenuDrawer extends StatelessWidget {
             future: ApiProfile().getProfile(),
             builder: (context, snapshot) {
               if (!snapshot.hasError &&
-                  snapshot
-                      .hasData //&& snapshot.data!.status.name.toString().trim().toLowerCase() == 'admin'
-                      ) {
+                  snapshot.hasData &&
+                  snapshot.data!.status.name.toString().trim().toLowerCase() ==
+                      'admin') {
                 return Column(
                   children: [
                     const Padding(
