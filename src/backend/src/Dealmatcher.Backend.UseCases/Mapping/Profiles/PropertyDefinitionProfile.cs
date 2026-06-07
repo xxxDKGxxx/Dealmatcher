@@ -8,7 +8,7 @@ public sealed class PropertyDefinitionProfile : Profile
             .ConstructUsing((src, ctx) => new PropertyDefinitionDto(
                 src.Id,
                 src.Name,
-                src.Type.ToString(),
+                src.Type.ToString().ToUpper(),
                 src is SelectPropertyDefinition spd
                     ? [.. spd.Values]
                     : null

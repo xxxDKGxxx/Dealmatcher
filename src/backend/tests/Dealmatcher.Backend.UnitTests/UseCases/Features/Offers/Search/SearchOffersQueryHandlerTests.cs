@@ -1,6 +1,4 @@
-﻿// tests/Dealmatcher.Backend.UnitTests/UseCases/Features/Offers/Search/SearchOffersQueryHandlerTests.cs
-
-using Dealmatcher.Backend.Domain.Core.Filtering;
+﻿using Dealmatcher.Backend.Domain.Core.Filtering;
 using Dealmatcher.Backend.Domain.Interfaces.OfferSuggestion;
 using Dealmatcher.Backend.UseCases.Features.Offers.Search;
 
