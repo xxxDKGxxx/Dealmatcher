@@ -16,10 +16,10 @@ public class GetCategoryPropertiesTests(CustomWebApplicationFactory factory) : E
         properties.ShouldNotBeEmpty();
 
         // Assert properties exist based on SeedData for "Cars"
-        properties.ShouldContain(p => p.Name == "Brand" && p.Type == "Select" && p.options != null && p.options.Contains("BMW"));
-        properties.ShouldContain(p => p.Name == "Mileage" && p.Type == "Numeric");
-        properties.ShouldContain(p => p.Name == "Year of production" && p.Type == "Numeric");
-        properties.ShouldContain(p => p.Name == "Damaged" && p.Type == "Boolean");
+        properties.ShouldContain(p => p.Name == "Brand" && p.Type == "SELECT" && p.options != null && p.options.Contains("BMW"));
+        properties.ShouldContain(p => p.Name == "Mileage" && p.Type == "NUMERIC");
+        properties.ShouldContain(p => p.Name == "Year of production" && p.Type == "NUMERIC");
+        properties.ShouldContain(p => p.Name == "Damaged" && p.Type == "BOOLEAN");
     }
 
     [Fact]
