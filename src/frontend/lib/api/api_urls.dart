@@ -17,6 +17,7 @@ class ApiUrls {
   String get getBans => '/bans';
 
   String offerDetailsById(int id) => '/offers/$id';
+  String offerUpdateStatus(int id) => '/offers/$id/status';
   String conversationById(int id) => '/conversations/$id';
   String messagesByConversationId(int id) => '/conversations/$id/messages';
   String propertiesByCategoryName(String categoryName) =>

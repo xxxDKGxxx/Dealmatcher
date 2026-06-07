@@ -100,6 +100,12 @@ class _AdminOffersViewState extends State<AdminOffersView> {
                   _dataFuture = widget.offersFuture ?? _fetchData();
                 });
               },
+              activateOffer: () async {
+                await apiAdmin.activateOffer(offer.id);
+                setState(() {
+                  _dataFuture = widget.offersFuture ?? _fetchData();
+                });
+              },
             );
           },
         ),
