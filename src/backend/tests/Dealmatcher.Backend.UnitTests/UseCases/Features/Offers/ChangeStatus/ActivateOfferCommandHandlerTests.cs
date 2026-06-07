@@ -49,7 +49,7 @@ public class ActivateOfferCommandHandlerTests
         var offer = CreateDraftOffer(seller);
 
         _usersRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>()).Returns(admin);
-        _offersRepository.GetByIdAsync(10, Arg.Any<CancellationToken>()).Returns(offer);
+        _offersRepository.FirstOrDefaultAsync(Arg.Any<OfferByIdNoFiltersSpec>(), Arg.Any<CancellationToken>()).Returns(offer);
         SetupMapper();
 
         var result = await _handler.Handle(new ActivateOfferCommand(1, 10), CancellationToken.None);
@@ -67,7 +67,7 @@ public class ActivateOfferCommandHandlerTests
         var result = await _handler.Handle(new ActivateOfferCommand(99, 10), CancellationToken.None);
 
         result.Status.ShouldBe(ResultStatus.Unauthorized);
-        await _offersRepository.DidNotReceive().GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>());
+        await _offersRepository.DidNotReceive().FirstOrDefaultAsync(Arg.Any<OfferByIdNoFiltersSpec>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public class ActivateOfferCommandHandlerTests
         var result = await _handler.Handle(new ActivateOfferCommand(2, 10), CancellationToken.None);
 
         result.Status.ShouldBe(ResultStatus.Forbidden);
-        await _offersRepository.DidNotReceive().GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>());
+        await _offersRepository.DidNotReceive().FirstOrDefaultAsync(Arg.Any<OfferByIdNoFiltersSpec>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public class ActivateOfferCommandHandlerTests
     {
         var admin = CreateAdmin();
         _usersRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>()).Returns(admin);
-        _offersRepository.GetByIdAsync(99, Arg.Any<CancellationToken>()).Returns((Offer?)null);
+        _offersRepository.FirstOrDefaultAsync(Arg.Any<OfferByIdNoFiltersSpec>(), Arg.Any<CancellationToken>()).Returns((Offer?)null);
 
         var result = await _handler.Handle(new ActivateOfferCommand(1, 99), CancellationToken.None);
 
@@ -104,7 +104,24 @@ public class ActivateOfferCommandHandlerTests
         offer.Activate();
 
         _usersRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>()).Returns(admin);
-        _offersRepository.GetByIdAsync(10, Arg.Any<CancellationToken>()).Returns(offer);
+        _offersRepository.FirstOrDefaultAsync(Arg.Any<OfferByIdNoFiltersSpec>(), Arg.Any<CancellationToken>()).Returns(offer);
+
+        var result = await _handler.Handle(new ActivateOfferCommand(1, 10), CancellationToken.None);
+
+        result.Status.ShouldBe(ResultStatus.Conflict);
+        await _offersRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_SellerNotActive_ReturnsConflict()
+    {
+        var admin = CreateAdmin();
+        var seller = CreateRegularUser(3);
+        seller.BanUser("", admin, null);
+        var offer = CreateDraftOffer(seller);
+
+        _usersRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>()).Returns(admin);
+        _offersRepository.FirstOrDefaultAsync(Arg.Any<OfferByIdNoFiltersSpec>(), Arg.Any<CancellationToken>()).Returns(offer);
 
         var result = await _handler.Handle(new ActivateOfferCommand(1, 10), CancellationToken.None);
 
@@ -120,7 +137,7 @@ public class ActivateOfferCommandHandlerTests
 
         await _handler.Handle(new ActivateOfferCommand(2, 10), CancellationToken.None);
 
-        await _offersRepository.DidNotReceive().GetByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>());
+        await _offersRepository.DidNotReceive().FirstOrDefaultAsync(Arg.Any<OfferByIdNoFiltersSpec>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -132,7 +149,7 @@ public class ActivateOfferCommandHandlerTests
         offer.Activate();
 
         _usersRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>()).Returns(admin);
-        _offersRepository.GetByIdAsync(10, Arg.Any<CancellationToken>()).Returns(offer);
+        _offersRepository.FirstOrDefaultAsync(Arg.Any<OfferByIdNoFiltersSpec>(), Arg.Any<CancellationToken>()).Returns(offer);
 
         await _handler.Handle(new ActivateOfferCommand(1, 10), CancellationToken.None);
 
@@ -147,7 +164,7 @@ public class ActivateOfferCommandHandlerTests
         var offer = CreateDraftOffer(seller);
 
         _usersRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>()).Returns(admin);
-        _offersRepository.GetByIdAsync(10, Arg.Any<CancellationToken>()).Returns(offer);
+        _offersRepository.FirstOrDefaultAsync(Arg.Any<OfferByIdNoFiltersSpec>(), Arg.Any<CancellationToken>()).Returns(offer);
         _offersRepository.SaveChangesAsync(Arg.Any<CancellationToken>())
             .Returns(Task.FromException<int>(new ConcurrencyException()));
 
