@@ -20,6 +20,7 @@ global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.Properties;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions;
 global using Dealmatcher.Backend.Domain.EntityAggregates.OfferAggregate.PropertyDefinitions.Dto;
+global using Dealmatcher.Backend.Domain.EntityAggregates.PurchaseAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.UserAggregate.Dto;
 global using Dealmatcher.Backend.Domain.Interfaces;
