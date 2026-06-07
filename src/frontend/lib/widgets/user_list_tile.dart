@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api/api_admin.dart';
 import 'package:frontend/models/user.dart';
+import 'package:frontend/widgets/ban_user_form_widget.dart';
 
-Widget userListTile({required User user, required ThemeData theme}) {
+Widget userListTile({
+  required User user,
+  required ThemeData theme,
+  required BuildContext context,
+}) {
   return Card(
     child: SizedBox(
       height: 120,
@@ -41,6 +47,22 @@ Widget userListTile({required User user, required ThemeData theme}) {
                 ],
               ),
             ),
+          ),
+          TextButton.icon(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return BanUserFormWidget(
+                    onSubmit: (userId, reason, expiresAt) async {
+                      await ApiAdmin().banUser(userId, reason, expiresAt);
+                    },
+                  );
+                },
+              );
+            },
+            label: Text('Ban'),
+            icon: Icon(Icons.block_rounded),
           ),
         ],
       ),

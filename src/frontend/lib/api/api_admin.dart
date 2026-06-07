@@ -2,6 +2,8 @@ import 'package:frontend/api/api_core.dart';
 import 'package:frontend/api/api_urls.dart';
 import 'package:frontend/api/models/admin_all_offers_response.dart';
 import 'package:frontend/api/models/admin_all_users_response.dart';
+import 'package:frontend/api/models/admin_ban_request.dart';
+import 'package:frontend/api/models/admin_get_single_ban_response.dart';
 import 'package:frontend/api/models/admin_user_activity_response.dart';
 import 'package:frontend/models/activity.dart';
 import 'package:frontend/api/models/admin_get_bans_response.dart';
@@ -74,6 +76,41 @@ class ApiAdmin {
           throw Exception('Unauthorized.');
         case 403:
           throw Exception('Forbidden - admin only.');
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown error: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Ban> banUser(int userId, String reason, DateTime expiresAt) async {
+    try {
+      final request = AdminBanRequest(
+        userId: userId,
+        reason: reason,
+        expiresAt: expiresAt,
+      );
+      final response = await _apiCore.post(_getBansUrl, request);
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = AdminGetSingleBanResponse(response: response);
+            responseModel.fromJson();
+            return responseModel.ban;
+          }
+        case 400:
+          throw Exception('Invalid ban data.');
+        case 401:
+          throw Exception('Unauthorized.');
+        case 403:
+          throw Exception('Forbidden - admin only.');
+        case 404:
+          throw Exception('User not found.');
+        case 409:
+          throw Exception('User already banned.');
         case 500:
           throw Exception('Internal server error.');
         default:

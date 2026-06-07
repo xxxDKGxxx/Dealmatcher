@@ -85,7 +85,7 @@ class _AdminUsersViewState extends State<AdminUsersView> {
           itemBuilder: (context, index) {
             final user = users[index];
 
-            return userListTile(user: user, theme: theme);
+            return userListTile(user: user, theme: theme, context: context);
           },
         ),
         Padding(
