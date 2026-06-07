@@ -23,4 +23,5 @@ class ApiUrls {
       '/categories/$categoryName/properties';
   String offerById(int offerId) => '/offers/$offerId';
   String cartItemById(int cartItemId) => '/cart/items/$cartItemId';
+  String adminUserActivity(int userId) => '/admin/activity/user/$userId';
 }
