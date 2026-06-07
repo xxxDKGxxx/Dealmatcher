@@ -33,7 +33,15 @@ public sealed class ActivateOfferCommandHandler(
         }
 
         offer.Activate();
-        await offersRepository.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await offersRepository.SaveChangesAsync(cancellationToken);
+        }
+        catch (ConcurrencyException)
+        {
+            return Result.Conflict("Offer was modified concurrently and cannot be activated");
+        }
 
         return Result.Success(mapper.Map<OfferDto>(offer));
     }

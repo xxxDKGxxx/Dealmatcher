@@ -38,6 +38,7 @@ global using Dealmatcher.Backend.Domain.Interfaces.OfferSuggestion;
 global using Dealmatcher.Backend.Domain.Interfaces.Payment;
 global using Dealmatcher.Backend.UseCases.Features.Activities.Interfaces;
 global using Dealmatcher.Backend.UseCases.Features.Authentication.Login;
+global using Dealmatcher.Backend.UseCases.Features.Purchases.Expiration;
 global using Dealmatcher.Backend.UseCases.Interfaces;
 global using MediatR;
 global using Microsoft.AspNetCore.Http;
