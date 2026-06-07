@@ -145,4 +145,42 @@ class ApiAdmin {
       rethrow;
     }
   }
+
+  Future<Offer> activateOffer(int offerId) async =>
+      updateOfferStatus(offerId, OfferStatus.active);
+
+  Future<Offer> updateOfferStatus(int offerId, OfferStatus status) async {
+    try {
+      final request = AdminUpdateOfferStatusRequest(status: status.toString());
+      final response = await _apiCore.put(
+        ApiUrls().offerUpdateStatus(offerId),
+        request,
+      );
+
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = OfferResponse(response: response);
+            responseModel.fromJson();
+            return responseModel.offer;
+          }
+        case 400:
+          throw Exception('Invalid status value.');
+        case 401:
+          throw Exception('Unauthorized.');
+        case 403:
+          throw Exception('Forbidden - admin only.');
+        case 404:
+          throw Exception('Offer not found.');
+        case 409:
+          throw Exception('Cannot change status from current state.');
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown error: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
