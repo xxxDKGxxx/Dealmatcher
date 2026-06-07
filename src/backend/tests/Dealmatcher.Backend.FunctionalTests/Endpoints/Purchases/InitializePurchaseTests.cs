@@ -5,33 +5,27 @@ public class InitializePurchaseTests(CustomWebApplicationFactory factory) : Endp
     private const string DeliveryMethodId = "example_courier";
     private const string PaymentMethodId = "ExampleProviderId";
 
-    private async Task<int> SeedActiveOffer(string sellerEmail, int availability = 5)
+    private async Task<int> SeedActiveOffer(string sellerEmail, int availability = 5, decimal price = 100m)
     {
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         var seller = await db.Set<User>().FirstAsync(u => u.Email == sellerEmail);
+        var category = await db.Set<Category>().Include(c => c.PropertyDefinitions).FirstAsync();
+        var mileageDef = category.PropertyDefinitions.First(pd => pd.Name == "Mileage");
+        var damagedDef = category.PropertyDefinitions.First(pd => pd.Name == "Damaged");
 
-        var category = new Category("Kategoria Purchase", "Opis");
-        db.Set<Category>().Add(category);
-        await db.SaveChangesAsync();
+        List<Property> properties =
+        [
+            mileageDef.CreatePropertyFromString("120000"),
+            damagedDef.CreatePropertyFromString("false")
+        ];
 
-        var offer = new OfferEntity(
-            "Oferta do zakupu",
-            "Opis",
-            100m,
-            ["image1.jpg"],
-            seller,
-            ["tag1"],
-            availability,
-            category,
-            []
-        );
+        var offer = new Offer("Oferta do zakupu", "Opis", price, [], seller, [], availability, category, properties);
         offer.Activate();
 
-        db.Set<OfferEntity>().Add(offer);
+        db.Set<Offer>().Add(offer);
         await db.SaveChangesAsync();
-
         return offer.Id;
     }
 
@@ -58,7 +52,7 @@ public class InitializePurchaseTests(CustomWebApplicationFactory factory) : Endp
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         json.RootElement.TryGetProperty("redirectUrl", out var redirectUrl).ShouldBeTrue();
-        redirectUrl.GetString()!.ShouldContain("orderId=");
+        redirectUrl.GetString().ShouldNotBeNullOrEmpty();
     }
 
     [Fact]
@@ -76,8 +70,30 @@ public class InitializePurchaseTests(CustomWebApplicationFactory factory) : Endp
 
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var offer = await db.Set<OfferEntity>().FirstAsync(o => o.Id == offerId);
+        var offer = await db.Set<Offer>().FirstAsync(o => o.Id == offerId);
         offer.Availability.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task Initialize_CreatesPurchaseInDb()
+    {
+        await RegisterAndLogin("seller_dbcheck@example.com", "Password123!");
+        var offerId = await SeedActiveOffer("seller_dbcheck@example.com");
+
+        var buyerToken = await RegisterAndLogin("buyer_dbcheck@example.com", "Password123!");
+        SetAuthHeader(buyerToken);
+
+        await _client.PostAsJsonAsync("/api/v1/purchases/initialize", BuildRequest(offerId));
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var purchase = await db.Set<Purchase>()
+            .Include(p => p.Offer)
+            .FirstOrDefaultAsync(p => p.Offer.Id == offerId);
+
+        purchase.ShouldNotBeNull();
+        purchase.Quantity.ShouldBe(1);
+        purchase.PaymentSessionId.ShouldNotBeNullOrEmpty();
     }
 
     [Fact]
@@ -169,6 +185,41 @@ public class InitializePurchaseTests(CustomWebApplicationFactory factory) : Endp
         SetAuthHeader(buyerToken);
 
         var response = await _client.PostAsJsonAsync("/api/v1/purchases/initialize", BuildRequest(offerId, quantity: 0));
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Initialize_DraftOffer_ReturnsConflict()
+    {
+        await RegisterAndLogin("seller_draft@example.com", "Password123!");
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var seller = await db.Set<User>().FirstAsync(u => u.Email == "seller_draft@example.com");
+        var category = await db.Set<Category>().Include(c => c.PropertyDefinitions).FirstAsync();
+        var offer = new Offer("Draft Offer", "Desc", 100m, [], seller, [], 5, category, []);
+        db.Set<Offer>().Add(offer);
+        await db.SaveChangesAsync();
+
+        var buyerToken = await RegisterAndLogin("buyer_draft@example.com", "Password123!");
+        SetAuthHeader(buyerToken);
+
+        var response = await _client.PostAsJsonAsync("/api/v1/purchases/initialize", BuildRequest(offer.Id));
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+    }
+
+    [Fact]
+    public async Task Initialize_NegativeQuantity_ReturnsBadRequest()
+    {
+        await RegisterAndLogin("seller_neg@example.com", "Password123!");
+        var offerId = await SeedActiveOffer("seller_neg@example.com");
+
+        var buyerToken = await RegisterAndLogin("buyer_neg@example.com", "Password123!");
+        SetAuthHeader(buyerToken);
+
+        var response = await _client.PostAsJsonAsync("/api/v1/purchases/initialize", BuildRequest(offerId, quantity: -1));
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }

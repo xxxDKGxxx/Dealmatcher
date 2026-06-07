@@ -8,8 +8,6 @@ public sealed class InitializePurchaseCommandHandler(
     IPaymentProviderService paymentProviderService,
     IPublisher publisher) : ICommandHandler<InitializePurchaseCommand, Result<InitializePurchaseResult>>
 {
-    private const string Currency = "PLN";
-
     public async Task<Result<InitializePurchaseResult>> Handle(InitializePurchaseCommand request, CancellationToken cancellationToken)
     {
         if (request.Quantity < 1)
@@ -67,9 +65,6 @@ public sealed class InitializePurchaseCommandHandler(
 
         var totalPrice = (offer.Price * request.Quantity) + deliveryProvider.Price;
 
-        // Reserve inventory and persist the purchase first. The Availability concurrency
-        // token makes this a first-writer-wins operation: a concurrent edit/purchase that
-        // already moved Availability causes a ConcurrencyException -> abort (409).
         offer.ReserveQuantity(request.Quantity);
 
         var purchase = new Purchase(
@@ -91,17 +86,12 @@ public sealed class InitializePurchaseCommandHandler(
             return Result.Conflict("Offer was modified concurrently and cannot be purchased");
         }
 
-        // Hook the pending purchase into the expiration background service (15 min TTL).
         await publisher.Publish(new PurchaseCreatedEvent(purchase.Id), cancellationToken);
 
-        // Only now call the external payment provider; the reservation is already committed.
-        var session = await paymentProvider.CreatePaymentSessionAsync(totalPrice, Currency);
+        var session = await paymentProvider.CreatePaymentSessionAsync(purchase);
         purchase.SetPaymentSession(session);
         await purchaseRepository.SaveChangesAsync(cancellationToken);
 
-        var separator = session.RedirectUrl.Contains('?') ? '&' : '?';
-        var redirectUrl = $"{session.RedirectUrl}{separator}orderId={purchase.Id}";
-
-        return Result.Success(new InitializePurchaseResult(redirectUrl));
+        return Result.Success(new InitializePurchaseResult(session.RedirectUrl));
     }
 }

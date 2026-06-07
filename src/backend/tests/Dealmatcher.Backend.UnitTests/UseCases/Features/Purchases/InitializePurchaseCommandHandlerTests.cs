@@ -30,8 +30,12 @@ public class InitializePurchaseCommandHandlerTests
 
         _paymentProvider = Substitute.For<IPaymentProvider>();
         _paymentProvider.Id.Returns(PaymentMethodId);
-        _paymentProvider.CreatePaymentSessionAsync(Arg.Any<decimal>(), Arg.Any<string>())
-            .Returns(ci => new PaymentSession("Provider", "session-1", "https://pay.example/checkout", (decimal)ci[0], (string)ci[1]));
+        _paymentProvider.CreatePaymentSessionAsync(Arg.Any<Purchase>())
+            .Returns(ci =>
+            {
+                var purchase = ci.Arg<Purchase>();
+                return new PaymentSession("Provider", "session-1", "https://pay.example/checkout", purchase.TotalPrice, "PLN");
+            });
 
         _deliveryProviderService.GetDeliveryProviderById(DeliveryMethodId).Returns(_deliveryProvider);
         _paymentProviderService.GetPaymentProviderById(PaymentMethodId).Returns(_paymentProvider);
@@ -74,15 +78,30 @@ public class InitializePurchaseCommandHandlerTests
         var result = await _handler.Handle(Command(quantity: 2), CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue();
-        result.Value.RedirectUrl.ShouldStartWith("https://pay.example/checkout");
-        result.Value.RedirectUrl.ShouldContain("orderId=");
+        result.Value.RedirectUrl.ShouldBe("https://pay.example/checkout");
         offer.Availability.ShouldBe(3);
 
-        // total = 100 * 2 + 10 delivery = 210
-        await _paymentProvider.Received(1).CreatePaymentSessionAsync(210m, "PLN");
+        await _paymentProvider.Received(1).CreatePaymentSessionAsync(Arg.Any<Purchase>());
         await _purchaseRepository.Received(1).AddAsync(Arg.Any<Purchase>(), Arg.Any<CancellationToken>());
         await _purchaseRepository.Received(2).SaveChangesAsync(Arg.Any<CancellationToken>());
         await _publisher.Received(1).Publish(Arg.Any<PurchaseCreatedEvent>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_ValidRequest_TotalPriceIncludesDelivery()
+    {
+        var buyer = CreateUser(1);
+        var seller = CreateUser(2, "seller@example.com");
+        var offer = CreateActiveOffer(seller, price: 100m, availability: 5);
+
+        _userRepository.FirstOrDefaultAsync(Arg.Any<ActiveUserByIdSpec>(), Arg.Any<CancellationToken>()).Returns(buyer);
+        _offerRepository.GetByIdAsync(10, Arg.Any<CancellationToken>()).Returns(offer);
+
+        await _handler.Handle(Command(quantity: 2), CancellationToken.None);
+
+        await _purchaseRepository.Received(1).AddAsync(
+            Arg.Is<Purchase>(p => p.TotalPrice == 210m),
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -216,7 +235,7 @@ public class InitializePurchaseCommandHandlerTests
         var result = await _handler.Handle(Command(), CancellationToken.None);
 
         result.Status.ShouldBe(ResultStatus.Conflict);
-        await _paymentProvider.DidNotReceive().CreatePaymentSessionAsync(Arg.Any<decimal>(), Arg.Any<string>());
+        await _paymentProvider.DidNotReceive().CreatePaymentSessionAsync(Arg.Any<Purchase>());
         await _publisher.DidNotReceive().Publish(Arg.Any<PurchaseCreatedEvent>(), Arg.Any<CancellationToken>());
     }
 }
