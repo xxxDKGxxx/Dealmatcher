@@ -27,8 +27,8 @@ public class GetCategoryPropertiesQueryHandlerTests
         category.AddPropertyDefinition(propDef1);
         category.AddPropertyDefinition(propDef2);
 
-        var propDto1 = new PropertyDefinitionDto(1, "Color", "Text", null);
-        var propDto2 = new PropertyDefinitionDto(2, "Size", "Numeric", null);
+        var propDto1 = new PropertyDefinitionDto(1, "Color", "TEXT", null);
+        var propDto2 = new PropertyDefinitionDto(2, "Size", "NUMERIC", null);
 
         _categoryRepository.SingleOrDefaultAsync(Arg.Any<ISingleResultSpecification<Category>>(), Arg.Any<CancellationToken>())
             .Returns(category);

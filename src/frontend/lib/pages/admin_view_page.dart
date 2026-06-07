@@ -4,6 +4,7 @@ import 'package:frontend/models/offer.dart';
 import 'package:frontend/models/user.dart';
 import 'package:frontend/widgets/admin_bans_view.dart';
 import 'package:frontend/widgets/admin_offers_view.dart';
+import 'package:frontend/widgets/admin_user_activity_view.dart';
 import 'package:frontend/widgets/admin_users_view.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 
@@ -32,6 +33,7 @@ class AdminViewPage extends StatelessWidget {
               tabs: [
                 Tab(icon: Icon(Icons.local_offer), text: 'Offers'),
                 Tab(icon: Icon(Icons.people), text: 'Users'),
+                Tab(icon: Icon(Icons.local_activity), text: 'Activities'),
                 Tab(icon: Icon(Icons.block_rounded), text: 'Bans'),
               ],
             ),
@@ -40,6 +42,7 @@ class AdminViewPage extends StatelessWidget {
             children: [
               AdminOffersView(offersFuture: offersFuture),
               AdminUsersView(usersFuture: usersFuture),
+              const AdminUserActivityView(),
               AdminBansView(bansFuture: bansFuture),
             ],
           ),
