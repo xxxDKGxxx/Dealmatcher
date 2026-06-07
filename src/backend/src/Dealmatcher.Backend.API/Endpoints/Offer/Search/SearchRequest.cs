@@ -4,7 +4,7 @@ public sealed record SearchRequest
 {
     public int? CategoryId { get; init; } = null;
     public decimal MinPrice { get; init; } = 0;
-    public decimal MaxPrice { get; init; } = decimal.MaxValue;
+    public decimal MaxPrice { get; init; } = 999_999_999m;
     public List<string> Tags { get; init; } = [];
     public Dictionary<string, List<string>> Properties { get; init; } = [];
     public string SearchPhrase { get; init; } = "";
