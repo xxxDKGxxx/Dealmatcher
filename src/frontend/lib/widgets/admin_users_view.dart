@@ -18,7 +18,7 @@ class _AdminUsersViewState extends State<AdminUsersView> {
   final apiAdmin = ApiAdmin();
   final apiProfile = ApiProfile();
 
-  int page = 0;
+  int page = 1;
   int pages = 1;
   int limit = 16;
 
