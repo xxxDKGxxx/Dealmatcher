@@ -7,6 +7,6 @@ public sealed class UsersWithExpiredBansSpec : Specification<User>
         var currentTime = DateTime.UtcNow;
         Query
             .Where(u => u.Bans.Any(b => b.IsActive && b.ExpiresAt.HasValue && b.ExpiresAt.Value < currentTime))
-            .Include(u => u.Bans);
+             .Include(u => u.Bans);
     }
 }

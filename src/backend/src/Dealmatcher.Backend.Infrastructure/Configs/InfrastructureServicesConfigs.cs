@@ -45,6 +45,12 @@ public static class InfrastructureServicesConfigs
         services.AddScoped<IDeliveryProvider, ExampleDeliveryProvider>();
         services.AddScoped<IDeliveryProviderService, DeliveryProviderService>();
 
+        services.AddSingleton<PurchaseExpirationQueue>();
+        services.AddSingleton<IPurchaseExpirationQueue>(sp => sp.GetRequiredService<PurchaseExpirationQueue>());
+        services.AddHostedService<PurchaseExpirationService>();
+
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ActivityLoggingBehavior<,>));
+
         logger.LogInformation("{Project} services registered.", "Infrastructure");
 
         return services;

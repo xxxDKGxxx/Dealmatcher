@@ -42,6 +42,8 @@ public sealed class Program
 
             builder.Services.AddCors();
 
+            builder.Services.AddHttpContextAccessor();
+
             var app = builder.Build();
 
             app.UseAuthentication();

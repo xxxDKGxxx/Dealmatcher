@@ -76,14 +76,6 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
         }
     }
 
-    public void Sell(int amount)
-    {
-        if (Status.CanBeSold && Availability >= amount)
-        {
-            Status = OfferStatus.Sold;
-        }
-    }
-
     public void AddTag(string tag)
     {
         if (!string.IsNullOrWhiteSpace(tag))
@@ -158,5 +150,28 @@ public sealed class Offer : DealmatcherEntityBase, IAggregateRoot
         {
             Status = OfferStatus.Sold;
         }
+    }
+
+    public void ReserveQuantity(int quantity)
+    {
+        if (!Status.CanBeSold)
+            throw new InvalidOperationException($"Cannot sell offer in status {Status.Name}");
+        if (Availability < quantity)
+            throw new InvalidOperationException("Not enough availability");
+        Availability -= quantity;
+        if (Availability == 0)
+        {
+            Status = OfferStatus.Sold;
+        }
+    }
+
+    public void RestoreQuantity(int quantity)
+    {
+        if (Availability == 0)
+        {
+            Status = OfferStatus.Active;
+        }
+        Availability += quantity;
+
     }
 }

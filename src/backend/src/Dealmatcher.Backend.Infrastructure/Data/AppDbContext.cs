@@ -14,8 +14,16 @@ public sealed class AppDbContext(
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
-        var result = await base.SaveChangesAsync(cancellationToken)
-            .ConfigureAwait(false);
+        int result;
+        try
+        {
+            result = await base.SaveChangesAsync(cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            throw new ConcurrencyException("Resource was modified by another user.", ex);
+        }
 
         // ignore events if no dispatcher provided
         if (_dispatcher == null)

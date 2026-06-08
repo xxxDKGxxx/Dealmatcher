@@ -1,11 +1,24 @@
 import 'package:frontend/api/api_core.dart';
 import 'package:frontend/api/api_urls.dart';
 import 'package:frontend/api/models/admin_all_offers_response.dart';
+import 'package:frontend/api/models/admin_all_users_response.dart';
+import 'package:frontend/api/models/admin_ban_request.dart';
+import 'package:frontend/api/models/admin_get_single_ban_response.dart';
+import 'package:frontend/api/models/admin_user_activity_response.dart';
+import 'package:frontend/models/activity.dart';
+import 'package:frontend/api/models/admin_get_bans_response.dart';
+import 'package:frontend/api/models/admin_update_offer_status_request.dart';
+import 'package:frontend/api/models/offer_response.dart';
 import 'package:frontend/models/all_offers.dart';
+import 'package:frontend/models/all_users.dart';
+import 'package:frontend/models/ban.dart';
+import 'package:frontend/models/offer.dart';
 
 class ApiAdmin {
   final ApiCore _apiCore = ApiCore();
   final _getOffersUrl = ApiUrls().adminGetOffers;
+  final _getUsersUrl = ApiUrls().adminGetUsers;
+  final _getBansUrl = ApiUrls().getBans;
 
   Future<AllOffers> getOffers({
     required int page,
@@ -30,6 +43,174 @@ class ApiAdmin {
           throw Exception('Unauthorized.');
         case 403:
           throw Exception('Forbidden - admin only.');
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown error: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<AllUsers> getUsers({
+    required int page,
+    required int limit,
+    required String status,
+  }) async {
+    try {
+      final response = await _apiCore.get(
+        '$_getUsersUrl?page=$page&limit=$limit&status=$status',
+      );
+
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = AdminAllUsersResponse(response: response);
+            responseModel.fromJson();
+            return responseModel.allUsers;
+          }
+        case 400:
+          throw Exception('Invalid request parameters.');
+        case 401:
+          throw Exception('Unauthorized.');
+        case 403:
+          throw Exception('Forbidden - admin only.');
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown error: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Ban> banUser(int userId, String reason, DateTime expiresAt) async {
+    try {
+      final request = AdminBanRequest(
+        userId: userId,
+        reason: reason,
+        expiresAt: expiresAt,
+      );
+      final response = await _apiCore.post(_getBansUrl, request);
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = AdminGetSingleBanResponse(response: response);
+            responseModel.fromJson();
+            return responseModel.ban;
+          }
+        case 400:
+          throw Exception('Invalid ban data.');
+        case 401:
+          throw Exception('Unauthorized.');
+        case 403:
+          throw Exception('Forbidden - admin only.');
+        case 404:
+          throw Exception('User not found.');
+        case 409:
+          throw Exception('User already banned.');
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown error: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Ban>> getBans() async {
+    try {
+      final response = await _apiCore.get(_getBansUrl);
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = AdminGetBansResponse(response: response);
+            responseModel.fromJson();
+            return responseModel.bans;
+          }
+        case 401:
+          throw Exception('Unauthorized.');
+        case 403:
+          throw Exception('Forbidden - admin only.');
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown error: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Activity>> getUserActivity(
+    int userId, {
+    DateTime? from,
+    DateTime? to,
+  }) async {
+    try {
+      var url = ApiUrls().adminUserActivity(userId);
+      final queryParams = <String>[];
+      if (from != null) queryParams.add('from=${from.toIso8601String()}');
+      if (to != null) queryParams.add('to=${to.toIso8601String()}');
+      if (queryParams.isNotEmpty) {
+        url += '?${queryParams.join('&')}';
+      }
+
+      final response = await _apiCore.get(url);
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = AdminUserActivityResponse(response: response);
+            responseModel.fromJson();
+            return responseModel.activities;
+          }
+        case 401:
+          throw Exception('Unauthorized.');
+        case 403:
+          throw Exception('Forbidden - admin only.');
+        case 404:
+          throw Exception('User not found.');
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown error: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Offer> activateOffer(int offerId) async =>
+      updateOfferStatus(offerId, OfferStatus.active);
+
+  Future<Offer> updateOfferStatus(int offerId, OfferStatus status) async {
+    try {
+      final request = AdminUpdateOfferStatusRequest(status: status.toString());
+      final response = await _apiCore.put(
+        ApiUrls().offerUpdateStatus(offerId),
+        request,
+      );
+
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = OfferResponse(response: response);
+            responseModel.fromJson();
+            return responseModel.offer;
+          }
+        case 400:
+          throw Exception('Invalid status value.');
+        case 401:
+          throw Exception('Unauthorized.');
+        case 403:
+          throw Exception('Forbidden - admin only.');
+        case 404:
+          throw Exception('Offer not found.');
+        case 409:
+          throw Exception('Cannot change status from current state.');
         case 500:
           throw Exception('Internal server error.');
         default:
