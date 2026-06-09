@@ -9,6 +9,9 @@ public sealed class SearchOffersQueryHandler(
     public async Task<Result<List<OfferDto>>> Handle(SearchOffersQuery request, CancellationToken cancellationToken)
     {
         List<IFilter> filters = [];
+
+        filters.Add(new StatusFilter(OfferStatus.Active));
+
         if (request.CategoryId != null)
         {
             var categoryWithDefinitionsByIdSpec = new CategoryWithDefinitionsByIdSpec(request.CategoryId.Value!);
