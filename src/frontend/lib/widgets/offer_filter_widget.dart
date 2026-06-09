@@ -105,7 +105,7 @@ class _OfferFilterWidgetState extends State<OfferFilterWidget> {
 
   Widget _buildPropertyFilter(PropertyDefinition prop) {
     switch (prop.type) {
-      case PropertyType.numeric:
+      case PropertyType.number:
         final propValues = _properties[prop.id.toString()];
         final minVal = (propValues != null && propValues.isNotEmpty)
             ? propValues[0]

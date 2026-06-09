@@ -21,7 +21,8 @@ class CategoryPropertyDefinitionsResponse extends ResponseModel {
         );
       } catch (e) {
         throw Exception(
-          'Property definition response does not contain valid data.',
+          'Property definition response does not contain valid data: ' +
+              e.toString(),
         );
       }
     }
