@@ -36,7 +36,7 @@ public class CreateOfferCommandHandlerTests
     private static Category CreateCategoryWithDefinitions()
     {
         var category = new Category("Samochody", "Kategoria samochodów");
-        var przebieg = new NumericPropertyDefinition("Przebieg", PropertyType.Numeric)
+        var przebieg = new NumericPropertyDefinition("Przebieg", PropertyType.Number)
         {
             Id = _przebiegId
         };

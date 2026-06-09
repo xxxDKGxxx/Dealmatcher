@@ -10,7 +10,7 @@ public class UpdateOfferTests(CustomWebApplicationFactory factory) : EndpointTes
         var seller = await db.Set<User>().FirstAsync(u => u.Email == sellerEmail);
 
         var category = new Category("Elektronika", "Opis");
-        var propertyDef = new NumericPropertyDefinition("RAM", PropertyType.Numeric);
+        var propertyDef = new NumericPropertyDefinition("RAM", PropertyType.Number);
         category.AddPropertyDefinition(propertyDef);
 
         db.Set<Category>().Add(category);

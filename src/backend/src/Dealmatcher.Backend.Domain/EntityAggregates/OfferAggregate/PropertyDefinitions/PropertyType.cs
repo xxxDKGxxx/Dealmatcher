@@ -3,7 +3,7 @@
 public enum PropertyType
 {
     Boolean,
-    Numeric,
+    Number,
     Select,
     Text
 }

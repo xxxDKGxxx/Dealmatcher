@@ -39,7 +39,7 @@ public class UpdateOfferCommandHandlerTests
         var category = new Category("Elektronika", "Kategoria elektroniki");
         typeof(Category).GetProperty("Id")?.SetValue(category, 1);
 
-        var przebieg = new NumericPropertyDefinition("Przebieg", PropertyType.Numeric) { Id = _przebiegId };
+        var przebieg = new NumericPropertyDefinition("Przebieg", PropertyType.Number) { Id = _przebiegId };
         var uszkodzony = new BooleanPropertyDefinition("Uszkodzony", PropertyType.Boolean) { Id = _uszkodzonyId };
         var marka = new SelectPropertyDefinition("Marka", PropertyType.Select, ["Apple", "Samsung", "Sony"]) { Id = _markaId };
 

@@ -11,7 +11,7 @@ public class CreateTests(CustomWebApplicationFactory factory) : EndpointTestBase
             "Test Category",
             "Test category description");
 
-        var przebieg = new NumericPropertyDefinition("Przebieg", PropertyType.Numeric);
+        var przebieg = new NumericPropertyDefinition("Przebieg", PropertyType.Number);
         category.AddPropertyDefinition(przebieg);
 
         db.Set<Category>().Add(category);
