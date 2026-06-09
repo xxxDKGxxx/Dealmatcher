@@ -17,11 +17,19 @@ public sealed class ProcessPaymentCommandHandler(
         if (purchase.Status.IsFinished)
             return Result.Success();
 
-        var provider = paymentProviderService.GetPaymentProviderById(purchase.PaymentProviderId);
-        var paymentStatus = provider.ParseStatus(request.RawBody);
+        IPaymentProvider provider;
+        try
+        {
+            provider = paymentProviderService.GetPaymentProviderById(purchase.PaymentProviderId);
+        }
+        catch (ArgumentException)
+        {
+            return Result.Error($"Unknown provider: {purchase.PaymentProviderId}");
+        }
 
+        var paymentStatus = provider.ParseStatus(request.ProviderStatus);
         if (paymentStatus is null)
-            return Result.Invalid(new ValidationError("Cannot parse webhook body"));
+            return Result.Invalid(new ValidationError($"Cannot parse provider status: {request.ProviderStatus}"));
 
         if (paymentStatus == PaymentStatus.Completed)
         {

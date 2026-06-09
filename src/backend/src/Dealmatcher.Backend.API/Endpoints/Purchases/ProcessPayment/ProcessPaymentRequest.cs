@@ -3,4 +3,5 @@
 public sealed record ProcessPaymentRequest
 {
     public string SessionId { get; init; } = null!;
+    public string ProviderStatus { get; init; } = null!;
 }

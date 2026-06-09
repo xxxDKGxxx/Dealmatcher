@@ -2,4 +2,4 @@
 
 public sealed record ProcessPaymentCommand(
     string SessionId,
-    string RawBody) : ICommand<Result>;
+    string ProviderStatus) : ICommand<Result>;

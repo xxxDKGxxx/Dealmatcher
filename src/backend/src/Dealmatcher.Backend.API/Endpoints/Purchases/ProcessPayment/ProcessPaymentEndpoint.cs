@@ -18,20 +18,12 @@ public sealed class ProcessPaymentEndpoint(IMediator mediator)
         {
             s.Summary = "Payment webhook";
             s.Description = "Called by payment provider to notify about payment result";
-            s.Response(200, "Processed");
-            s.Response(400, "Invalid payload");
-            s.Response(404, "Purchase not found");
-            s.Response(409, "Concurrency conflict");
-            s.Response(500, "Internal server error");
         });
     }
 
     public override async Task HandleAsync(ProcessPaymentRequest request, CancellationToken ct)
     {
-        using var reader = new StreamReader(HttpContext.Request.Body);
-        var rawBody = await reader.ReadToEndAsync(ct);
-
-        var command = new ProcessPaymentCommand(request.SessionId, rawBody);
+        var command = new ProcessPaymentCommand(request.SessionId, request.ProviderStatus);
         var result = await mediator.Send(command, ct);
         await result.SendResult(this, ct);
     }

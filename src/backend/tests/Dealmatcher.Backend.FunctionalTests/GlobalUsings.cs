@@ -8,6 +8,7 @@ global using Dealmatcher.Backend.API.Endpoints.Bans.Create;
 global using Dealmatcher.Backend.API.Endpoints.Cart.GetTotal;
 global using Dealmatcher.Backend.Domain.Core.Cart;
 global using Dealmatcher.Backend.Domain.Core.Cart.Dto;
+global using Dealmatcher.Backend.Domain.Core.Payment;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ActivityAggregate;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ActivityAggregate.Dto;
 global using Dealmatcher.Backend.Domain.EntityAggregates.ConversationAggregate;
