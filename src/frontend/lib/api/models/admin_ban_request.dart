@@ -18,7 +18,7 @@ class AdminBanRequest extends RequestModel {
     return jsonEncode({
       'userId': userId,
       'reason': reason,
-      'expiresAt': expiresAt,
+      'expiresAt': expiresAt.toIso8601String(),
     });
   }
 }

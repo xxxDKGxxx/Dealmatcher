@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class BanUserFormWidget extends StatefulWidget {
   final void Function(int userId, String reason, DateTime expiresAt) onSubmit;
 
-  const BanUserFormWidget({super.key, required this.onSubmit});
+  const BanUserFormWidget({super.key, required this.onSubmit, this.userId});
+
+  final int? userId;
 
   @override
   State<BanUserFormWidget> createState() => _BanUserFormWidgetState();
@@ -16,6 +19,12 @@ class _BanUserFormWidgetState extends State<BanUserFormWidget> {
   final _reasonController = TextEditingController();
 
   DateTime? _expiresAt;
+
+  @override
+  void initState() {
+    super.initState();
+    _userIdController.text = widget.userId.toString();
+  }
 
   @override
   void dispose() {
@@ -80,6 +89,7 @@ class _BanUserFormWidgetState extends State<BanUserFormWidget> {
 
             const SizedBox(height: 32),
 
+            if (widget.userId == null) ...[
             Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -111,6 +121,7 @@ class _BanUserFormWidgetState extends State<BanUserFormWidget> {
                 ),
               ),
             ),
+            ],
 
             const SizedBox(height: 16),
 
@@ -210,7 +221,10 @@ class _BanUserFormWidgetState extends State<BanUserFormWidget> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: _submit,
+                onPressed: () {
+                  _submit();
+                  context.pop();
+                },
                 icon: const Icon(Icons.block),
                 label: const Text("Ban User", style: TextStyle(fontSize: 18)),
                 style: ElevatedButton.styleFrom(
