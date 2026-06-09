@@ -22,7 +22,7 @@ public class GetCategoryPropertiesQueryHandlerTests
         var category = new Category(categoryName, "Description");
 
         var propDef1 = new TextPropertyDefinition("Color", PropertyType.Text);
-        var propDef2 = new NumericPropertyDefinition("Size", PropertyType.Numeric);
+        var propDef2 = new NumericPropertyDefinition("Size", PropertyType.Number);
 
         category.AddPropertyDefinition(propDef1);
         category.AddPropertyDefinition(propDef2);

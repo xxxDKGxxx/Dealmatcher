@@ -17,8 +17,8 @@ public class GetCategoryPropertiesTests(CustomWebApplicationFactory factory) : E
 
         // Assert properties exist based on SeedData for "Cars"
         properties.ShouldContain(p => p.Name == "Brand" && p.Type == "SELECT" && p.options != null && p.options.Contains("BMW"));
-        properties.ShouldContain(p => p.Name == "Mileage" && p.Type == "NUMERIC");
-        properties.ShouldContain(p => p.Name == "Year of production" && p.Type == "NUMERIC");
+        properties.ShouldContain(p => p.Name == "Mileage" && p.Type == "NUMBER");
+        properties.ShouldContain(p => p.Name == "Year of production" && p.Type == "NUMBER");
         properties.ShouldContain(p => p.Name == "Damaged" && p.Type == "BOOLEAN");
     }
 

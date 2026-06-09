@@ -18,14 +18,14 @@ public class PropertyDefinitionProfileTests
 
     [Theory]
     [InlineData(PropertyType.Boolean, "BOOLEAN")]
-    [InlineData(PropertyType.Numeric, "NUMERIC")]
+    [InlineData(PropertyType.Number, "NUMBER")]
     [InlineData(PropertyType.Text, "TEXT")]
     public void Map_ProducesUpperCaseType(PropertyType type, string expectedType)
     {
         PropertyDefinition definition = type switch
         {
             PropertyType.Boolean => new BooleanPropertyDefinition("Flag", type),
-            PropertyType.Numeric => new NumericPropertyDefinition("Size", type),
+            PropertyType.Number => new NumericPropertyDefinition("Size", type),
             _ => new TextPropertyDefinition("Color", type),
         };
 

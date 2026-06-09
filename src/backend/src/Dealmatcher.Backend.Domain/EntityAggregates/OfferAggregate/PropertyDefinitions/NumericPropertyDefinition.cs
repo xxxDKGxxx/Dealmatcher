@@ -4,7 +4,7 @@ public sealed class NumericPropertyDefinition : PropertyDefinition<double>
 {
     public NumericPropertyDefinition(string name, PropertyType type) : base(name, type)
     {
-        if (type != PropertyType.Numeric)
+        if (type != PropertyType.Number)
         {
             throw new ArgumentException($"Invalid PropertyType: {type} for {nameof(NumericPropertyDefinition)}");
         }
