@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/ban.dart';
 
-Widget banListTile({required Ban ban, required ThemeData theme}) {
+Widget banListTile({
+  required Ban ban,
+  required ThemeData theme,
+  required void Function() unban,
+}) {
   return Card(
     child: ConstrainedBox(
       constraints: BoxConstraints(minHeight: 120),
@@ -51,6 +55,14 @@ Widget banListTile({required Ban ban, required ThemeData theme}) {
                   ),
                 ],
               ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: TextButton.icon(
+              onPressed: unban,
+              icon: Icon(Icons.check_rounded),
+              label: Text('Unban'),
             ),
           ),
         ],
