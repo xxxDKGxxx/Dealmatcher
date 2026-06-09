@@ -23,8 +23,8 @@ class Ban {
       userId: json["userId"],
       reason: json["reason"],
       issuedBy: json["issuedBy"],
-      issuedAt: json["issuedAt"],
-      expiresAt: json["expiresAt"],
+      issuedAt: DateTime.parse(json["issuedAt"]),
+      expiresAt: DateTime.parse(json["expiresAt"]),
       isActive: json["isActive"],
     );
   }

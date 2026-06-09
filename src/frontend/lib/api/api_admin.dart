@@ -96,7 +96,7 @@ class ApiAdmin {
       );
       final response = await _apiCore.post(_getBansUrl, request);
       switch (response.statusCode) {
-        case 200:
+        case 201:
           {
             final responseModel = AdminGetSingleBanResponse(response: response);
             responseModel.fromJson();
@@ -229,7 +229,9 @@ class ApiAdmin {
 
   Future<Offer> updateOfferStatus(int offerId, OfferStatus status) async {
     try {
-      final request = AdminUpdateOfferStatusRequest(status: status.toString());
+      final request = AdminUpdateOfferStatusRequest(
+        status: status.toString().toLowerCase().split('.').last,
+      );
       final response = await _apiCore.put(
         ApiUrls().offerUpdateStatus(offerId),
         request,

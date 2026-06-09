@@ -39,7 +39,7 @@ Widget userListTile({
                     style: theme.textTheme.bodyMedium,
                   ),
                   Text(
-                    'Status: ${user.status.toString()}',
+                    'Status: ${user.status.toString().toUpperCase().split('.').last}',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -53,10 +53,13 @@ Widget userListTile({
               showDialog(
                 context: context,
                 builder: (context) {
-                  return BanUserFormWidget(
-                    onSubmit: (userId, reason, expiresAt) async {
-                      await ApiAdmin().banUser(userId, reason, expiresAt);
-                    },
+                  return Dialog(
+                    child: BanUserFormWidget(
+                      userId: user.id,
+                      onSubmit: (userId, reason, expiresAt) async {
+                        await ApiAdmin().banUser(userId, reason, expiresAt);
+                      },
+                    ),
                   );
                 },
               );
