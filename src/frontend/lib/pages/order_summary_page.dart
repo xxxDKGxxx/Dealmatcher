@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_cart.dart';
+import 'package:frontend/api/api_purchases.dart';
 import 'package:frontend/models/cart_item.dart';
 import 'package:frontend/models/delivery_method.dart';
 import 'package:frontend/models/payment_method.dart';
 import 'package:frontend/models/price.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/placeholder_image_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OrderSummaryPage extends StatefulWidget {
   const OrderSummaryPage({
@@ -25,6 +27,7 @@ class OrderSummaryPage extends StatefulWidget {
 
 class _OrderSummaryPageState extends State<OrderSummaryPage> {
   late final ApiCart _apiCart = widget.apiCart ?? ApiCart();
+  final ApiPurchases _apiPurchases = ApiPurchases();
 
   late Future<List<CartItem>> _cartItemsFuture;
   late Future<Price> _cartTotalFuture;
@@ -165,7 +168,7 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
                   ],
                 ),
               ),
-              _buildBottomSummaryPanel(),
+              _buildBottomSummaryPanel(items),
             ],
           );
         },
@@ -220,7 +223,7 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
     );
   }
 
-  Widget _buildBottomSummaryPanel() {
+  Widget _buildBottomSummaryPanel(List<CartItem> items) {
     return FutureBuilder<Price>(
       future: _cartTotalFuture,
       builder: (context, totalSnapshot) {
@@ -264,7 +267,23 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
                   ],
                 ),
                 ElevatedButton(
-                  onPressed: totalSnapshot.hasData ? () {} : null,
+                  onPressed: !totalSnapshot.hasData
+                      ? null
+                      : () async {
+                          for (var item in items) {
+                            final redirectUrl = await _apiPurchases
+                                .initializePurchase(
+                                  item.offer.id,
+                                  widget.deliveryMethod.id,
+                                  widget.paymentMethod.id,
+                                  item.quantity,
+                                );
+                            final Uri url = Uri.parse(redirectUrl);
+                            if (!await launchUrl(url)) {
+                              throw Exception('Could not launch $redirectUrl');
+                            }
+                          }
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green[700],
                     foregroundColor: Colors.white,

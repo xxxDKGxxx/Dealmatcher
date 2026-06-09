@@ -15,6 +15,7 @@ class ApiUrls {
   String get deliveryMethods => '/purchases/delivery-methods';
   String get paymentMethods => '/purchases/payment-methods';
   String get initializePurchase => '/purchases/initialize';
+  String get paymentWebhook => '/purchases/webhook';
   String get getBans => '/bans';
 
   String offerDetailsById(int id) => '/offers/$id';
