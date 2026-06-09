@@ -8,4 +8,5 @@ public interface IPaymentProvider
     public string Icon { get; }
     public Task<PaymentSession> CreatePaymentSessionAsync(Purchase purchase);
     public Task<PaymentStatus> GetPaymentStatusAsync(PaymentSession session);
+    public PaymentStatus? ParseStatus(string rawBody);
 }

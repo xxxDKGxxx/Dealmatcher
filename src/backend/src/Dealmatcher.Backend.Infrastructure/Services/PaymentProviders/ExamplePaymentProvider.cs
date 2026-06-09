@@ -19,4 +19,16 @@ public sealed class ExamplePaymentProvider : IPaymentProvider
     {
         return Task.FromResult(PaymentStatus.Pending);
     }
+
+    public PaymentStatus? ParseStatus(string providerStatus)
+    {
+        try
+        {
+            return PaymentStatus.FromName(providerStatus, true);
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }
