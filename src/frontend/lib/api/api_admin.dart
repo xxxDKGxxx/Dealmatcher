@@ -188,7 +188,9 @@ class ApiAdmin {
 
   Future<Offer> updateOfferStatus(int offerId, OfferStatus status) async {
     try {
-      final request = AdminUpdateOfferStatusRequest(status: status.toString().toLowerCase().split('.').last);
+      final request = AdminUpdateOfferStatusRequest(
+        status: status.toString().toLowerCase().split('.').last,
+      );
       final response = await _apiCore.put(
         ApiUrls().offerUpdateStatus(offerId),
         request,

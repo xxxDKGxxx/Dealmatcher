@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_admin.dart';
-import 'package:frontend/api/api_profile.dart';
 import 'package:frontend/models/user.dart';
 import 'package:frontend/widgets/user_list_tile.dart';
 
@@ -53,7 +52,6 @@ class _AdminUsersViewState extends State<AdminUsersView> {
     return FutureBuilder(
       future: _dataFuture,
       builder: (context, snapshotUsers) {
-
         return CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
@@ -69,7 +67,10 @@ class _AdminUsersViewState extends State<AdminUsersView> {
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: DropdownButtonFormField<UserStatus>(
                   initialValue: _selectedStatus,
                   decoration: const InputDecoration(
@@ -94,29 +95,39 @@ class _AdminUsersViewState extends State<AdminUsersView> {
               ),
             ),
             if (snapshotUsers.connectionState == ConnectionState.waiting) ...[
-              const SliverFillRemaining(child: Center(child: CircularProgressIndicator())),
-            ]
-            else if (snapshotUsers.hasData && snapshotUsers.data != null) ...[
+              const SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ] else if (snapshotUsers.hasData && snapshotUsers.data != null) ...[
               SliverList.builder(
                 itemCount: snapshotUsers.data!.length,
                 itemBuilder: (context, index) {
                   final user = snapshotUsers.data![index];
-                  return userListTile(user: user, theme: theme, context: context);
+                  return userListTile(
+                    user: user,
+                    theme: theme,
+                    context: context,
+                  );
                 },
               ),
-            ]
-            else ...[
+            ] else ...[
               SliverToBoxAdapter(
                 child: Center(
                   child: Text(
-                    snapshotUsers.error.toString().trim().replaceAll('Exception: ', ''),
+                    snapshotUsers.error.toString().trim().replaceAll(
+                      'Exception: ',
+                      '',
+                    ),
                   ),
                 ),
               ),
             ],
             SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsetsGeometry.symmetric(vertical: 16, horizontal: 8),
+                padding: EdgeInsetsGeometry.symmetric(
+                  vertical: 16,
+                  horizontal: 8,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [

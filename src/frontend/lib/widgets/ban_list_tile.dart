@@ -8,7 +8,13 @@ Widget banListTile({required Ban ban, required ThemeData theme}) {
       child: Row(
         children: [
           const SizedBox(width: 16),
-          SizedBox(height: 60, child: FittedBox(fit: BoxFit.contain, child: Icon(Icons.block_rounded))),
+          SizedBox(
+            height: 60,
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: Icon(Icons.block_rounded),
+            ),
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Padding(
@@ -33,11 +39,11 @@ Widget banListTile({required Ban ban, required ThemeData theme}) {
                   ),
                   Text(
                     'Issued by admin of ID: ${ban.issuedBy} at ${ban.issuedAt}',
-                    style: theme.textTheme.bodyMedium
+                    style: theme.textTheme.bodyMedium,
                   ),
                   Text(
                     'Expires at: ${ban.expiresAt}',
-                    style: theme.textTheme.bodyMedium
+                    style: theme.textTheme.bodyMedium,
                   ),
                   Text(
                     'Is active: ${ban.isActive}',

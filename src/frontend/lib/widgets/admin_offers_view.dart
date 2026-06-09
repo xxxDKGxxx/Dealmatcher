@@ -75,7 +75,10 @@ class _AdminOffersViewState extends State<AdminOffersView> {
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: DropdownButtonFormField<OfferStatus>(
                   initialValue: _selectedStatus,
                   decoration: const InputDecoration(
@@ -100,9 +103,11 @@ class _AdminOffersViewState extends State<AdminOffersView> {
               ),
             ),
             if (snapshotOffers.connectionState == ConnectionState.waiting) ...[
-              SliverFillRemaining(child: const Center(child: CircularProgressIndicator())),
-            ]
-            else if (snapshotOffers.hasData && snapshotOffers.data != null) ...[
+              SliverFillRemaining(
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+            ] else if (snapshotOffers.hasData &&
+                snapshotOffers.data != null) ...[
               SliverList.builder(
                 itemCount: snapshotOffers.data!.length,
                 itemBuilder: (context, index) {
@@ -126,22 +131,24 @@ class _AdminOffersViewState extends State<AdminOffersView> {
                   );
                 },
               ),
-            ]
-            else ...[
+            ] else ...[
               SliverToBoxAdapter(
                 child: Center(
                   child: Text(
                     snapshotOffers.error.toString().trim().replaceAll(
-                    'Exception: ',
-                    '',
+                      'Exception: ',
+                      '',
                     ),
                   ),
                 ),
-              )
+              ),
             ],
             SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsetsGeometry.symmetric(vertical: 16, horizontal: 8),
+                padding: EdgeInsetsGeometry.symmetric(
+                  vertical: 16,
+                  horizontal: 8,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [

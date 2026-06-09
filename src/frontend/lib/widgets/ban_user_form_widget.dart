@@ -90,37 +90,37 @@ class _BanUserFormWidgetState extends State<BanUserFormWidget> {
             const SizedBox(height: 32),
 
             if (widget.userId == null) ...[
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: Theme.of(context).primaryColor),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: TextFormField(
-                  controller: _userIdController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: "User ID",
-                    prefixIcon: Icon(Icons.person),
-                    border: OutlineInputBorder(),
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Theme.of(context).primaryColor),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: TextFormField(
+                    controller: _userIdController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: "User ID",
+                      prefixIcon: Icon(Icons.person),
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter a user ID';
+                      }
+
+                      final id = int.tryParse(value);
+
+                      if (id == null || id <= 0) {
+                        return 'Please enter a valid user ID';
+                      }
+
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter a user ID';
-                    }
-
-                    final id = int.tryParse(value);
-
-                    if (id == null || id <= 0) {
-                      return 'Please enter a valid user ID';
-                    }
-
-                    return null;
-                  },
                 ),
               ),
-            ),
             ],
 
             const SizedBox(height: 16),
