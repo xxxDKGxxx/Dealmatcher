@@ -4,6 +4,7 @@ import 'package:frontend/api/models/admin_all_offers_response.dart';
 import 'package:frontend/api/models/admin_all_users_response.dart';
 import 'package:frontend/api/models/admin_ban_request.dart';
 import 'package:frontend/api/models/admin_get_single_ban_response.dart';
+import 'package:frontend/api/models/admin_offer_activity_response.dart';
 import 'package:frontend/api/models/admin_user_activity_response.dart';
 import 'package:frontend/models/activity.dart';
 import 'package:frontend/api/models/admin_get_bans_response.dart';
@@ -173,6 +174,46 @@ class ApiAdmin {
           throw Exception('Forbidden - admin only.');
         case 404:
           throw Exception('User not found.');
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown error: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Activity>> getOfferActivity(
+    int offerId, {
+    DateTime? from,
+    DateTime? to,
+  }) async {
+    try {
+      var url = ApiUrls().adminOfferActivity(offerId);
+      final queryParams = <String>[];
+      if (from != null) queryParams.add('from=${from.toIso8601String()}');
+      if (to != null) queryParams.add('to=${to.toIso8601String()}');
+      if (queryParams.isNotEmpty) {
+        url += '?${queryParams.join('&')}';
+      }
+
+      final response = await _apiCore.get(url);
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = AdminOfferActivityResponse(
+              response: response,
+            );
+            responseModel.fromJson();
+            return responseModel.activities;
+          }
+        case 401:
+          throw Exception('Unauthorized.');
+        case 403:
+          throw Exception('Forbidden - admin only.');
+        case 404:
+          throw Exception('Offer not found.');
         case 500:
           throw Exception('Internal server error.');
         default:

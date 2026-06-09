@@ -21,7 +21,7 @@ class _AdminOffersViewState extends State<AdminOffersView> {
   final apiProfile = ApiProfile();
   final apiOffer = ApiOffers();
 
-  int page = 0;
+  int page = 1;
   int pages = 1;
   int limit = 16;
 

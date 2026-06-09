@@ -25,4 +25,5 @@ class ApiUrls {
   String offerById(int offerId) => '/offers/$offerId';
   String cartItemById(int cartItemId) => '/cart/items/$cartItemId';
   String adminUserActivity(int userId) => '/admin/activity/user/$userId';
+  String adminOfferActivity(int offerId) => '/admin/activity/offer/$offerId';
 }
