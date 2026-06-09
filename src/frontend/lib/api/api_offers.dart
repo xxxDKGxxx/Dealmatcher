@@ -1,5 +1,6 @@
 import 'package:frontend/api/api_core.dart';
 import 'package:frontend/api/api_urls.dart';
+import 'package:frontend/api/models/offer_change_status_request.dart';
 import 'package:frontend/api/models/offer_create_request.dart';
 import 'package:frontend/api/models/offer_response.dart';
 import 'package:frontend/api/models/offer_search_request.dart';
@@ -10,6 +11,44 @@ import 'package:http/http.dart' as http;
 
 class ApiOffers {
   final ApiCore _apiCore = ApiCore();
+
+  Future<Offer> changeOfferStatus(int offerId, OfferChangeStatusRequest request) async {
+    late Offer offer;
+    try {
+      final response = await _apiCore.put(
+        ApiUrls().offerUpdateStatus(offerId),
+        request,
+      );
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = OfferResponse(response: response);
+            responseModel.fromJson();
+            offer = responseModel.offer;
+          }
+        case 400:
+          throw Exception('Invalid status value.');
+        case 401:
+          throw Exception('Invalid credentials.');
+        case 403:
+          throw Exception(
+            'Forbidden - you do not have permissions to edit this offer.',
+          );
+        case 404:
+          throw Exception('Offer not found.');
+        case 409:
+          throw Exception('Cannot change status from current state.');
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown server response: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+
+    return offer;
+  }
 
   Future deleteOffer(int offerId) async {
     try {

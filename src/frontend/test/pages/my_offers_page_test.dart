@@ -100,6 +100,49 @@ void main() {
       expect(find.text('Price: 4500.50'), findsOneWidget);
     });
 
+    testWidgets('Shows eye icon for sold offer and arrow for active offer', (tester) async {
+      final mockOffers = [
+        Offer(
+          id: 1,
+          title: 'Sold Laptop',
+          description: 'Omega Ultra Fabulous Gaming Laptop',
+          price: 4500.5,
+          images: ['https://example.com/image.jpg'],
+          seller: const Seller(id: 1, name: 'Seller'),
+          category: Category(id: 1, name: 'Electronics', description: ''),
+          tags: [],
+          properties: {},
+          availability: 1,
+          status: OfferStatus.sold,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+        Offer(
+          id: 2,
+          title: 'Active Laptop',
+          description: 'Omega Ultra Fabulous Gaming Laptop',
+          price: 4500.5,
+          images: ['https://example.com/image.jpg'],
+          seller: const Seller(id: 1, name: 'Seller'),
+          category: Category(id: 1, name: 'Electronics', description: ''),
+          tags: [],
+          properties: {},
+          availability: 1,
+          status: OfferStatus.active,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      ];
+
+      await tester.pumpWidget(
+        createWidgetUnderTest(future: Future.value(mockOffers)),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.visibility), findsOneWidget);
+      expect(find.byIcon(Icons.arrow_right_alt), findsOneWidget);
+    });
+
     testWidgets('CustomScrollView scrolling shows hidden elements', (
       tester,
     ) async {

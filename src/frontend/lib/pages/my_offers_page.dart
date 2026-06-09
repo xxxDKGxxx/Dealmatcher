@@ -132,9 +132,17 @@ class _MyOffersPageState extends State<MyOffersPage> {
                       padding: EdgeInsets.symmetric(horizontal: 12),
                       child: IconButton(
                         onPressed: () {
-                          context.push('/update-offer/${offer.id}');
+                          if (offer.status != OfferStatus.sold) {
+                            context.push('/update-offer/${offer.id}');
+                          } else {
+                            context.push('/offer/${offer.id}');
+                          }
                         },
-                        icon: Icon(Icons.arrow_right_alt),
+                        icon: Icon(
+                          offer.status != OfferStatus.sold
+                              ? Icons.arrow_right_alt
+                              : Icons.visibility,
+                        ),
                       ),
                     ),
                   ],
