@@ -8,8 +8,6 @@ class OfferChangeStatusRequest extends RequestModel {
 
   @override
   String toJson() {
-    return jsonEncode({
-      'status': status,
-    });
+    return jsonEncode({'status': status});
   }
 }

@@ -12,7 +12,10 @@ import 'package:http/http.dart' as http;
 class ApiOffers {
   final ApiCore _apiCore = ApiCore();
 
-  Future<Offer> changeOfferStatus(int offerId, OfferChangeStatusRequest request) async {
+  Future<Offer> changeOfferStatus(
+    int offerId,
+    OfferChangeStatusRequest request,
+  ) async {
     late Offer offer;
     try {
       final response = await _apiCore.put(

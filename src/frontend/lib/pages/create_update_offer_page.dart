@@ -201,9 +201,9 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
 
     if (offer!.status == OfferStatus.sold) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Offer is already sold.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Offer is already sold.')));
         context.go('/my-offers');
       }
       return null;

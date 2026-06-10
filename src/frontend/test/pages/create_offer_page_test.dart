@@ -94,23 +94,6 @@ void main() {
     );
   }
 
-  Widget createUpdateWidgetUnderTest() {
-    return MaterialApp(
-      home: CreateOfferPage(
-        offerId: 1,
-        fetchCategories: () async => [
-          Category(
-            id: 0,
-            name: "Computers",
-            description: "PC, Laptops and Notebooks",
-          ),
-        ],
-        fetchProperties: (categoryName) async => [],
-        updateOffer: (request) async {},
-      ),
-    );
-  }
-
   setUp(() {
     final TestWidgetsFlutterBinding binding =
         TestWidgetsFlutterBinding.ensureInitialized();

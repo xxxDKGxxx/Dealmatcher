@@ -100,7 +100,9 @@ void main() {
       expect(find.text('Price: 4500.50'), findsOneWidget);
     });
 
-    testWidgets('Shows eye icon for sold offer and arrow for active offer', (tester) async {
+    testWidgets('Shows eye icon for sold offer and arrow for active offer', (
+      tester,
+    ) async {
       final mockOffers = [
         Offer(
           id: 1,
