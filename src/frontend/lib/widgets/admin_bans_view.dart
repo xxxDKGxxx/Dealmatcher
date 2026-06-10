@@ -67,7 +67,13 @@ class _AdminBansViewState extends State<AdminBansView> {
           itemBuilder: (context, index) {
             final ban = bans[index];
 
-            return banListTile(ban: ban, theme: theme);
+            return banListTile(
+              ban: ban,
+              theme: theme,
+              unban: () async {
+                await apiAdmin.unbanUser(ban.id);
+              },
+            );
           },
         ),
       ],

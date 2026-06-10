@@ -122,6 +122,32 @@ class ApiAdmin {
     }
   }
 
+  Future<void> unbanUser(int banId) async {
+    try {
+      final response = await _apiCore.delete('$_getBansUrl/$banId');
+      switch (response.statusCode) {
+        case 204:
+          {}
+        case 400:
+          throw Exception('Invalid ban data.');
+        case 401:
+          throw Exception('Unauthorized.');
+        case 403:
+          throw Exception('Forbidden - admin only.');
+        case 404:
+          throw Exception('User not found.');
+        case 409:
+          throw Exception('User already banned.');
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown error: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<List<Ban>> getBans() async {
     try {
       final response = await _apiCore.get(_getBansUrl);

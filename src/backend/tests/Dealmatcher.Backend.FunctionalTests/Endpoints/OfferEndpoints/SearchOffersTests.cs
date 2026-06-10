@@ -20,6 +20,7 @@ public class SearchOffersTests(CustomWebApplicationFactory factory) : EndpointTe
         }
 
         var offer = new Offer(title, "Test description", price, [], seller, tags ?? [], 1, trackedCategory, properties);
+        offer.Activate();
         db.Set<Offer>().Add(offer);
         await db.SaveChangesAsync();
     }

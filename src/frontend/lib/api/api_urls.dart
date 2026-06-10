@@ -14,6 +14,7 @@ class ApiUrls {
   String get adminGetUsers => '/admin/users';
   String get deliveryMethods => '/purchases/delivery-methods';
   String get paymentMethods => '/purchases/payment-methods';
+  String get initializePurchase => '/purchases/initialize';
   String get getBans => '/bans';
 
   String offerDetailsById(int id) => '/offers/$id';

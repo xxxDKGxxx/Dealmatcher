@@ -35,13 +35,13 @@ void main() {
               PropertyDefinition(
                 id: 1,
                 name: "RAM (GB)",
-                type: PropertyType.numeric,
+                type: PropertyType.number,
                 options: [],
               ),
               PropertyDefinition(
                 id: 2,
                 name: "Storage (GB)",
-                type: PropertyType.numeric,
+                type: PropertyType.number,
                 options: [],
               ),
               PropertyDefinition(
@@ -62,13 +62,13 @@ void main() {
               PropertyDefinition(
                 id: 5,
                 name: "Rooms",
-                type: PropertyType.numeric,
+                type: PropertyType.number,
                 options: [],
               ),
               PropertyDefinition(
                 id: 6,
                 name: "Floor",
-                type: PropertyType.numeric,
+                type: PropertyType.number,
                 options: [],
               ),
               PropertyDefinition(
