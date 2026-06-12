@@ -288,7 +288,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                 const SizedBox(height: 32),
 
                 // Action Buttons
-                if (!isMyOffer) ...[
+                if (!isMyOffer && offer.status != OfferStatus.sold) ...[
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
