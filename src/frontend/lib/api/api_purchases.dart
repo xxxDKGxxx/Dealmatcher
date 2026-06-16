@@ -85,8 +85,8 @@ class ApiPurchases {
               response: response,
             );
             responseModel.fromJson();
-            //return '${responseModel.redirectUrl}?api=${_apiCore.baseUrl}${ApiUrls().apiUrl}${ApiUrls().paymentWebhook}';
-            return 'https://amber-gold-legit-payment-confirmation.netlify.app?api=${_apiCore.baseUrl}${ApiUrls().apiUrl}${ApiUrls().paymentWebhook}';
+            return '${responseModel.redirectUrl}?api=${_apiCore.baseUrl}${ApiUrls().apiUrl}${ApiUrls().paymentWebhook}';
+            //return 'https://amber-gold-legit-payment-confirmation.netlify.app?api=${_apiCore.baseUrl}${ApiUrls().apiUrl}${ApiUrls().paymentWebhook}';
           }
         case 400:
           throw Exception('Invalid purchase data.');

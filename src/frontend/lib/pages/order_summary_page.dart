@@ -7,6 +7,7 @@ import 'package:frontend/models/payment_method.dart';
 import 'package:frontend/models/price.dart';
 import 'package:frontend/widgets/dealmatcher_app_bar.dart';
 import 'package:frontend/widgets/placeholder_image_widget.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OrderSummaryPage extends StatefulWidget {
@@ -282,6 +283,10 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
                             if (!await launchUrl(url)) {
                               throw Exception('Could not launch $redirectUrl');
                             }
+                          }
+
+                          if (context.mounted) {
+                            context.pop();
                           }
                         },
                   style: ElevatedButton.styleFrom(
