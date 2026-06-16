@@ -282,12 +282,16 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
                                   );
                               final Uri url = Uri.parse(redirectUrl);
                               if (!await launchUrl(url)) {
-                                throw Exception('Could not launch $redirectUrl');
+                                throw Exception(
+                                  'Could not launch $redirectUrl',
+                                );
                               }
                             } catch (e) {
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: ${e.toString()}')),
+                                  SnackBar(
+                                    content: Text('Error: ${e.toString()}'),
+                                  ),
                                 );
                               }
                               break;
