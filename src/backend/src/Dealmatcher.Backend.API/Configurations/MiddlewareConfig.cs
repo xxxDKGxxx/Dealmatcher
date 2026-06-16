@@ -17,14 +17,6 @@ public static class MiddlewareConfig
             app.UseHsts();
         }
 
-        app.UseFastEndpoints(c =>
-          {
-              c.Endpoints.RoutePrefix = "api";
-              c.Versioning.Prefix = "v";
-              c.Versioning.PrependToRoute = true;
-          })
-          .UseSwaggerGen(); // Includes AddFileServer and static files middleware
-
         var allowedUrls = app.Configuration.GetSection("AllowedUrls").Get<string[]>();
 
         if (allowedUrls is not null)
@@ -34,6 +26,14 @@ public static class MiddlewareConfig
                 opt.WithOrigins(allowedUrls).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
             });
         }
+
+        app.UseFastEndpoints(c =>
+          {
+              c.Endpoints.RoutePrefix = "api";
+              c.Versioning.Prefix = "v";
+              c.Versioning.PrependToRoute = true;
+          })
+          .UseSwaggerGen(); // Includes AddFileServer and static files middleware
 
         await SeedDatabase(app);
 
