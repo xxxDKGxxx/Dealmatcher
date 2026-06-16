@@ -272,21 +272,30 @@ class _OrderSummaryPageState extends State<OrderSummaryPage> {
                       ? null
                       : () async {
                           for (var item in items) {
-                            final redirectUrl = await _apiPurchases
-                                .initializePurchase(
-                                  item.offer.id,
-                                  widget.deliveryMethod.id,
-                                  widget.paymentMethod.id,
-                                  item.quantity,
+                            try {
+                              final redirectUrl = await _apiPurchases
+                                  .initializePurchase(
+                                    item.offer.id,
+                                    widget.deliveryMethod.id,
+                                    widget.paymentMethod.id,
+                                    item.quantity,
+                                  );
+                              final Uri url = Uri.parse(redirectUrl);
+                              if (!await launchUrl(url)) {
+                                throw Exception('Could not launch $redirectUrl');
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error: ${e.toString()}')),
                                 );
-                            final Uri url = Uri.parse(redirectUrl);
-                            if (!await launchUrl(url)) {
-                              throw Exception('Could not launch $redirectUrl');
+                              }
+                              break;
                             }
                           }
 
                           if (context.mounted) {
-                            context.pop();
+                            context.go('/');
                           }
                         },
                   style: ElevatedButton.styleFrom(
