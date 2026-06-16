@@ -9,39 +9,38 @@ public sealed class Program
         var builder = WebApplication.CreateBuilder(args);
 
         var logger = Log.Logger = new LoggerConfiguration()
-            .Enrich.FromLogContext()
-            .WriteTo.Console()
-            .CreateLogger();
+          .Enrich.FromLogContext()
+          .WriteTo.Console()
+          .CreateLogger();
 
         logger.Information("Starting web host");
 
         builder.AddLoggerConfigs();
 
-        var appLogger = new SerilogLoggerFactory(logger)
-          .CreateLogger<Program>();
+        var appLogger = new SerilogLoggerFactory(logger).CreateLogger<Program>();
 
         try
         {
             builder.Services.AddServiceConfigs(appLogger, builder);
             builder.Services.AddAuthenticationConfigs(builder.Configuration);
-            builder.Services.AddFastEndpoints()
-                .SwaggerDocument(o =>
-                    {
-                        o.DocumentSettings = s =>
-                            {
-                                s.Title = "Dealmatcher API";
-                                s.Version = "1";
-                            };
-                        o.ShortSchemaNames = true;
-                        o.MaxEndpointVersion = 1;
-                    });
+            builder
+              .Services.AddFastEndpoints()
+              .SwaggerDocument(o =>
+              {
+                  o.DocumentSettings = s =>
+            {
+                    s.Title = "Dealmatcher API";
+                    s.Version = "1";
+                };
+                  o.ShortSchemaNames = true;
+                  o.MaxEndpointVersion = 1;
+              });
             builder.Services.AddCommandMiddleware(c =>
             {
                 c.Register(typeof(CommandLogger<,>));
             });
 
             builder.Services.AddCors();
-
             builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();
