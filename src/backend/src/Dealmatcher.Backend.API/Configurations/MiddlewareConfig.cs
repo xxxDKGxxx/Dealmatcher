@@ -2,7 +2,9 @@
 
 public static class MiddlewareConfig
 {
-    public static async Task<IApplicationBuilder> UseAppMiddlewareAndSeedDatabase(this WebApplication app)
+    public static async Task<IApplicationBuilder> UseAppMiddlewareAndSeedDatabase(
+      this WebApplication app
+    )
     {
         if (app.Environment.IsDevelopment())
         {
@@ -15,27 +17,23 @@ public static class MiddlewareConfig
             app.UseHsts();
         }
 
-        app.UseFastEndpoints(
-                c =>
-                {
-                    c.Endpoints.RoutePrefix = "api";
-                    c.Versioning.Prefix = "v";
-                    c.Versioning.PrependToRoute = true;
-                })
-            .UseSwaggerGen(); // Includes AddFileServer and static files middleware
+        var allowedUrls = app.Configuration.GetSection("AllowedUrls").Get<string[]>();
 
-        var frontendOrigin = app.Configuration["FrontendOrigin"];
-
-        if (frontendOrigin is not null)
+        if (allowedUrls is not null)
         {
             app.UseCors(opt =>
             {
-                opt.WithOrigins(frontendOrigin)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials();
+                opt.WithOrigins(allowedUrls).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
             });
-        } // else we are in prod environment and FrontendOrigin is not set
+        }
+
+        app.UseFastEndpoints(c =>
+          {
+              c.Endpoints.RoutePrefix = "api";
+              c.Versioning.Prefix = "v";
+              c.Versioning.PrependToRoute = true;
+          })
+          .UseSwaggerGen(); // Includes AddFileServer and static files middleware
 
         await SeedDatabase(app);
 

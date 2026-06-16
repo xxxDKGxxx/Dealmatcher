@@ -30,7 +30,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
-      - FrontendOrigin=http://localhost:8080
+      - AllowedUrls__0=http://localhost:8080
       - Authentication__Jwt__SecretKey=${Authentication__Jwt__SecretKey}
       - Authentication__Jwt__Issuer=${Authentication__Jwt__Issuer}
       - Authentication__Jwt__Audience=${Authentication__Jwt__Audience}
