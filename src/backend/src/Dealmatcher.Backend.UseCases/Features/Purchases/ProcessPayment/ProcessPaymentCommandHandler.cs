@@ -4,6 +4,7 @@ public sealed class ProcessPaymentCommandHandler(
     IRepository<Purchase> purchaseRepository,
     IRepository<Offer> offerRepository,
     IPaymentProviderService paymentProviderService,
+    ICartRepository cartRepository,
     ILogger<ProcessPaymentCommandHandler> logger)
     : ICommandHandler<ProcessPaymentCommand, Result>
 {
@@ -33,6 +34,13 @@ public sealed class ProcessPaymentCommandHandler(
 
         if (paymentStatus == PaymentStatus.Completed)
         {
+            var cart = await cartRepository.GetCartAsync(purchase.Buyer.Id, ct);
+
+            if (cart is not null)
+            {
+                cart.RemoveItem(purchase.Offer.Id);
+                await cartRepository.SaveCartAsync(cart, ct);
+            }
             purchase.Complete();
             logger.LogInformation("Purchase {PurchaseId} completed via webhook.", purchase.Id);
         }
