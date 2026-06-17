@@ -24,7 +24,9 @@ class Ban {
       reason: json["reason"],
       issuedBy: json["issuedBy"],
       issuedAt: DateTime.parse(json["issuedAt"]),
-      expiresAt: json["expiresAt"] == null ? null : DateTime.parse(json["expiresAt"]),
+      expiresAt: json["expiresAt"] == null
+          ? null
+          : DateTime.parse(json["expiresAt"]),
       isActive: json["isActive"],
     );
   }
