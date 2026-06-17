@@ -20,6 +20,7 @@ public class SearchOffersTests(CustomWebApplicationFactory factory) : EndpointTe
         }
 
         var offer = new Offer(title, "Test description", price, [], seller, tags ?? [], 1, trackedCategory, properties);
+        offer.Activate();
         db.Set<Offer>().Add(offer);
         await db.SaveChangesAsync();
     }
@@ -54,6 +55,14 @@ public class SearchOffersTests(CustomWebApplicationFactory factory) : EndpointTe
             SearchPhrase = searchPhrase,
             Limit = limit
         });
+    }
+
+    [Fact]
+    public async Task Search_EmptyRequest_ReturnsOkOrNoContent()
+    {
+        var response = await _client.PostAsJsonAsync("/api/v1/offers/search", new { });
+        var status = response.StatusCode;
+        (status == HttpStatusCode.OK || status == HttpStatusCode.NoContent).ShouldBeTrue();
     }
 
     [Fact]

@@ -33,7 +33,7 @@ final class PropertyDefinition {
 }
 
 enum PropertyType {
-  numeric,
+  number,
   boolean,
   select,
   text;

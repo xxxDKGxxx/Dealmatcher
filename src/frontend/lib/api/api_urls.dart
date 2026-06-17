@@ -11,12 +11,21 @@ class ApiUrls {
   String get cartItems => '/cart/items';
   String get cartTotal => '/cart/total';
   String get adminGetOffers => '/admin/offers';
+  String get adminGetUsers => '/admin/users';
+  String get deliveryMethods => '/purchases/delivery-methods';
+  String get paymentMethods => '/purchases/payment-methods';
+  String get initializePurchase => '/purchases/initialize';
+  String get paymentWebhook => '/purchases/webhook';
+  String get getBans => '/bans';
 
   String offerDetailsById(int id) => '/offers/$id';
+  String offerUpdateStatus(int id) => '/offers/$id/status';
   String conversationById(int id) => '/conversations/$id';
   String messagesByConversationId(int id) => '/conversations/$id/messages';
   String propertiesByCategoryName(String categoryName) =>
       '/categories/$categoryName/properties';
   String offerById(int offerId) => '/offers/$offerId';
   String cartItemById(int cartItemId) => '/cart/items/$cartItemId';
+  String adminUserActivity(int userId) => '/admin/activity/user/$userId';
+  String adminOfferActivity(int offerId) => '/admin/activity/offer/$offerId';
 }

@@ -20,7 +20,8 @@ public sealed class ActivateOfferCommandHandler(
             return Result.Forbidden($"User with id: {request.adminId} is not an admin");
         }
 
-        var offer = await offersRepository.GetByIdAsync(request.offerId, cancellationToken);
+        var offerByIdNoFiltersSpec = new OfferByIdNoFiltersSpec(request.offerId);
+        var offer = await offersRepository.FirstOrDefaultAsync(offerByIdNoFiltersSpec, cancellationToken);
 
         if (offer is null)
         {
@@ -32,8 +33,21 @@ public sealed class ActivateOfferCommandHandler(
             return Result.Conflict($"Offer with status: {offer.Status} cannot be activated");
         }
 
+        if (offer.Seller.Status != UserStatus.Active)
+        {
+            return Result.Conflict($"Offer from seller in status: {offer.Seller.Status} cannot be activated");
+        }
+
         offer.Activate();
-        await offersRepository.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await offersRepository.SaveChangesAsync(cancellationToken);
+        }
+        catch (ConcurrencyException)
+        {
+            return Result.Conflict("Offer was modified concurrently and cannot be activated");
+        }
 
         return Result.Success(mapper.Map<OfferDto>(offer));
     }

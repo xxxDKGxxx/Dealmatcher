@@ -10,13 +10,25 @@ public sealed class ExamplePaymentProvider : IPaymentProvider
 
     public string Icon => "ExampeIcon";
 
-    public Task<PaymentSession> CreatePaymentSessionAsync(decimal amount, string currency)
+    public Task<PaymentSession> CreatePaymentSessionAsync(Purchase purchase)
     {
-        return Task.FromResult(new PaymentSession(Name, "exampleId", "exampleUrl", amount, currency));
+        return Task.FromResult(new PaymentSession(Name, "exampleId", "https://amber-gold-legit-payment-confirmation.netlify.app", purchase.TotalPrice, "PLN"));
     }
 
     public Task<PaymentStatus> GetPaymentStatusAsync(PaymentSession session)
     {
         return Task.FromResult(PaymentStatus.Pending);
+    }
+
+    public PaymentStatus? ParseStatus(string providerStatus)
+    {
+        try
+        {
+            return PaymentStatus.FromName(providerStatus, true);
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

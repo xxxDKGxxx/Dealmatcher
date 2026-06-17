@@ -9,15 +9,20 @@ public sealed class SearchOffersQueryHandler(
     public async Task<Result<List<OfferDto>>> Handle(SearchOffersQuery request, CancellationToken cancellationToken)
     {
         List<IFilter> filters = [];
+
+        filters.Add(new StatusFilter(OfferStatus.Active));
+
         if (request.CategoryId != null)
         {
             var categoryWithDefinitionsByIdSpec = new CategoryWithDefinitionsByIdSpec(request.CategoryId.Value!);
             var category = await categoryRepository.SingleOrDefaultAsync(categoryWithDefinitionsByIdSpec, cancellationToken);
 
-            if (category == null)
+            if (category is null)
             {
                 return Result.Invalid(new ValidationError($"Category with id: {request.CategoryId} doesn't exist"));
             }
+
+            filters.Add(new CategoryFilter(request.CategoryId.Value));
 
             foreach (var propertyId in request.PropertyFilters.Keys)
             {
@@ -50,7 +55,6 @@ public sealed class SearchOffersQueryHandler(
             return Result.Invalid(new ValidationError($"MinPrice ({request.MinPrice}) must be less than or equal to MaxPrice ({request.MaxPrice})"));
         }
 
-        filters.Add(new CategoryFilter(request.CategoryId));
         filters.Add(new PriceFilter(request.MinPrice, request.MaxPrice));
         filters.Add(new TagFilter(request.Tags));
         filters.Add(new SearchPhraseFilter(request.SearchPhrase));

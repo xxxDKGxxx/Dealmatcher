@@ -16,6 +16,8 @@ class ApiCore {
   String? _baseUrl;
   String? _token;
 
+  String get baseUrl => _baseUrl!;
+
   Future<void> init(String baseUrl) async {
     _baseUrl = baseUrl;
     final prefs = await SharedPreferences.getInstance();

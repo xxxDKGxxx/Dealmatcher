@@ -8,13 +8,13 @@ public static class SeedData
         {
             var cars = new Category("Cars", "Personal and work vehicles");
             cars.AddPropertyDefinition(new SelectPropertyDefinition("Brand", PropertyType.Select, ["BMW", "Audi", "Mercedes", "Toyota", "Volkswagen"]));
-            cars.AddPropertyDefinition(new NumericPropertyDefinition("Mileage", PropertyType.Numeric));
-            cars.AddPropertyDefinition(new NumericPropertyDefinition("Year of production", PropertyType.Numeric));
+            cars.AddPropertyDefinition(new NumericPropertyDefinition("Mileage", PropertyType.Number));
+            cars.AddPropertyDefinition(new NumericPropertyDefinition("Year of production", PropertyType.Number));
             cars.AddPropertyDefinition(new BooleanPropertyDefinition("Damaged", PropertyType.Boolean));
 
             var phones = new Category("Phones", "Smartphones and accessories");
             phones.AddPropertyDefinition(new SelectPropertyDefinition("Brand", PropertyType.Select, ["Apple", "Samsung", "Xiaomi", "Huawei", "Google"]));
-            phones.AddPropertyDefinition(new NumericPropertyDefinition("Storage GB", PropertyType.Numeric));
+            phones.AddPropertyDefinition(new NumericPropertyDefinition("Storage GB", PropertyType.Number));
             phones.AddPropertyDefinition(new BooleanPropertyDefinition("Warranty", PropertyType.Boolean));
 
             var clothing = new Category("Clothing", "Apparel");

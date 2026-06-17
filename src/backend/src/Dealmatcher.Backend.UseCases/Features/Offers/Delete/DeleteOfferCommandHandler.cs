@@ -2,7 +2,8 @@
 
 public sealed class DeleteOfferCommandHandler(
     IRepository<Offer> offerRepository,
-    IRepository<User> userRepository) : ICommandHandler<DeleteOfferCommand, Result>
+    IRepository<User> userRepository,
+    IReadRepository<Purchase> purchaseRepository) : ICommandHandler<DeleteOfferCommand, Result>
 {
     public async Task<Result> Handle(DeleteOfferCommand request, CancellationToken cancellationToken)
     {
@@ -22,8 +23,22 @@ public sealed class DeleteOfferCommandHandler(
             return Result.Forbidden();
         }
 
-        await offerRepository.DeleteAsync(offer, cancellationToken);
-        await offerRepository.SaveChangesAsync(cancellationToken);
+        var pendingPurchasesSpec = new PendingPurchasesByOfferIdSpec(request.OfferId);
+        var pendingPurchases = await purchaseRepository.ListAsync(pendingPurchasesSpec, cancellationToken);
+        if (pendingPurchases.Count > 0)
+        {
+            return Result.Conflict("Cannot delete offer with active pending purchases");
+        }
+
+        try
+        {
+            await offerRepository.DeleteAsync(offer, cancellationToken);
+            await offerRepository.SaveChangesAsync(cancellationToken);
+        }
+        catch (ConcurrencyException)
+        {
+            return Result.Conflict("Offer was modified concurrently and cannot be deleted");
+        }
 
         return Result.Success();
     }

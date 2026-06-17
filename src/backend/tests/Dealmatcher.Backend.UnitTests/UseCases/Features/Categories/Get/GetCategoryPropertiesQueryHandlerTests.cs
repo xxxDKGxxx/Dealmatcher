@@ -22,13 +22,13 @@ public class GetCategoryPropertiesQueryHandlerTests
         var category = new Category(categoryName, "Description");
 
         var propDef1 = new TextPropertyDefinition("Color", PropertyType.Text);
-        var propDef2 = new NumericPropertyDefinition("Size", PropertyType.Numeric);
+        var propDef2 = new NumericPropertyDefinition("Size", PropertyType.Number);
 
         category.AddPropertyDefinition(propDef1);
         category.AddPropertyDefinition(propDef2);
 
-        var propDto1 = new PropertyDefinitionDto(1, "Color", "Text", null);
-        var propDto2 = new PropertyDefinitionDto(2, "Size", "Numeric", null);
+        var propDto1 = new PropertyDefinitionDto(1, "Color", "TEXT", null);
+        var propDto2 = new PropertyDefinitionDto(2, "Size", "NUMERIC", null);
 
         _categoryRepository.SingleOrDefaultAsync(Arg.Any<ISingleResultSpecification<Category>>(), Arg.Any<CancellationToken>())
             .Returns(category);

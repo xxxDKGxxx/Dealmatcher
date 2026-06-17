@@ -288,7 +288,7 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
                 const SizedBox(height: 32),
 
                 // Action Buttons
-                if (!isMyOffer) ...[
+                if (!isMyOffer && offer.status != OfferStatus.sold) ...[
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -431,6 +431,8 @@ class _OfferDetailsPageState extends State<OfferDetailsPage> {
         return Colors.green;
       case OfferStatus.deleted:
         return Colors.grey;
+      case OfferStatus.draft:
+        return Colors.orange.shade300;
       case OfferStatus.sold:
         return Colors.blue;
     }

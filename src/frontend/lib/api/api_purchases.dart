@@ -1,3 +1,9 @@
+import 'package:frontend/api/api_core.dart';
+import 'package:frontend/api/api_urls.dart';
+import 'package:frontend/api/models/delivery_methods_response.dart';
+import 'package:frontend/api/models/payment_methods_response.dart';
+import 'package:frontend/api/models/purchase_initialize_request.dart';
+import 'package:frontend/api/models/purchase_initialize_response.dart';
 import 'package:frontend/models/delivery_method.dart';
 import 'package:frontend/models/payment_method.dart';
 
@@ -6,60 +12,96 @@ class ApiPurchases {
   factory ApiPurchases() => _instance;
   ApiPurchases._internal();
 
-  // Mocked endpoint for /purchases/delivery-methods
-  Future<List<DeliveryMethod>> getDeliveryMethods() async {
-    // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 500));
+  final ApiCore _apiCore = ApiCore();
 
-    return [
-      DeliveryMethod(
-        id: 'del_1',
-        name: 'Standard Delivery',
-        description: 'Delivery via standard post',
-        price: 5.99,
-        estimatedDays: 3,
-      ),
-      DeliveryMethod(
-        id: 'del_2',
-        name: 'Express Delivery',
-        description: 'Next day delivery',
-        price: 15.99,
-        estimatedDays: 1,
-      ),
-      DeliveryMethod(
-        id: 'del_3',
-        name: 'Pickup Point',
-        description: 'Deliver to a local pickup point',
-        price: 3.99,
-        estimatedDays: 2,
-      ),
-    ];
+  Future<List<DeliveryMethod>> getDeliveryMethods() async {
+    late List<DeliveryMethod> deliveryMethods;
+    try {
+      final response = await _apiCore.get(ApiUrls().deliveryMethods);
+
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = DeliveryMethodsResponse(response: response);
+            responseModel.fromJson();
+            deliveryMethods = responseModel.deliveryMethods;
+          }
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown server response: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return deliveryMethods;
   }
 
-  // Mocked endpoint for /purchases/payment-methods
   Future<List<PaymentMethod>> getPaymentMethods() async {
-    // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 500));
+    late List<PaymentMethod> paymentMethods;
+    try {
+      final response = await _apiCore.get(ApiUrls().paymentMethods);
 
-    return [
-      PaymentMethod(
-        id: 'pay_1',
-        name: 'Credit Card',
-        provider: 'Stripe',
-        icon: 'credit_card',
-      ),
-      PaymentMethod(
-        id: 'pay_2',
-        name: 'PayPal',
-        provider: 'PayPal Inc.',
-        icon: 'paypal',
-      ),
-      PaymentMethod(
-        id: 'pay_3',
-        name: 'Bank Transfer',
-        provider: 'Przelewy24',
-        icon: 'account_balance',
-      ),
-    ];
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = PaymentMethodsResponse(response: response);
+            responseModel.fromJson();
+            paymentMethods = responseModel.paymentMethods;
+          }
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown server response: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return paymentMethods;
+  }
+
+  Future<String> initializePurchase(
+    int offerId,
+    String deliveryMethodId,
+    String paymentMethodId,
+    int quantity,
+  ) async {
+    try {
+      final request = PurchaseInitializeRequest(
+        offerId: offerId,
+        deliveryMethodId: deliveryMethodId,
+        paymentMethodId: paymentMethodId,
+        quantity: quantity,
+      );
+      final response = await _apiCore.post(
+        ApiUrls().initializePurchase,
+        request,
+      );
+
+      switch (response.statusCode) {
+        case 200:
+          {
+            final responseModel = PurchaseInitializeResponse(
+              response: response,
+            );
+            responseModel.fromJson();
+            return '${responseModel.redirectUrl}?api=${_apiCore.baseUrl}${ApiUrls().apiUrl}${ApiUrls().paymentWebhook}';
+          }
+        case 400:
+          throw Exception('Invalid purchase data.');
+        case 401:
+          throw Exception('Unauthorized.');
+        case 404:
+          throw Exception('Offer not found.');
+        case 409:
+          throw Exception('Offer not available for purchase.');
+        case 500:
+          throw Exception('Internal server error.');
+        default:
+          throw Exception('Unknown server response: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 }

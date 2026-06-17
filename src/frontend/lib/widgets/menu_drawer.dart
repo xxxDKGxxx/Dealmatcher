@@ -67,9 +67,9 @@ class MenuDrawer extends StatelessWidget {
 
                     ListTile(
                       leading: Icon(Icons.local_offer_rounded),
-                      title: Text('All Offers'),
+                      title: Text('Admin'),
                       onTap: () {
-                        context.go('/admin-offers');
+                        context.go('/admin');
                       },
                     ),
                   ],

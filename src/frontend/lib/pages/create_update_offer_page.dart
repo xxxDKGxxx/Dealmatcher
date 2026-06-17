@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api_categories.dart';
 import 'package:frontend/api/api_offers.dart';
+import 'package:frontend/api/models/offer_change_status_request.dart';
 import 'package:frontend/api/models/offer_create_request.dart';
 import 'package:frontend/api/models/offer_update_request.dart';
 import 'package:frontend/models/offer.dart';
@@ -198,6 +199,16 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
 
     offer = await ApiOffers().getOffer(widget.offerId!);
 
+    if (offer!.status == OfferStatus.sold) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Offer is already sold.')));
+        context.go('/my-offers');
+      }
+      return null;
+    }
+
     _titleController.text = offer!.title;
     _descriptionController.text = offer!.description;
     _priceController.text = offer!.price.toString();
@@ -236,6 +247,27 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
       return widget.fetchProperties!(categoryName);
     }
     return ApiCategories().getPropertyDefinitions(categoryName);
+  }
+
+  Future _sellOffer(int id) async {
+    try {
+      await ApiOffers().changeOfferStatus(
+        id,
+        OfferChangeStatusRequest(status: 'SOLD'),
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Successfully sold this offer')),
+        );
+        context.go('/my-offers');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      }
+    }
   }
 
   Future _deleteOffer(int id) async {
@@ -726,6 +758,33 @@ class _CreateOfferPageState extends State<CreateOfferPage> {
                             ),
                           ),
                           if (isUpdated) ...[
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () async {
+                                final confirmed = await showConfirmDialog(
+                                  context,
+                                  title: 'Sell offer',
+                                  content:
+                                      'Are you sure you want to mark this offer as sold?',
+                                  confirmText: 'Sell',
+                                );
+
+                                if (confirmed) {
+                                  _sellOffer(offer!.id);
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                foregroundColor: Colors.green.shade900,
+                                backgroundColor: Colors.green.shade400,
+                              ),
+                              child: const Text(
+                                'Sell Offer',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
                             const SizedBox(height: 16),
                             ElevatedButton(
                               onPressed: () async {

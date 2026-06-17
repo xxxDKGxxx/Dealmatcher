@@ -6,7 +6,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.UseEnvironment("Testing");
 
-        builder.UseSetting("FrontendOrigin", "http://localhost:8080");
+        builder.UseSetting("AllowedUrls:0", "http://localhost:8080");
         builder.UseSetting("ConnectionStrings:DefaultConnection", "");
         builder.UseSetting(
             "Authentication:Jwt:SecretKey",

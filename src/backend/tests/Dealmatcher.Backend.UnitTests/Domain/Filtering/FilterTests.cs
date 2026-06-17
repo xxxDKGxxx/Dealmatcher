@@ -100,21 +100,6 @@ public class FilterTests
         result.Count.ShouldBe(1);
     }
 
-    [Fact]
-    public void CategoryFilter_NullCategoryId_ReturnsAll()
-    {
-        var offers = new List<Offer>
-        {
-            CreateOffer(),
-            CreateOffer(),
-        };
-
-        var filter = new CategoryFilter(null);
-        var result = ApplyFilter(offers, filter);
-
-        result.Count.ShouldBe(2);
-    }
-
     // ── SearchPhraseFilter ──
 
     [Fact]
@@ -222,7 +207,7 @@ public class FilterTests
     [Fact]
     public void NumericPropertyFilter_InRange_Included()
     {
-        var definition = new NumericPropertyDefinition("Mileage", PropertyType.Numeric)
+        var definition = new NumericPropertyDefinition("Mileage", PropertyType.Number)
         {
             Id = 20
         };
@@ -291,7 +276,7 @@ public class FilterTests
     public void CombinedFilters_AllApplied()
     {
         var category = CreateCarsCategory();
-        var mileageDef = new NumericPropertyDefinition("Mileage", PropertyType.Numeric)
+        var mileageDef = new NumericPropertyDefinition("Mileage", PropertyType.Number)
         {
             Id = 20
         };

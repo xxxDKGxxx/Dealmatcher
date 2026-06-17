@@ -9,6 +9,9 @@ public class User(string email, string passwordHash, string name, string surname
     public UserStatus Status { get; private set; } = UserStatus.Active;
     public bool IsPrivileged => Status == UserStatus.Admin;
 
+    private readonly List<Ban> _bans = [];
+    public IReadOnlyCollection<Ban> Bans => _bans.AsReadOnly();
+
     public void UpdateEmail(string email)
     {
         if (!string.IsNullOrWhiteSpace(email))
@@ -51,9 +54,24 @@ public class User(string email, string passwordHash, string name, string surname
         Status = UserStatus.Active;
     }
 
-    public void BanUser()
+    public void BanUser(string reason, User issuedBy, DateTime? expiresAt)
     {
+        var ban = new Ban(this, reason, issuedBy, expiresAt);
+        _bans.Add(ban);
+
         Status = UserStatus.Banned;
+    }
+    public void RevokeBan(int banId)
+    {
+        var ban = _bans.FirstOrDefault(b => b.Id == banId);
+        ban?.Revoke();
+
+        bool hasOtherActiveBans = _bans.Any(b => b.IsActive && (b.ExpiresAt == null || b.ExpiresAt > DateTime.UtcNow));
+
+        if (!hasOtherActiveBans)
+        {
+            Status = UserStatus.Active;
+        }
     }
 
     public void ActivateUserAccount()
