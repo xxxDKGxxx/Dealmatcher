@@ -14,7 +14,7 @@ class Ban {
   final String reason;
   final int issuedBy;
   final DateTime issuedAt;
-  final DateTime expiresAt;
+  final DateTime? expiresAt;
   final bool isActive;
 
   factory Ban.fromJson(Map<String, dynamic> json) {
@@ -24,7 +24,9 @@ class Ban {
       reason: json["reason"],
       issuedBy: json["issuedBy"],
       issuedAt: DateTime.parse(json["issuedAt"]),
-      expiresAt: DateTime.parse(json["expiresAt"]),
+      expiresAt: json["expiresAt"] == null
+          ? null
+          : DateTime.parse(json["expiresAt"]),
       isActive: json["isActive"],
     );
   }
