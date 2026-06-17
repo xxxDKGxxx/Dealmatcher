@@ -46,7 +46,7 @@ Widget banListTile({
                     style: theme.textTheme.bodyMedium,
                   ),
                   Text(
-                    'Expires at: ${ban.expiresAt}',
+                    'Expires at: ${ban.expiresAt ?? ''}',
                     style: theme.textTheme.bodyMedium,
                   ),
                   Text(
