@@ -6,6 +6,7 @@ public class ProcessPaymentCommandHandlerTests
     private readonly IRepository<Offer> _offerRepository;
     private readonly IPaymentProviderService _paymentProviderService;
     private readonly IPaymentProvider _paymentProvider;
+    private readonly ICartRepository _cartRepository;
     private readonly ILogger<ProcessPaymentCommandHandler> _logger;
     private readonly ProcessPaymentCommandHandler _handler;
 
@@ -15,6 +16,7 @@ public class ProcessPaymentCommandHandlerTests
         _offerRepository = Substitute.For<IRepository<Offer>>();
         _paymentProviderService = Substitute.For<IPaymentProviderService>();
         _paymentProvider = Substitute.For<IPaymentProvider>();
+        _cartRepository = Substitute.For<ICartRepository>();
         _logger = Substitute.For<ILogger<ProcessPaymentCommandHandler>>();
 
         _paymentProviderService.GetPaymentProviderById(Arg.Any<string>()).Returns(_paymentProvider);
@@ -23,6 +25,7 @@ public class ProcessPaymentCommandHandlerTests
             _purchaseRepository,
             _offerRepository,
             _paymentProviderService,
+            _cartRepository,
             _logger);
     }
 
