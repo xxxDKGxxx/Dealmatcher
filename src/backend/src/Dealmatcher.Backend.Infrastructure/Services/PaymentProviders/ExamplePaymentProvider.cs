@@ -12,7 +12,7 @@ public sealed class ExamplePaymentProvider : IPaymentProvider
 
     public Task<PaymentSession> CreatePaymentSessionAsync(Purchase purchase)
     {
-        return Task.FromResult(new PaymentSession(Name, "exampleId", "exampleUrl", purchase.TotalPrice, "PLN"));
+        return Task.FromResult(new PaymentSession(Name, "exampleId", "https://amber-gold-legit-payment-confirmation.netlify.app", purchase.TotalPrice, "PLN"));
     }
 
     public Task<PaymentStatus> GetPaymentStatusAsync(PaymentSession session)
